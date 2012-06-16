@@ -1,0 +1,2 @@
+#!/bin/bash
+mysql -uroot -proot -e "CREATE DATABASE xplanner CHARACTER SET UTF8 COLLATE utf8_general_ci; GRANT ALL PRIVILEGES ON xplanner.* TO 'xplanner'@'%' IDENTIFIED BY 'xp' WITH GRANT OPTION;"

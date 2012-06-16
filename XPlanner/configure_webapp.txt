@@ -1,0 +1,20 @@
+#!/bin/sh
+
+env > /tmp/env.txt
+# Stop the application server. 
+$service_stop
+# Configuring xplanner-custom.properties to use with MySQL
+cp /opt/vmware/darwin/tcserver/working/springsource-tc-server-standard/instance1/webapps/xplanner-plus/WEB-INF/classes/xplanner-custom.properties /tmp/xplanner-custom.properties.backup
+cat <<EOF > /opt/vmware/darwin/tcserver/working/springsource-tc-server-standard/instance1/webapps/xplanner-plus/WEB-INF/classes/xplanner-custom.properties
+hibernate.dialect=com.technoetic.xplanner.db.hibernate.XPlannerMySQLDialect
+hibernate.connection.driver_class=com.mysql.jdbc.Driver
+hibernate.connection.dbname=xplanner
+hibernate.connection.url=jdbc:mysql://$db_host:$db_port/xplanner
+hibernate.connection.username=xplanner
+hibernate.connection.password=xp
+hibernate.show_sql=false
+xplanner.migration.databasetype=mysql
+EOF
+
+# Start the application server. This parameter should point to the script used to start the application server.
+$service_start

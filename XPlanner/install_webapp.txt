@@ -1,0 +1,16 @@
+#!/bin/sh
+env > /tmp/env.txt
+# Stop the application server. This parameter should point to the script used to stop the application server.
+
+$service_stop
+
+cp $war_file /tmp
+yum -y install unzip
+mkdir $webapps_dir/xplanner-plus
+unzip  /tmp/xplanner-plus.war -d $webapps_dir/xplanner-plus
+
+# Start the application server. This parameter should point to the script used to start the application server.
+$service_start
+
+# xplanner has permission issues with log, this will avoid that
+touch xplannerActivity.log
