@@ -61,7 +61,7 @@ To use the JBoss Server service in the sample petcare application blueprint foll
 4. Add a WAR application component to the JBoss service and name it Petcare.
 
 5. Add and update property values to be similar to those seen in petcarewarproperties.png. 
-   Be sure to put the petcare.war file on a web server and set the URL for the "war_file" properly.
+   Be sure to put the petcare.war file included with Application Director on a web server and set the URL for the "war_file" properly.
 
 6. Add the petcarewar-start.sh to the install lifecycle of the Petcare WAR component.
 
