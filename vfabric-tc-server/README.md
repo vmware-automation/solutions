@@ -14,8 +14,8 @@ To create vFabric tc Server service in vFabric Application Director follow these
 	Service Version: 5.1.0  
 	Tags: "Application Servers"  
 	Supported OSes: "RHEL32 5.x", "RHEL64 5.x", "RHEL32 6.x", "RHEL64 6.x"  
-	Supported Components:  JAR, WAR, SCRIPT
-
+	Supported Components:  JAR, WAR, SCRIPT  
+[Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-create.png)  
 3.   Add following Properties to the service:
 
     This example uses the values posted below as defaults.   To change any of these
@@ -42,8 +42,10 @@ To create vFabric tc Server service in vFabric Application Director follow these
     `minimum version of java required                      REQUIRED_VERSION [String]`  
     `tc Server template used to create new instance        TCSERVER_TEMPLATE [String]`  
     `application name if different from war                APPLICATION_NAME [String]`  
-
+[Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-properties.png)  
 4.   Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.  
+[Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-actions.png)  
+
 
 Create and Deploy Application using vFabric tc Server service  
 -------------------------------------------------------------  
