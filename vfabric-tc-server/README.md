@@ -22,8 +22,6 @@ To create vFabric tc Server service in vFabric Application Director follow these
     values, add the Property Name as shown below as individual properties in your 
     service definition in the ApplicationDirector Catalog.   The value specified after
     the Property name is the Type to use for the property (i.e. String, Content, Array etc)
-    There are two types of properties for this script: Required and Optional.  Both are 
-    listed below.  
 
     **Required Properties**  
     These are the properties you must add in order for this sample script to work. The property
@@ -33,15 +31,6 @@ To create vFabric tc Server service in vFabric Application Director follow these
     `global_conf [Content]   https://${darwin.server.ip}:8443/darwin/conf/darwin_global.conf`  
     `WAR [Content]           http://${darwin.server.ip}/artifacts/app-components/spring-travel/swf-booking-mvc-2.0.3.RELEASE.war`  
     `TCSERVER_HOME [String]  /opt/vmware/vfabric-tc-server-standard`  
-  
-    **Optional Properties**  
-    `Property Description:                                Property Name settable in blueprint:`  
-    .................................................................................................  
-    `which java to use                                     JAVA_HOME [String]`  
-    `name of the new tc server instance to be created      INSTANCE_NAME [String]`  
-    `minimum version of java required                      REQUIRED_VERSION [String]`  
-    `tc Server template used to create new instance        TCSERVER_TEMPLATE [String]`  
-    `application name if different from war                APPLICATION_NAME [String]`  
 [Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-properties.png)  
 4.   Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.  
 [Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-actions.png)  
