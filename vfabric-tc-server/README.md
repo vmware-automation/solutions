@@ -32,7 +32,7 @@ To create vFabric tc Server service in vFabric Application Director follow these
     `WAR [Content]           http://${darwin.server.ip}/artifacts/app-components/spring-travel/swf-booking-mvc-2.0.3.RELEASE.war`  
     `TCSERVER_HOME [String]  /opt/vmware/vfabric-tc-server-standard`  
 [Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-properties.png)  
-4.   Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.  
+4.   Add the tcserver-install.sh, tcserver-config.sh, and tcserver-start.sh script contents to the service lifecycle under Action tab.  
 [Here's a screenshot](https://github.com/vmware-applicationdirector/solutions/blob/staging/vfabric-tc-server/service-actions.png)  
 
 
