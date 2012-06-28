@@ -6,17 +6,17 @@ The set of scripts provided here helps you install, configure and deploy
 
 To create vFabric tc Server service in vFabric Application Director follow these steps:
 
-1.   Create a new service in the catalog.
+1.   Create a new service in the catalog
 
 2.   Use following values for service details
 
-	Name: vFabric tc Server  
-	Version: 2.7.0.RELEASE  
+	Name: vFabric tc Server 5.1.0 
+	Service Version: 5.1.0  
 	Tags: "Application Servers"  
-	Supported OSes: "RHEL 5 32bit"  
-	Supported Components:  war  
+	Supported OSes: "RHEL32 5.x", "RHEL64 5.x", "RHEL32 6.x", "RHEL64 6.x"  
+	Supported Components:  JAR, WAR, SCRIPT
 
-3.   Add following properties to the service:
+3.   Add following Properties to the service:
 
     This example uses the values posted below as defaults.   To change any of these
     values, add the Property Name as shown below as individual properties in your 
@@ -28,10 +28,11 @@ To create vFabric tc Server service in vFabric Application Director follow these
     **Required Properties**  
     These are the properties you must add in order for this sample script to work. The property
     is added when you create your service definition in the ApplicationDirector Catalog.    
-    `Property Description:                                Property Value settable in blueprint [type]:`  
+    `Property Name [Type]    Property Value`  
     .................................................................................................  
-    `Location of global configuration data                global_conf [Content]`  
-    `value: https://${darwin.server.ip}:8443/darwin/conf/darwin_global.conf`  
+    `global_conf [Content]   https://${darwin.server.ip}:8443/darwin/conf/darwin_global.conf`  
+    `WAR [Content]           http://${darwin.server.ip}/artifacts/app-components/spring-travel/swf-booking-mvc-2.0.3.RELEASE.war`  
+    `TCSERVER_HOME [String]  /opt/vmware/vfabric-tc-server-standard`  
   
     **Optional Properties**  
     `Property Description:                                Property Name settable in blueprint:`  
@@ -39,8 +40,20 @@ To create vFabric tc Server service in vFabric Application Director follow these
     `which java to use                                     JAVA_HOME [String]`  
     `name of the new tc server instance to be created      INSTANCE_NAME [String]`  
     `minimum version of java required                      REQUIRED_VERSION [String]`  
-    `application war to be downloaded and deployed         WAR [Content]`  
     `tc Server template used to create new instance        TCSERVER_TEMPLATE [String]`  
     `application name if different from war                APPLICATION_NAME [String]`  
 
-4.   Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.
+4.   Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.  
+
+Create and Deploy Application using vFabric tc Server service  
+-------------------------------------------------------------  
+
+Once you have finished creating vFabric tc Server service you should see it under existing and new Applications.  
+
+1.   Create a new Application  
+2.   Set following properties:  
+     Name : Spring Travel Application  
+3.   On Blueprint canvass drag and drop RHEL 5 or 6 OS template from Logical Templates menu  
+4.   From Services menu select **vFabric tc Server 5.1.0** and drop it under OS  
+5.   Save Application  
+6.   Click Deploy and step through deployment wizard  
