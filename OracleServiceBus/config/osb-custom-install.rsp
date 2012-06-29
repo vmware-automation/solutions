@@ -1,0 +1,53 @@
+# $Id$
+
+[ENGINE]
+
+#DO NOT CHANGE THIS.
+Response File Version=1.0.0.0.0
+
+[GENERIC]
+# Set this to true if typical installation must be done. If this is set to true,
+# then variable "CUSTOM TYPE" must be set to false as the variables are mutually exclusive
+TYPICAL TYPE=false
+
+# Set this to true if custom installation must be done, all other required variables need to be provided.
+# If this is set to true then variable "TYPICAL TYPE" must be set to false as the variables are mutually exclusive.
+CUSTOM TYPE=true
+
+# Set this to true if component Oracle Service Bus Examples must be installed. This input will be needed only
+# in the case of custom installation
+Oracle Service Bus Examples=true
+
+# Set this to true if component Oracle Service Bus IDE must be installed.
+# This input will be needed only in the case of custom installation
+Oracle Service Bus IDE=false
+
+# Provide the Oracle Home location. The location has to be the immediate child under the specified Middleware Home location.
+# The Oracle Home directory name may only contain alphanumeric , hyphen (-) , dot (.) and underscore (_) characters,
+# and it must begin with an alphanumeric character. The total length has to be less than or equal to 128 characters.
+# The location has to be an empty directory or a valid OSB Oracle Home.
+# ORACLE_HOME=/oracle/products/osbmw/Oracle_OSB1
+ORACLE_HOME=%OSB_ORACLE_HOME%
+
+# Provide existing Middleware Home location.
+# MIDDLEWARE_HOME=/oracle/products/osbmw
+MIDDLEWARE_HOME=%BEAHOME%
+
+# Give the complete path to a valid WebLogic Server Home for the corresponding Middleware Home entered.
+# WL_HOME=/oracle/products/osbmw/wlserver_10.3
+WL_HOME=%BEAHOME%/wlserver_10.3
+
+# Give the complete path to a valid OEPE Home for the corresponding Middleware Home entered.
+# This input will be needed in both typical and custom installations. But in case of custom installation,
+# Oracle Service Bus IDE must be set to true.
+OEPE_HOME=
+
+
+[SYSTEM]
+
+
+[APPLICATIONS]
+
+
+[RELATIONSHIPS]
+
