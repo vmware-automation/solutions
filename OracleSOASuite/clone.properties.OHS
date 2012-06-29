@@ -1,0 +1,352 @@
+# $Id$
+
+######################################################################
+# This is the main properties file that guides the SOA cloning process
+######################################################################
+
+# NOTE: Due to the way Ant behaves, the best way to disable or turn off
+# a parameter is to comment it out. The best way to enable a parameter
+# is to use:
+#     src.param.name=true
+# In order to disable it, please don't set the value to false because
+# that's still interpreted by Ant as a defined value. Instead, comment
+# it out instead by using:
+#     # src.param.name=false
+
+######################################################################
+# SOURCE PARAMETERS (src.*)
+######################################################################
+
+# The capture process consists of two phases - install and dbconfig.
+# You can turn on/off the two phases individually using these flags.
+# The install phase configures and captures the software bits. 
+# The dbconfig phases configures and captures the database-related
+# information.
+src.phase.install=true
+# src.phase.dbconfig=false
+
+# Location of the Source Oracle Homes for SOA 10.1.3.3, OHS 10.1.3.3,
+# OWSM 10.1.3.3, ESB-DT 10.1.3.3 products.
+# IMPORTANT NOTE: Please specify *unique* oracle homes only. For eg,
+# if your OWSM 10.1.3.3 is installed in the same Oracle Home as SOA
+# Suite 10.1.3.3, then you should comment out the src.owsm.oracle.home
+# parameter below and specify only the src.soa.oracle.home parameter.
+#
+#src.soa.oracle.home=/oracle/products/10.1.3.1/SOA
+src.ohs.oracle.home=/oracle/products/10.1.3.5/OHS
+#src.owsm.oracle.home=/oracle/products/10.1.3.4/WSM
+#src.esbdt.oracle.home=/oracle/products/10.1.3.1/ESBDT
+
+# Location of the OraInventory directory. Please specify *unique*
+# OraInventory homes only. A maximum of two OraInventory directories
+# are supported currently.
+#
+src.ora.inventory1.home=/etc/oraInventory
+# src.ora.inventory2.home=/usr/lib/oracle/oraInventory
+
+# Location of custom user directories. You may specify up to five
+# custom user directories to be captured and cloned.
+#
+# src.custom.dir1=/home/oracle/baseDir
+# src.custom.dir2=
+# src.custom.dir3=
+# src.custom.dir4=
+# src.custom.dir5=
+
+# Database Client/Server Software. In order to access schemas running at
+# the source database, the cloning process needs access to an installed
+# database client or server software on the local machine. We need
+# access to exp, imp, sqlldr, sqlplus, and other database tools.
+src.db.oracle.home=/install/apps/oracle/fmw/soa/app/clone/instantclient_10_2_0_4
+
+# Source Database Location. The database system must be running in order
+# for the cloning process to access the schemas.
+#
+# Specify the service name of the database (not SID!) If you are
+# unsure what the service name for your database is, you can obtain it
+# from the SERVICE_NAMES parameter in the database's init.ora
+# parameter file. If the initialization parameter file does not contain
+# the SERVICE_NAMES parameter, then the service name is the same as the
+# global database name, which is specified in the DB_NAME and DB_DOMAIN
+# parameters. In a RAC scenario, all instances of the database must have
+# the same service name.
+# src.db.hostname=localhost
+# src.db.port=1521
+# src.db.servicename=XE
+
+# Source Database Passwords. The cloning process needs to have access to
+# the ORABPEL, ORAESB, and ORAWSM schema passwords in order to export the
+# data to the target database. You can also pass these parameters in
+# the ant command line: -Dsrc.db.orabpel.password=orabpel
+# If the passwords are not set in either the properties file or on the
+# command line, you will be prompted for them.
+# src.db.orabpel.password=orabpel
+# src.db.oraesb.password=oraesb
+# src.db.orawsm.password=orawsm
+
+# Source Load Balancer configuration. If you're using an LBR configuration,
+# you should specify the virtual host name here. This token
+# will be located and replaced in configuration files such as httpd.conf,
+# collaxa-config.xml, etc.
+src.lbr.virtual.hostname=ora-dev2-fmwsoax-a1.vmware.com
+
+# OC4JAdmin Passwords. The cloning process needs to have access to
+# the oc4jadmin user's password in order to make configuration changes
+# to system-jazn-data.xml, etc. You can also pass these parameters in
+# the ant command line: -Dsrc.soa.oc4jadmin.password=welcome1
+#src.soa.oc4jadmin.password=welcome1
+src.ohs.oc4jadmin.password=welcome1
+#src.owsm.oc4jadmin.password=welcome1
+#src.esbdt.oc4jadmin.password=welcome1
+
+
+######################################################################
+# DESTINATION PARAMETERS (dest.*)
+######################################################################
+
+# The apply process consists of three phases - install, config, and
+# dbconfig. You can turn on/off the three phases individually using
+# these flags. The install phase installs the software bits and 
+# recreates the directories. The config phase configures the software
+# by running Oracle's clone.pl and endpoint mapping, custom shell scripts,
+# etc. Finally, the dbconfig step configures the database related
+# files and runs custom SQL scripts.
+dest.phase.install=true
+dest.phase.config=true
+# dest.phase.dbconfig=false
+
+# Location of the Destination Oracle Homes for SOA 10.1.3.3, OHS 10.1.3.3,
+# OWSM 10.1.3.3, ESB-DT 10.1.3.3 products. Currently, the destination
+# homes *MUST* be the same as the source Oracle Homes. In addition, you
+# must enable those parameters whose Oracle Homes you want to recreate.
+#
+# dest.soa.oracle.home=${src.soa.oracle.home}
+dest.ohs.oracle.home=${src.ohs.oracle.home}
+# dest.owsm.oracle.home=${src.owsm.oracle.home}
+# dest.esbdt.oracle.home=${src.esbdt.oracle.home}
+
+# IAS names to be used in the destination. You may specify ias names to
+# use during apply (prefix only, the system will automatically append
+# the host name and domain name). Please note that Oracle's cloning does
+# not allow the dest ias name to be the same as the src ias name. This
+# parameter is not mandatory. By default, the system uses the value
+# "S-H" where S is the source ias name and H is the destination host name.
+# dest.soa.ias.name=SOA
+dest.ohs.ias.name=OHS_10135
+# dest.owsm.ias.name=OWSM_nlt
+# dest.esbdt.ias.name=ESBDT_uat
+
+# Location of the Destination OraInventory directory. Currently, the
+# destination homes *MUST* be the same as the source homes. In addition,
+# you must enable those parameters whose homes you want to recreate.
+#
+dest.ora.inventory1.home=${src.ora.inventory1.home}
+# dest.ora.inventory2.home=${src.ora.inventory2.home}
+
+# Location of custom user directories. You may specify up to five
+# custom user directories to be captured and cloned. Enable only those
+# parameters whose homes you want to recreate. Please note that these
+# directories will first be wiped and then recreated to make it
+# match identically with the source directory.
+#
+# dest.custom.dir1=${src.custom.dir1}
+# dest.custom.dir2=${src.custom.dir2}
+# dest.custom.dir3=${src.custom.dir3}
+# dest.custom.dir4=${src.custom.dir4}
+# dest.custom.dir5=${src.custom.dir5}
+
+# Database Client/Server Software. In order to access schemas running at
+# the destination db, the cloning process needs access to an installed
+# database client or server software on the local machine. We need
+# access to exp, imp, sqlldr, sqlplus, and other database tools.
+dest.db.oracle.home=${src.db.oracle.home}
+
+# Destination Database Location. The database system must be running
+# for the cloning process to access the schemas.
+#
+# Specify the service name of the database (not SID!) If you are
+# unsure what the service name for your database is, you can obtain it
+# from the SERVICE_NAMES parameter in the database's init.ora
+# parameter file. If the initialization parameter file does not contain
+# the SERVICE_NAMES parameter, then the service name is the same as the
+# global database name, which is specified in the DB_NAME and DB_DOMAIN
+# parameters. In a RAC scenario, all instances of the database must have
+# the same service name.
+dest.db.hostname=ORACLE_ON_VMWARE
+dest.db.port=1521
+dest.db.servicename=XE
+
+# Dest Database Passwords. The cloning process needs to have access to
+# the ORABPEL, ORAESB, and ORAWSM schema passwords in order to import
+# data to the target database. You can also pass these parameters in
+# the ant command line: -Ddest.db.orabpel.password=orabpel
+dest.db.orabpel.password=orabpel
+dest.db.oraesb.password=oraesb
+dest.db.orawsm.password=orawsm
+
+# Dest SYS user and password. Oracle's cloning process requires you to
+# specify the name of the db user that created the SOA schemas (for
+# example, SYS) and its password. You can also pass the password
+# in the ant command line for security reasons.
+dest.db.sys.username=SYS
+dest.db.sys.password=mgr
+
+# Load Balancer configuration. If you want to update LBR configuration,
+# you should specify the virtual host name here. This value
+# will be inserted into configuration files such as httpd.conf,
+# collaxa-config.xml, etc.
+dest.lbr.virtual.hostname=ora-dev-fmwsoax-a1.vmware.com
+
+# OPMN environment variables. You may specify up to five environment
+# variables to be updated in opmn.xml. All environment variables
+# that match the name will be replaced with the value provided.
+# dest.opmn.env1.name=TRILLDIRADDR
+# dest.opmn.env1.value=trillium.example.com
+
+# dest.opmn.env2.name=TRILLDIRPORT
+# dest.opmn.env2.value=8888
+
+# dest.opmn.env3.name=
+# dest.opmn.env3.value=
+
+# dest.opmn.env4.name=
+# dest.opmn.env4.value=
+
+# dest.opmn.env5.name=
+# dest.opmn.env5.value=
+
+# Custom SQL execution. The cloning process provides the ability for
+# you to invoke 5 custom SQL statement(s) via sqlplus. Sqlplus will
+# connect to the server that's specified by the dest.db.hostname,
+# dest.db.port, and dest.db.servicename parameters. As with all
+# passwords, you may specify the parameters in the command line.
+dest.custom.sql1.username=system
+dest.custom.sql1.password=manager
+dest.custom.sql1.statement=\
+	select count(*) from dual; ${line.separator} \
+	select * from all_users; ${line.separator}
+
+# dest.custom.sql2.username=
+# dest.custom.sql2.password=
+# dest.custom.sql2.statement=
+
+# dest.custom.sql3.username=
+# dest.custom.sql3.password=
+# dest.custom.sql3.statement=
+
+# dest.custom.sql4.username=
+# dest.custom.sql4.password=
+# dest.custom.sql4.statement=
+
+# dest.custom.sql5.username=
+# dest.custom.sql5.password=
+# dest.custom.sql5.statement=
+
+# Custom shell script execution. The cloning process provides the
+# ability for you to invoke custom shell scripts. The commands will
+# be executed via ant's exec task. The shell scripts are executed
+# after the destination oracle homes have been set up & configured.
+# Scripts will be run under the "/bin/sh -c" umbrella, therefore
+# you may use bourne shell (or bash)-like syntax.
+
+dest.custom.script1.command=cd ${dest.ohs.oracle.home}/Apache/Apache/htdocs; \
+        grep -lr -e 'ora-dev2-fmwsoax-a1' * | xargs sed -i 's/ora-dev2-fmwsoax-a1/ora-dev-fmwsoax-a1/g'; \
+        exit 0;
+dest.custom.script2.command=cd ${dest.ohs.oracle.home}/Apache/Apache/htdocs; \
+        grep -lr -e 'ora-dev2-fmidm-a1' * | xargs sed -i 's/ora-dev2-fmidm-a1/ora-apps-fm00-2/g'; \
+        exit 0;
+dest.custom.script3.command=cd ${dest.ohs.oracle.home}/Apache/Apache/conf; \
+        sed -i 's/ora-dev2-fmwsoax-a1/ora-dev-fmwsoax-a1/g' httpd.conf; \
+        exit 0;
+
+# dest.custom.script1.command=cd ${dest.custom.dir1}; \
+#    gpg --import private2.key; \
+#    exit 0;
+# dest.custom.script2.command=
+# dest.custom.script3.command=
+# dest.custom.script4.command=
+# dest.custom.script5.command=
+
+# Custom XML updates. The cloning process provides the ability for
+# you to update custom XML files.
+# The action parameter must be on of the following (case-sensitive):
+#     CreateAttribute, UpdateAttribute, DeleteAttribute,
+#     CreateElement, UpdateElement, DeleteElement
+# The filename parameter is the XML file to be worked on. If it's a
+#     relative path, then it's assumed to be relative from an Oracle Home
+#     directory, and applied to all Oracle Homes (SOA, OHS, OWSM, ESB-DT).
+# The token parameter is the attribute/element on which the operation
+#     will be performed. For DeleteAttribute & DeleteElement, the token
+#     parameter is the attribute/element to be deleted. For CreateAttribute
+#     & CreateElement, the token parameter is the parent element under which
+#     the attribute/element will be created. For UpdateAttribute &
+#     UpdateElement, the token parameter is the attribute/element to be
+#     modified. The token parameter can be any valid XPath, for e.g:
+#     /opmn:opmn/opmn:notification-server/opmn:ssl/@enabled
+# For convenience, some namespace prefixes are provided to you:
+#     xmlns:opmn=http://www.oracle.com/ias-instance
+# The name parameter is used for CreateAttribute and CreateElement
+#     actions ONLY. It's the name of the attribute/element to be created.
+# The value parameter is used for CreateAttribute, CreateElement,
+#     UpdateAttribute, UpdateElement actions only. For these actions, the
+#     parameter is the value of the new/updated attribute or element.
+dest.xmlupdate1.action=UpdateAttribute
+dest.xmlupdate1.filename=opmn/conf/opmn.xml
+dest.xmlupdate1.token=/opmn:opmn/opmn:notification-server/opmn:topology/opmn:discover/@list
+dest.xmlupdate1.name=
+dest.xmlupdate1.value=*225.0.0.13:5789
+
+# dest.xmlupdate2.action=UpdateAttribute
+# dest.xmlupdate2.filename=bpel/system/config/jgroups-protocol.xml
+# dest.xmlupdate2.token=/config/TCPPING/@initial_hosts
+# dest.xmlupdate2.name=
+# dest.xmlupdate2.value=ora-lt-fmsoa-1a.vmware.com[7900],ora-lt-fmsoa-2a.vmware.com[7900]
+# dest.xmlupdate2.value=false
+
+# dest.xmlupdate3.action=UpdateAttribute
+# dest.xmlupdate3.filename=bpel/system/config/jgroups-protocol.xml
+# dest.xmlupdate3.token=/config/TCPPING/@num_initial_members
+# dest.xmlupdate3.name=
+# dest.xmlupdate3.value=2
+
+# dest.xmlupdate4.action=CreateAttribute
+# dest.xmlupdate4.filename=opmn/conf/opmn.xml
+# dest.xmlupdate4.token=/opmn:opmn/opmn:notification-server/opmn:ssl
+# dest.xmlupdate4.name=newattribute
+# dest.xmlupdate4.value=newvalue
+
+# dest.xmlupdate5.action=UpdateAttribute
+# dest.xmlupdate5.filename=
+# dest.xmlupdate5.token=
+# dest.xmlupdate5.name=
+# dest.xmlupdate5.value=
+
+######################################################################
+# ADVANCED SETTINGS. During a normal course of operation, you will not
+# need to mess with these settings.
+######################################################################
+
+# Name of clone zipfile that contains the capture process results.
+# The default name contains the hostname and timestamp of capture
+# process, e.g. clone-hostname.domain-02-01-2010_1430.zip. You can
+# change this behavior by specifying a static name below.
+# clone.zip.filename=clone.zip
+
+# Prompt User to shutdown the middle tier during capture process?
+# clone.prompt.shutdown=true
+
+# Flag that specifies whether 'apply' should stop if the destination
+# directory exists and contains one or more files.
+dest.stop.if.dir.nonempty=false
+
+# List of tables for each schema that will be exported/imported. Use
+# the exp and imp parameter syntax: tables=(TABLE1,TABLE2,...,TABLEn)
+db.orabpel.tables=(DOMAIN,DOMAIN_PROPERTIES)
+
+# Before and after running the database import command, we may need to
+# run certain sql statements. These parameters allow for that provision.
+# SQL*Plus requires newlines between individual SQL statements.
+db.orabpel.preimp.sql=\
+	delete from DOMAIN; ${line.separator} \
+	delete from DOMAIN_PROPERTIES; ${line.separator}
+# db.orabpel.postimp.sql=

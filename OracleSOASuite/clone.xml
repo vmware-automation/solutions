@@ -1,0 +1,2984 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- $Id: clone.xml,v 1.10 2010/05/28 17:25:06 sawadhwa Exp $ -->
+<project name="SOACloning" basedir="." default="usage">
+
+    <!-- Include Ant-contrib tasks -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+    
+    <!-- ................................................................ -->
+    <!-- Target: CAPTURE                                                  -->
+    <target name="capture" depends="load-properties">
+        <echo message="Exilor - Oracle SOA 10.1.3.x Capture Process"/>
+
+        <!-- Prompt user to shutdown midtier if necessary -->
+        <antcall target="shutdown-mid" inheritRefs="true" />
+
+        <!-- Delete any existing clone.zip file from a previous run -->
+        <delete quiet="true">
+            <file file="${clone.zip.filename}" />
+        </delete>
+
+        <!-- Store clone.xml and clone.properties in the zipfile -->
+        <zip destfile="${clone.zip.filename}" update="true">
+            <zipfileset dir="${clone.xml.file.dirname}"
+                        includes ="${clone.xml.file.basename}" />
+            <zipfileset dir="${clone.properties.file.dirname}"
+                        includes ="${clone.properties.file.basename}" />
+        </zip>
+     
+        <!-- Run Phase 1: DB Configure -->
+        <antcall target="capture-dbconfig" inheritRefs="true">
+            <param name="enabled" value="src.phase.dbconfig" />
+        </antcall>
+        
+        <!-- Run Phase 2: Install -->
+        <antcall target="capture-install" inheritRefs="true">
+            <param name="enabled" value="src.phase.install" />
+        </antcall>
+        
+        <echo message="Capture process completed successfully!" />
+        <echo message="Data is stored in the archive ${clone.zip.filename}" />
+    </target>
+
+
+    <!-- Generic target to run the dbconfig phase of capture -->
+	<target name="capture-dbconfig" if="${enabled}">
+        <!-- Export ORABPEL database schema -->
+        <antcall target="export-schema" inheritRefs="true">
+            <param name="schema"   value="orabpel" />
+            <param name="desc"     value="ORABPEL Schema" />
+            <param name="password" value="${src.db.orabpel.password}" />
+            <param name="tables"   value="${db.orabpel.tables}" />
+            <param name="enabled"  value="src.db.orabpel.password" />
+        </antcall>
+
+        <!-- Export ESB parameters -->
+    	<!-- Run export ESB schema in SOA home -->
+        <antcall target="export-esb-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.soa.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${src.db.oraesb.password}" />
+            <param name="enabled"  value="src.soa.oracle.home" />
+        </antcall>
+
+    	<!-- Run export ESB schema in OHS home -->
+        <antcall target="export-esb-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.ohs.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${src.db.oraesb.password}" />
+            <param name="enabled"  value="src.ohs.oracle.home" />
+        </antcall>
+        
+    	<!-- Run export ESB schema in OWSM home -->
+        <antcall target="export-esb-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.owsm.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${src.db.oraesb.password}" />
+            <param name="enabled"  value="src.owsm.oracle.home" />
+        </antcall>
+        
+    	<!-- Run export ESB schema in ESB-DT home -->
+        <antcall target="export-esb-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.esbdt.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${src.db.oraesb.password}" />
+            <param name="enabled"  value="src.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Export OWSM topology -->
+    	<!-- Run export WSM schema in SOA home -->
+        <antcall target="export-wsm-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.soa.oracle.home}" />
+            <param name="schema"   value="orawsm" />
+            <param name="desc"     value="ORAWSM schema" />
+            <param name="oc4jpwd"  value="${src.soa.oc4jadmin.password}" />
+            <param name="password" value="${src.db.orawsm.password}" />
+            <param name="enabled"  value="src.soa.oracle.home" />
+        </antcall>
+
+    	<!-- Run export WSM schema in OHS home -->
+        <antcall target="export-wsm-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.ohs.oracle.home}" />
+            <param name="schema"   value="orawsm" />
+            <param name="desc"     value="ORAWSM schema" />
+            <param name="oc4jpwd"  value="${src.ohs.oc4jadmin.password}" />
+            <param name="password" value="${src.db.orawsm.password}" />
+            <param name="enabled"  value="src.ohs.oracle.home" />
+        </antcall>
+        
+    	<!-- Run export WSM schema in OWSM home -->
+        <antcall target="export-wsm-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.owsm.oracle.home}" />
+            <param name="schema"   value="orawsm" />
+            <param name="desc"     value="ORAWSM schema" />
+            <param name="oc4jpwd"  value="${src.owsm.oc4jadmin.password}" />
+            <param name="password" value="${src.db.orawsm.password}" />
+            <param name="enabled"  value="src.owsm.oracle.home" />
+        </antcall>
+        
+    	<!-- Run export WSM schema in ESB-DT home -->
+        <antcall target="export-wsm-schema" inheritRefs="true">
+        	<param name="dir"      value="${src.esbdt.oracle.home}" />
+            <param name="schema"   value="orawsm" />
+            <param name="desc"     value="ORAWSM schema" />
+            <param name="oc4jpwd"  value="${src.esbdt.oc4jadmin.password}" />
+            <param name="password" value="${src.db.orawsm.password}" />
+            <param name="enabled"  value="src.esbdt.oracle.home" />
+        </antcall>
+    </target>
+
+
+    <!-- Generic target to run the install phase of capture -->
+	<target name="capture-install" if="${enabled}">
+        <!-- Generate endpoint mapping file (for SOA). -->
+        <antcall target="capture-endpoints-4clone" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.soa}"/>
+            <param name="dir"    value="${src.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="enabled" value="src.soa.oracle.home" />
+        </antcall>
+
+        <!-- Generate endpoint mapping file (for OHS). -->
+        <antcall target="capture-endpoints-4clone" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.ohs}"/>
+            <param name="dir"    value="${src.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="enabled" value="src.ohs.oracle.home" />
+        </antcall>
+
+        <!-- Generate endpoint mapping file (for OWSM). -->
+        <antcall target="capture-endpoints-4clone" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.owsm}"/>
+            <param name="dir"    value="${src.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="enabled" value="src.owsm.oracle.home" />
+        </antcall>
+
+        <!-- Generate endpoint mapping file (for ESB-DT). -->
+        <antcall target="capture-endpoints-4clone" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.esbdt}"/>
+            <param name="dir"    value="${src.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="enabled" value="src.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Prepare SOA installation for cloning. -->
+        <antcall target="prepare-source" inheritRefs="true">
+            <param name="dir"    value="${src.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="enabled" value="src.soa.oracle.home" />
+        </antcall>
+
+        <!-- Prepare OHS installation for cloning. -->
+        <antcall target="prepare-source" inheritRefs="true">
+            <param name="dir"    value="${src.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="enabled" value="src.ohs.oracle.home" />
+        </antcall>
+
+        <!-- Prepare OWSM installation for cloning. -->
+        <antcall target="prepare-source" inheritRefs="true">
+            <param name="dir"    value="${src.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="enabled" value="src.owsm.oracle.home" />
+        </antcall>
+
+        <!-- Prepare ESBDT installation for cloning. -->
+        <antcall target="prepare-source" inheritRefs="true">
+            <param name="dir"    value="${src.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="enabled" value="src.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Add Custom Dir1 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom1}"/>
+            <param name="dir"    value="${src.custom.dir1}"/>
+            <param name="desc"   value="Custom directory #1" />
+            <param name="enabled" value="src.custom.dir1" />
+        </antcall>
+
+        <!-- Add Custom Dir2 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom2}"/>
+            <param name="dir"    value="${src.custom.dir2}"/>
+            <param name="desc"   value="Custom directory #2" />
+            <param name="enabled" value="src.custom.dir2" />
+        </antcall>
+
+        <!-- Add Custom Dir3 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom3}"/>
+            <param name="dir"    value="${src.custom.dir3}"/>
+            <param name="desc"   value="Custom directory #3" />
+            <param name="enabled" value="src.custom.dir3" />
+        </antcall>
+
+        <!-- Add Custom Dir4 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom4}"/>
+            <param name="dir"    value="${src.custom.dir4}"/>
+            <param name="desc"   value="Custom directory #4" />
+            <param name="enabled" value="src.custom.dir4" />
+        </antcall>
+
+        <!-- Add Custom Dir5 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom5}"/>
+            <param name="dir"    value="${src.custom.dir5}"/>
+            <param name="desc"   value="Custom directory #5" />
+            <param name="enabled" value="src.custom.dir5" />
+        </antcall>
+
+        <!-- Add OraInventory1 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.inv1}"/>
+            <param name="dir"    value="${src.ora.inventory1.home}"/>
+            <param name="desc"   value="OraInventory directory #1" />
+            <param name="enabled" value="src.ora.inventory1.home" />
+        </antcall>
+
+        <!-- Add OraInventory2 files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.inv2}"/>
+            <param name="dir"    value="${src.ora.inventory2.home}"/>
+            <param name="desc"   value="OraInventory directory #2" />
+            <param name="enabled" value="src.ora.inventory2.home" />
+        </antcall>
+
+        <!-- Add SOA binaries and files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.soa}"/>
+            <param name="dir"    value="${src.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="enabled" value="src.soa.oracle.home" />
+        </antcall>
+
+        <!-- Add OHS binaries and files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.ohs}"/>
+            <param name="dir"    value="${src.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="enabled" value="src.ohs.oracle.home" />
+        </antcall>
+
+        <!-- Add OWSM binaries and files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.owsm}"/>
+            <param name="dir"    value="${src.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="enabled" value="src.owsm.oracle.home" />
+        </antcall>
+
+        <!-- Add ESBDT binaries and files to the zipfile. -->
+        <antcall target="add-to-zip" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.esbdt}"/>
+            <param name="dir"    value="${src.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="enabled" value="src.esbdt.oracle.home" />
+        </antcall>
+	</target>
+
+
+    <!-- Generic target to add elements to a zip file -->
+    <!-- Must pass four parameters: prefix, dir, desc and enabled -->
+    <target name="add-to-zip" if="${enabled}">
+        <echo message="Adding ${desc} to the zip file ..." />
+
+        <!-- Check availability of the directory -->
+        <available file="${dir}" type="dir" property="dir.present"/>
+
+        <fail unless="dir.present">
+            Failed to find or read the ${desc} ${dir}. Please ensure that it is available and readable.
+        </fail>
+
+        <pathconvert property="zip.file.list" pathsep="${line.separator}">
+            <dirset dir="${dir}" includes="**/*" />
+            <fileset dir="${dir}">
+                <exclude name="Apache/Apache/logs/*.lock"/>
+                <exclude name="Apache/Apache/logs/access_log.*"/>
+                <exclude name="Apache/Apache/logs/error_log.*"/>
+                <exclude name="bpel/domains/*/logs/*"/>
+                <exclude name="bpel/domains/*/tmp/**"/>
+                <exclude name="bpel/system/logs/*"/>
+                <exclude name="bpel/system/tmp/**"/>
+                <exclude name="clone/cloraInventory/**" />
+                <exclude name="j2ee/*/log/**/*.log"/>
+                <exclude name="opmn/logs/*.log"/>
+                <exclude name="opmn/logs/opmn.*"/>
+            </fileset>
+            <map from="${dir}/" to=""/>
+        </pathconvert>
+
+        <property name="prefix.zip.file"
+                  location="${clone.zip.file.dirname}/${prefix}.zip" />
+
+        <!-- Run the zip utility. We must run the OS-based zip command
+             because ant's <zip> task does not capture file permissions
+          -->
+        <exec failonerror="false" executable="zip" dir="${dir}"
+              inputstring="${zip.file.list}" resultproperty="zip.res">
+            <env key="PATH" path="${toString:src.fmw.bin}" />
+            <arg value="-@" />
+            <arg value="-q" />
+            <arg value="-3" />
+            <arg value="${prefix.zip.file}" />
+        </exec>
+
+        <condition property="zip.success">
+            <equals arg1="${zip.res}" arg2="0" />
+        </condition>
+
+        <fail unless="zip.success">
+            Failed to zip ${desc}. Please check the logs for more details and try again.
+        </fail>
+
+        <!-- Store the zip file in clone.zip with the prefix. -->
+        <zip destfile="${clone.zip.filename}" update="true">
+            <zipfileset src="${prefix.zip.file}" prefix="${prefix}" />
+        </zip>
+
+        <delete quiet="true">
+            <file file="${prefix.zip.file}" />
+        </delete>
+    </target>
+
+    <!-- Generic target to export a database schema -->
+    <!-- Five parameters: schema, desc, password, tables, and enabled -->
+    <target name="export-schema" if="${enabled}" >
+        <echo message="Exporting ${desc} ..." />
+
+        <!-- Delete any existing files lying around -->
+        <delete quiet="true">
+            <fileset dir="." includes="${schema}.dmp,${schema}.log,sqlnet.log"/>
+        </delete>
+
+        <!-- Run the export utility -->
+        <exec failonerror="false" executable="${src.db.oracle.home}/bin/exp"
+              output="${schema}.log" resultproperty="exp.res">
+            <env key="ORACLE_HOME" value="${src.db.oracle.home}" />
+            <arg value="${schema}/${password}@(DESCRIPTION\=(ADDRESS\=(PROTOCOL\=tcp)(HOST\=${src.db.hostname})(PORT\=${src.db.port}))(CONNECT_DATA\=(SERVICE_NAME\=${src.db.servicename})))" />
+            <arg value="file=${schema}.dmp" />
+            <arg value="tables=${tables}" />
+            <arg value="consistent=y" />
+            <arg value="statistics=none" />
+        </exec>
+
+        <condition property="exp.success">
+            <equals arg1="${exp.res}" arg2="0" />
+        </condition>
+
+        <fail unless="exp.success">
+            Failed to export ${desc}. Please check the log file ${schema}.log for more details and try again.
+        </fail>
+
+        <zip destfile="${clone.zip.filename}" update="true">
+            <zipfileset dir="." prefix="${zip.prefix.db}">
+                <include name="${schema}.dmp"/>
+                <include name="${schema}.log"/>
+            </zipfileset>
+        </zip>
+
+        <!-- Delete any existing files lying around -->
+        <delete quiet="true">
+            <fileset dir="." includes="${schema}.dmp,${schema}.log,sqlnet.log"/>
+        </delete>
+    </target>
+
+
+	<!-- Generic target to export ESB params -->
+	<!-- Parameters: dir, schema, desc, password, and enabled -->
+    <target name="export-esb-schema" if="${enabled}">
+        <echo message="Exporting ${desc} ..." />
+
+    	<!-- First, read config/ias.properties file -->
+        <loadproperties srcFile="${dir}/config/ias.properties">
+            <filterchain>
+                <prefixlines prefix="ias.config." />
+            </filterchain>
+        </loadproperties>
+        
+        <!-- Do we need to run ESB export-param in this dir? -->
+        <condition property="is.esb.installed">
+        	<and>
+        		<isset property="src.db.oraesb.password" />
+        		<isset property="ias.config.Esb.LaunchSuccess" />
+        		<equals arg1="${ias.config.Esb.LaunchSuccess}" arg2="true" />
+        		<isset property="ias.config.Components" />
+        		<contains string="${ias.config.Components}" substring="oraesb" />
+        		<available file="${dir}/integration/esb/bin/build.xml" />
+        		<available file="${dir}/integration/esb/bin/esbsetenv.sh" />
+        	</and>
+        </condition>
+        
+        <antcall target="run-esb-params" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+        	<param name="jdbcurl"  value="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${src.db.hostname})(PORT=${src.db.port}))(CONNECT_DATA=(SERVICE_NAME=${src.db.servicename})))" />
+            <param name="schema"   value="${schema}" />
+            <param name="password" value="${password}" />
+            <param name="target"   value="export-params" />
+            <param name="enabled"  value="is.esb.installed" />
+        </antcall>
+    </target>
+
+
+	<!-- Generic target to run esb.params.sh script -->
+	<!-- Parameters: dir, jdbcurl, schema, password, target, and enabled -->
+    <target name="run-esb-params" if="${enabled}">
+        <property name="esb.params.sh.file" value="esb.params.sh" />
+
+        <delete quiet="true">
+            <file file="${esb.params.sh.file}" />
+        </delete>
+
+        <echo message="${esb.params.sh}" file="${esb.params.sh.file}" />
+    	<chmod file="${esb.params.sh.file}" perm="755" />
+    	
+        <exec executable="${esb.params.sh.file}" failonerror="true">
+        	<env key="ANT_HOME"    value="${ant.home}" />
+            <env key="ORACLE_HOME" value="${dir}" />
+            <env key="DB_URL"      value="${jdbcurl}" />
+            <env key="DB_USER"     value="${schema}" />
+            <env key="DB_PASSWORD" value="${password}" />
+            <arg value="${target}" />
+        </exec>
+        
+        <!-- Add cloraEsb.properties file to hostname.lst for chgip cloning -->
+        <echo message="clone/config/cloraEsb.properties${line.separator}"
+              file="${dir}/chgip/config/hostname.lst" append="true" />
+
+        <delete quiet="true">
+            <file file="${esb.params.sh.file}" />
+        </delete>
+    </target>
+
+
+	<!-- Generic target to export OWSM params -->
+	<!-- Parameters: dir, schema, desc, oc4jpwd, password, and enabled -->
+    <target name="export-wsm-schema" if="${enabled}">
+        <echo message="Exporting ${desc} ..." />
+
+    	<!-- First, read config/ias.properties file -->
+        <loadproperties srcFile="${dir}/config/ias.properties">
+            <filterchain>
+                <prefixlines prefix="ias.config." />
+            </filterchain>
+        </loadproperties>
+        
+        <!-- WSM cloning is Oracle supported from 10.1.3.4 and above. -->
+        <!-- For earlier releases, we don't need to run inspectTopology on capture -->
+        <condition property="is.10134.or.later">
+        	<not>
+        		<matches string="${ias.config.Version}" pattern="10.1.3.[0123].*" />
+        	</not>
+        </condition>
+        
+        <!-- Do we need to run OWSM inspectTopology in this dir? -->
+        <condition property="is.wsm.installed">
+        	<and>
+        		<isset property="is.10134.or.later" />
+        		<isset property="src.db.orawsm.password" />
+        		<isset property="ias.config.Wsm.LaunchSuccess" />
+        		<equals arg1="${ias.config.Wsm.LaunchSuccess}" arg2="true" />
+        		<isset property="ias.config.Components" />
+        		<contains string="${ias.config.Components}" substring="owsm" />
+        		<available file="${dir}/owsm/bin/wsmadmin.sh" />
+        	</and>
+        </condition>
+        
+        <antcall target="run-wsmadmin.sh-inspect" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+            <param name="schema"   value="${schema}" />
+            <param name="oc4jpwd"  value="${oc4jpwd}" />
+            <param name="password" value="${password}" />
+            <param name="target"   value="inspectTopology" />
+            <param name="enabled"  value="is.wsm.installed" />
+        </antcall>
+    </target>
+    
+	<!-- Generic target to run wsmadmin.sh inspectTopology -->
+	<!-- Parameters: dir, schema, oc4jpwd, password, target, and enabled -->
+    <target name="run-wsmadmin.sh-inspect" if="${enabled}">
+        <property name="wsmadmin.sh.file" value="${dir}/owsm/bin/wsmadmin.sh" />
+
+        <exec executable="${wsmadmin.sh.file}" failonerror="true">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="${target}" />
+            <arg value="-DDBPassword=${password}" />
+            <arg value="-Doc4jAdminPassword=${oc4jpwd}" />
+        </exec>
+        
+        <!-- Add topology.properties to hostname.lst and hostname_short.lst -->
+        <echo message="owsm/config/topology/topology.properties${line.separator}"
+              file="${dir}/chgip/config/hostname.lst" append="true" />
+
+        <echo message="owsm/config/topology/topology.properties${line.separator}"
+              file="${dir}/chgip/config/hostname_short.lst" append="true" />
+    </target>
+
+
+	<!-- Externally callable target to capture endpoint map -->
+	<!-- Parameters: dir (REQUIRED), filename (OPTIONAL) -->
+	<target name="capture-endpoints" depends="load-properties">
+
+		<!-- Usage statement -->
+		<fail unless="dir">Required parameter dir is missing.
+    Parameters
+    (1) dir:      (Required) Oracle Home whose endpoints are to be captured
+    (2) filename: (Optional) Name of map file (default = endpoint-map.xml)
+		</fail>
+		
+		<!-- Validate that directory exists and readable -->
+		<fail>
+            Failed to find or read the directory ${dir}. Please ensure that it is available and readable.
+			<condition>
+				<not>
+			        <available file="${dir}" type="dir"/>
+		    	</not>
+			</condition>
+		</fail>
+
+		<condition property="endpoint.map.file" value="${filename}"	else="endpoint-map.xml">
+			<isset property="filename" />
+		</condition>
+
+		<!-- Call the internal helper -->
+        <antcall target="gen-endpoint-map" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+        	<param name="desc"     value="directory ${dir}" />
+        	<param name="filename" value="${endpoint.map.file}" />
+        	<param name="enabled"  value="true" />
+        </antcall>
+        
+        <!-- Print success message -->
+        <echo message="Endpoint map generated successfully in ${endpoint.map.file}" />
+    </target>
+
+
+	<!-- Generic target to capture endpoint for cloning process -->
+	<!-- Parameters: prefix, dir, desc, and enabled -->
+	<target name="capture-endpoints-4clone" if="${enabled}">
+		<property name="endpoint.map.file" value="${prefix}-endpoint-map.xml" />
+
+		<!-- Call the internal helper -->
+        <antcall target="gen-endpoint-map" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+        	<param name="desc"     value="${desc}" />
+        	<param name="filename" value="${endpoint.map.file}" />
+        	<param name="enabled"  value="${enabled}" />
+        </antcall>
+
+        <!-- Insert into clone.zip file -->
+        <zip destfile="${clone.zip.filename}" update="true">
+            <mappedresources>
+                <file file="${endpoint.map.file}" />
+                <flattenmapper/>
+            </mappedresources>
+        </zip>
+        
+        <!-- Cleanup -->
+        <delete quiet="true" includeemptydirs="true">
+            <file file="${endpoint.map.file}" />
+        </delete>
+    </target>
+
+
+    <!-- Internal helper used to generate endpoint mapping file -->
+    <!-- Do NOT call this target directly: use capture-endpoints* instead -->
+    <!-- Parameters: dir, desc, filename, and enabled -->
+    <target name="gen-endpoint-map" if="${enabled}">
+        <echo message="Generating endpoint mapping file for ${desc} ..." />
+        
+        <!-- Create working directory -->
+        <property name="wdir" value="ENDPOINTS" />
+        <property name="endpoint.capture.xslt.file" value="endpoint-capture.xslt" />
+        <property name="endpoint.map.file" value="${filename}" />
+
+        <delete quiet="true" includeemptydirs="true">
+            <file file="${endpoint.capture.xslt.file}" />
+            <fileset dir="${wdir}" erroronmissingdir="false" />
+        </delete>
+
+        <mkdir dir="${wdir}" />
+
+        <echo message="${endpoint.capture.xslt}"
+              file="${endpoint.capture.xslt.file}" />
+
+        <xslt style="${endpoint.capture.xslt.file}"
+            filenameparameter="filename" filedirparameter="filedir"
+            basedir="${dir}" destdir="${wdir}" force="true">
+            <include name="j2ee/*/application-deployments/**/oc4j-ra.xml" />
+            <include name="j2ee/*/config/data-sources.xml" />
+            <identitymapper/>
+        </xslt>
+
+        <!-- Create an empty dummy file -->
+        <echo file="${endpoint.map.file}"><![CDATA[<?xml version="1.0"?>
+<endpoint-map oh="${dir}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>]]>
+        </echo>
+
+        <!-- Concatenate all resultant files into one mapping file -->
+        <concat destfile="${endpoint.map.file}" force="true">
+            <fileset dir="${wdir}"/>
+            <header filtering="false"><![CDATA[<?xml version="1.0"?>
+
+<!-- INSTRUCTIONS: To modify a config-property, change the attribute name -->
+<!--   from value= to newvalue= and enter the new value. For example:     -->
+<!--   OLD: <config-property name="url"    value="ftp://oldhost:21/root" /> -->
+<!--   NEW: <config-property name="url" newvalue="ftp://newhost:81/head" /> -->
+
+<endpoint-map oh="${dir}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			]]></header>
+            <footer filtering="false"><![CDATA[
+</endpoint-map>
+			]]>
+			</footer>
+        </concat>
+
+        <xmlvalidate lenient="true" file="${endpoint.map.file}" />
+
+        <!-- Cleanup -->
+        <delete quiet="true" includeemptydirs="true">
+            <file file="${endpoint.capture.xslt.file}" />
+            <fileset dir="${wdir}" erroronmissingdir="false" />
+        </delete>
+    </target>
+
+
+    <target name="shutdown-mid" if="clone.prompt.shutdown">
+        <input message="Please shut down your midtier, and press Enter to continue ..." />
+    </target>
+
+
+    <!-- Generic target to run Oracle's prepare_clone.pl script   -->
+    <!-- Parameters: dir, enabled, and desc                       -->
+    <!-- This script creates or modifies the following files:     -->
+    <!--     javacache/admin/javacache.xml.source                 -->
+    <!--     clone/logs/error*.log                                -->
+    <!--     clone/logs/clone*.log                                -->
+    <!--     clone/config/source.properties                       -->
+    <!--     Apache/Apache/conf/ohstarget.xml.clone0              -->
+    <!--     iaspt/conf/iaspt.conf.source                         -->
+    <!--     j2ee/oc4j_opmn.xml.clone0                            -->
+    <target name="prepare-source" if="${enabled}">
+        <exec executable="${dir}/perl/bin/perl" failonerror="false"
+              resultproperty="prepare_clone.res">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <env key="PERL5LIB" path="${dir}/perl/lib/5.8.3/i686-linux-thread-multi:${dir}/perl/lib/5.8.3:${dir}/perl/lib/site_perl/5.8.3/i686-linux-thread-multi" />
+            <arg value="${dir}/clone/bin/prepare_clone.pl" />
+        </exec>
+
+        <condition property="prepare_clone.success">
+            <equals arg1="${prepare_clone.res}" arg2="0" />
+        </condition>
+
+        <fail unless="prepare_clone.success">
+            Failed to run prepare_clone on ${desc}. Please check the logs in ${dir}/clone/logs for more details and try again.
+        </fail>
+
+
+        <!-- Generate a static ports .ini file -->
+        <property name="static.ports.file" value="${dir}/clone/config/cloraPorts.ini" />
+        <property name="ons.ports.capture.xslt.file" value="onsports.xslt" />
+        <echo message="${ons.ports.capture.xslt}" file="${ons.ports.capture.xslt.file}" />
+        
+        <xslt style="${ons.ports.capture.xslt.file}" force="true"
+              in="${dir}/opmn/conf/opmn.xml" out="${static.ports.file}" />
+
+        <!-- Add HTTP server and SSL port(s) to the file -->
+        <concat destfile="${static.ports.file}" append="true" force="true">
+            <fileset dir="${dir}" includes="Apache/Apache/conf/httpd.conf" />
+            <filterchain>
+                <containsregex flags="gim"
+                    pattern="^\s*Listen\s+(\d*)\s*$"
+                    replace="Oracle HTTP Server port = \1" />
+            </filterchain>
+        </concat>
+
+        <concat destfile="${static.ports.file}" append="true" force="true">
+            <fileset dir="${dir}" includes="Apache/Apache/conf/ssl.conf" />
+            <filterchain>
+                <containsregex flags="gim"
+                    pattern="^\s*Listen\s+(\d*)\s*$"
+                    replace="Oracle HTTP Server SSL port = \1" />
+            </filterchain>
+        </concat>
+        
+        <!-- Add ASG port to this file -->
+        <concat destfile="${static.ports.file}" append="true" force="true">
+            <fileset dir="${dir}" includes="dsa/dsa.conf" />
+            <filterchain>
+                <containsregex flags="gim"
+                    pattern="^\s*port\s*=\s*(\d*)"
+                    replace="ASG port = \1" />
+            </filterchain>
+        </concat>
+
+        <!-- Cleanup -->
+        <delete quiet="true">
+            <file file="${ons.ports.capture.xslt.file}" />
+        </delete>
+    </target>
+    <!-- ................................................................ -->
+
+
+    <!-- ................................................................ -->
+    <!-- Target: APPLY                                                    -->
+    <target name="apply" depends="load-properties">
+        <echo message="Exilor - Oracle SOA 10.1.3.x Apply Process"/>
+
+        <!-- Check existence of clone.zip file -->
+        <available file="${clone.zip.filename}"
+                   property="clone.zip.file.present" />
+
+        <fail unless="clone.zip.file.present">
+            Failed to find or read the zip file ${clone.zip.filename}. Please ensure that you have specified -Dclone.zip.filename=file parameter, and that the file is available and readable.
+        </fail>
+
+        <!-- Run Phase 1: Install -->
+        <antcall target="apply-install" inheritRefs="true">
+            <param name="enabled" value="dest.phase.install" />
+        </antcall>
+        
+        <!-- Run Phase 2: Configure -->
+        <antcall target="apply-config" inheritRefs="true">
+            <param name="enabled" value="dest.phase.config" />
+        </antcall>
+        
+        <!-- Run Phase 3: DB Configure -->
+        <antcall target="apply-dbconfig" inheritRefs="true">
+            <param name="enabled" value="dest.phase.dbconfig" />
+        </antcall>
+        
+        <!-- Run root.sh scripts (run this task last!) -->
+        <!-- Only needed when Install step is executed -->
+        <antcall target="run-root.sh" inheritRefs="true">
+            <param name="enabled" value="dest.phase.install" />
+        </antcall>
+
+        <!-- Finally, success! -->
+        <echo message="Apply process completed successfully!" />
+    </target>
+
+
+    <!-- Generic target to run the install phase of apply -->
+    <target name="apply-install" if="${enabled}">
+        <!-- Recreate Custom Dir#1 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom1}"/>
+            <param name="dir"    value="${dest.custom.dir1}"/>
+            <param name="desc"   value="Custom directory #1" />
+            <param name="enabled" value="dest.custom.dir1" />
+        </antcall>
+
+        <!-- Recreate Custom Dir#2 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom2}"/>
+            <param name="dir"    value="${dest.custom.dir2}"/>
+            <param name="desc"   value="Custom directory #2" />
+            <param name="enabled" value="dest.custom.dir2" />
+        </antcall>
+
+        <!-- Recreate Custom Dir#3 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom3}"/>
+            <param name="dir"    value="${dest.custom.dir3}"/>
+            <param name="desc"   value="Custom directory #3" />
+            <param name="enabled" value="dest.custom.dir3" />
+        </antcall>
+
+        <!-- Recreate Custom Dir#4 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom4}"/>
+            <param name="dir"    value="${dest.custom.dir4}"/>
+            <param name="desc"   value="Custom directory #4" />
+            <param name="enabled" value="dest.custom.dir4" />
+        </antcall>
+
+        <!-- Recreate Custom Dir#5 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.custom5}"/>
+            <param name="dir"    value="${dest.custom.dir5}"/>
+            <param name="desc"   value="Custom directory #5" />
+            <param name="enabled" value="dest.custom.dir5" />
+        </antcall>
+
+        <!-- Recreate OraInventory1 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.inv1}"/>
+            <param name="dir"    value="${dest.ora.inventory1.home}"/>
+            <param name="desc"   value="OraInventory directory #1" />
+            <param name="enabled" value="dest.ora.inventory1.home" />
+        </antcall>
+
+        <!-- Recreate OraInventory2 files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.inv2}"/>
+            <param name="dir"    value="${dest.ora.inventory2.home}"/>
+            <param name="desc"   value="OraInventory directory #2" />
+            <param name="enabled" value="dest.ora.inventory2.home" />
+        </antcall>
+
+        <!-- Recreate SOA Suite files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.soa}"/>
+            <param name="dir"    value="${dest.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="enabled" value="dest.soa.oracle.home" />
+        </antcall>
+
+        <!-- Recreate OHS files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.ohs}"/>
+            <param name="dir"    value="${dest.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="enabled" value="dest.ohs.oracle.home" />
+        </antcall>
+
+        <!-- Recreate OWSM files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.owsm}"/>
+            <param name="dir"    value="${dest.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="enabled" value="dest.owsm.oracle.home" />
+        </antcall>
+
+        <!-- Recreate ESBDT files. -->
+        <antcall target="recreate-dir" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.esbdt}"/>
+            <param name="dir"    value="${dest.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="enabled" value="dest.esbdt.oracle.home" />
+        </antcall>
+    </target>
+
+
+    <!-- Generic target to run the config phase of apply -->
+    <target name="apply-config" if="${enabled}">
+        <!-- Update OPMN environment variables -->
+        <antcall target="update-opmn-env-vars" inheritRefs="true">
+            <param name="enabled" value="true" />
+        </antcall>
+
+        <!-- Run custom XML Update #1 -->
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="XML Update #1" />
+            <param name="action"   value="${dest.xmlupdate1.action}" />
+            <param name="xmlfile"  value="${dest.xmlupdate1.filename}" />
+            <param name="token"    value="${dest.xmlupdate1.token}" />
+            <param name="name"     value="${dest.xmlupdate1.name}" />
+            <param name="value"    value="${dest.xmlupdate1.value}" />
+            <param name="enabled"  value="dest.xmlupdate1.filename" />
+        </antcall>
+    
+        <!-- Run custom XML Update #2 -->
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="XML Update #2" />
+            <param name="action"   value="${dest.xmlupdate2.action}" />
+            <param name="xmlfile"  value="${dest.xmlupdate2.filename}" />
+            <param name="token"    value="${dest.xmlupdate2.token}" />
+            <param name="name"     value="${dest.xmlupdate2.name}" />
+            <param name="value"    value="${dest.xmlupdate2.value}" />
+            <param name="enabled"  value="dest.xmlupdate2.filename" />
+        </antcall>
+        
+        <!-- Run custom XML Update #3 -->
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="XML Update #3" />
+            <param name="action"   value="${dest.xmlupdate3.action}" />
+            <param name="xmlfile"  value="${dest.xmlupdate3.filename}" />
+            <param name="token"    value="${dest.xmlupdate3.token}" />
+            <param name="name"     value="${dest.xmlupdate3.name}" />
+            <param name="value"    value="${dest.xmlupdate3.value}" />
+            <param name="enabled"  value="dest.xmlupdate3.filename" />
+        </antcall>
+        
+        <!-- Run custom XML Update #4 -->
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="XML Update #4" />
+            <param name="action"   value="${dest.xmlupdate4.action}" />
+            <param name="xmlfile"  value="${dest.xmlupdate4.filename}" />
+            <param name="token"    value="${dest.xmlupdate4.token}" />
+            <param name="name"     value="${dest.xmlupdate4.name}" />
+            <param name="value"    value="${dest.xmlupdate4.value}" />
+            <param name="enabled"  value="dest.xmlupdate4.filename" />
+        </antcall>
+        
+        <!-- Run custom XML Update #5 -->
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="XML Update #5" />
+            <param name="action"   value="${dest.xmlupdate5.action}" />
+            <param name="xmlfile"  value="${dest.xmlupdate5.filename}" />
+            <param name="token"    value="${dest.xmlupdate5.token}" />
+            <param name="name"     value="${dest.xmlupdate5.name}" />
+            <param name="value"    value="${dest.xmlupdate5.value}" />
+            <param name="enabled"  value="dest.xmlupdate5.filename" />
+        </antcall>
+        
+        <!-- Apply endpoint mapping file (for SOA). -->
+        <available property="is.soa.map.present"
+            file="${zip.prefix.soa}-endpoint-map.xml" />
+            
+        <antcall target="apply-endpoint-map-epmx" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.soa}"/>
+            <param name="dir"    value="${dest.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="enabled" value="is.soa.map.present" />
+        </antcall>
+
+        <!-- Apply endpoint mapping file (for OHS). -->
+        <available property="is.ohs.map.present"
+            file="${zip.prefix.ohs}-endpoint-map.xml" />
+            
+        <antcall target="apply-endpoint-map-epmx" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.ohs}"/>
+            <param name="dir"    value="${dest.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="enabled" value="is.ohs.map.present" />
+        </antcall>
+
+        <!-- Apply endpoint mapping file (for OWSM). -->
+        <available property="is.owsm.map.present"
+            file="${zip.prefix.owsm}-endpoint-map.xml" />
+            
+        <antcall target="apply-endpoint-map-epmx" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.owsm}"/>
+            <param name="dir"    value="${dest.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="enabled" value="is.owsm.map.present" />
+        </antcall>
+
+        <!-- Apply endpoint mapping file (for ESB-DT). -->
+        <available property="is.esbdt.map.present"
+            file="${zip.prefix.esbdt}-endpoint-map.xml" />
+            
+        <antcall target="apply-endpoint-map-epmx" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.esbdt}"/>
+            <param name="dir"    value="${dest.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="enabled" value="is.esbdt.map.present" />
+        </antcall>
+
+        <!-- Run SOA database configuration -->
+        <antcall target="run-db-config" inheritRefs="true">
+            <param name="dir"      value="${dest.soa.oracle.home}" />
+            <param name="desc"     value="Oracle SOA install" />
+            <param name="password" value="${src.soa.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.soa.oracle.home" />
+        </antcall>
+
+        <!-- Run OHS database configuration -->
+        <antcall target="run-db-config" inheritRefs="true">
+            <param name="dir"      value="${dest.ohs.oracle.home}" />
+            <param name="desc"     value="Oracle HTTP Server install" />
+            <param name="password" value="${src.ohs.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.ohs.oracle.home" />
+        </antcall>
+
+        <!-- Run OWSM database configuration -->
+        <antcall target="run-db-config" inheritRefs="true">
+            <param name="dir"      value="${dest.owsm.oracle.home}" />
+            <param name="desc"     value="Oracle WSM install" />
+            <param name="password" value="${src.owsm.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.owsm.oracle.home" />
+        </antcall>
+
+        <!-- Run ESBDT database configuration -->
+        <antcall target="run-db-config" inheritRefs="true">
+            <param name="dir"      value="${dest.esbdt.oracle.home}" />
+            <param name="desc"     value="Oracle ESB-DT install" />
+            <param name="password" value="${src.esbdt.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Run Custom script #1 if specified by user -->
+        <antcall target="run-custom-script" inheritRefs="true">
+            <param name="command" value="${dest.custom.script1.command}" />
+            <param name="desc"    value="Custom script #1" />
+            <param name="enabled" value="dest.custom.script1.command" />
+        </antcall>
+
+        <!-- Run Custom script #2 if specified by user -->
+        <antcall target="run-custom-script" inheritRefs="true">
+            <param name="command" value="${dest.custom.script2.command}" />
+            <param name="desc"    value="Custom script #2" />
+            <param name="enabled" value="dest.custom.script2.command" />
+        </antcall>
+
+        <!-- Run Custom script #3 if specified by user -->
+        <antcall target="run-custom-script" inheritRefs="true">
+            <param name="command" value="${dest.custom.script3.command}" />
+            <param name="desc"    value="Custom script #3" />
+            <param name="enabled" value="dest.custom.script3.command" />
+        </antcall>
+
+        <!-- Run Custom script #4 if specified by user -->
+        <antcall target="run-custom-script" inheritRefs="true">
+            <param name="command" value="${dest.custom.script4.command}" />
+            <param name="desc"    value="Custom script #4" />
+            <param name="enabled" value="dest.custom.script4.command" />
+        </antcall>
+
+        <!-- Run Custom script #5 if specified by user -->
+        <antcall target="run-custom-script" inheritRefs="true">
+            <param name="command" value="${dest.custom.script5.command}" />
+            <param name="desc"    value="Custom script #5" />
+            <param name="enabled" value="dest.custom.script5.command" />
+        </antcall>
+        
+    	<!-- If dest.*.ias.name is not specified, set to empty -->
+    	<condition property="dest.soa.ias.name" value="">
+    		<not>
+    			<isset property="dest.soa.ias.name"/>
+    		</not>
+    	</condition>
+    	
+        <!-- Run cloning script on Oracle SOA Suite. -->
+        <antcall target="run-clone-script" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.soa}" />
+            <param name="dir"    value="${dest.soa.oracle.home}"/>
+            <param name="desc"   value="Oracle SOA install" />
+            <param name="iasname"  value="${dest.soa.ias.name}" />
+            <param name="password" value="${src.soa.oc4jadmin.password}" />
+            <param name="srcdir"   value="${src.soa.oracle.home}" />
+            <param name="enabled" value="dest.soa.oracle.home" />
+        </antcall>
+
+    	<!-- If dest.*.ias.name is not specified, set to empty -->
+    	<condition property="dest.ohs.ias.name" value="">
+    		<not>
+    			<isset property="dest.ohs.ias.name"/>
+    		</not>
+    	</condition>
+    	
+        <!-- Run cloning script on OHS. -->
+        <antcall target="run-clone-script" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.ohs}"/>
+            <param name="dir"    value="${dest.ohs.oracle.home}"/>
+            <param name="desc"   value="Oracle HTTP Server install" />
+            <param name="iasname"  value="${dest.ohs.ias.name}" />
+            <param name="password" value="${src.ohs.oc4jadmin.password}" />
+            <param name="srcdir"   value="${src.ohs.oracle.home}" />
+            <param name="enabled" value="dest.ohs.oracle.home" />
+        </antcall>
+
+    	<!-- If dest.*.ias.name is not specified, set to empty -->
+    	<condition property="dest.owsm.ias.name" value="">
+    		<not>
+    			<isset property="dest.owsm.ias.name"/>
+    		</not>
+    	</condition>
+    	
+        <!-- Run cloning script on OWSM. -->
+        <antcall target="run-clone-script" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.owsm}"/>
+            <param name="dir"    value="${dest.owsm.oracle.home}"/>
+            <param name="desc"   value="Oracle WSM install" />
+            <param name="iasname"  value="${dest.owsm.ias.name}" />
+            <param name="password" value="${src.owsm.oc4jadmin.password}" />
+            <param name="srcdir"   value="${src.owsm.oracle.home}" />
+            <param name="enabled" value="dest.owsm.oracle.home" />
+        </antcall>
+
+    	<!-- If dest.*.ias.name is not specified, set to empty -->
+    	<condition property="dest.esbdt.ias.name" value="">
+    		<not>
+    			<isset property="dest.esbdt.ias.name"/>
+    		</not>
+    	</condition>
+    	
+        <!-- Run cloning script on ESBDT. -->
+        <antcall target="run-clone-script" inheritRefs="true">
+            <param name="prefix" value="${zip.prefix.esbdt}"/>
+            <param name="dir"    value="${dest.esbdt.oracle.home}"/>
+            <param name="desc"   value="Oracle ESB-DT install" />
+            <param name="iasname"  value="${dest.esbdt.ias.name}" />
+            <param name="password" value="${src.esbdt.oc4jadmin.password}" />
+            <param name="srcdir"   value="${src.esbdt.oracle.home}" />
+            <param name="enabled" value="dest.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Configure OWSM cloning in SOA dir -->
+        <antcall target="run-owsm-config" inheritRefs="true">
+            <param name="dir"      value="${dest.soa.oracle.home}" />
+            <param name="desc"     value="Oracle SOA install" />
+            <param name="oc4jpwd"  value="${src.soa.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.soa.oracle.home" />
+        </antcall>
+        
+        <!-- Configure OWSM cloning in OHS dir -->
+        <antcall target="run-owsm-config" inheritRefs="true">
+            <param name="dir"      value="${dest.ohs.oracle.home}" />
+            <param name="desc"     value="Oracle HTTP Server install" />
+            <param name="oc4jpwd"  value="${src.ohs.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.ohs.oracle.home" />
+        </antcall>
+        
+        <!-- Configure OWSM cloning in OWSM dir -->
+        <antcall target="run-owsm-config" inheritRefs="true">
+            <param name="dir"      value="${dest.owsm.oracle.home}" />
+            <param name="desc"     value="Oracle WSM install" />
+            <param name="oc4jpwd"  value="${src.owsm.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.owsm.oracle.home" />
+        </antcall>
+        
+        <!-- Configure OWSM cloning in ESB-DT dir -->
+        <antcall target="run-owsm-config" inheritRefs="true">
+            <param name="dir"      value="${dest.esbdt.oracle.home}" />
+            <param name="desc"     value="Oracle ESB-DT install" />
+            <param name="oc4jpwd"  value="${src.esbdt.oc4jadmin.password}" />
+            <param name="enabled"  value="dest.esbdt.oracle.home" />
+        </antcall>
+    </target>
+
+
+    <!-- Generic target to run the dbconfig phase of apply -->
+    <target name="apply-dbconfig" if="${enabled}">
+        <!-- Import ORABPEL database schema -->
+        <antcall target="import-schema" inheritRefs="true">
+            <param name="schema"   value="orabpel" />
+            <param name="desc"     value="ORABPEL Schema" />
+            <param name="password" value="${dest.db.orabpel.password}" />
+            <param name="tables"   value="${db.orabpel.tables}" />
+            <param name="presql"   value="${db.orabpel.preimp.sql}" />
+            <param name="postsql"  value="${db.orabpel.postimp.sql}" />
+            <param name="enabled"  value="dest.db.orabpel.password" />
+        </antcall>
+
+        <!-- Import ORAESB database schema -->
+        <!-- Import ORAESB database schema in SOA dir -->
+        <antcall target="import-esb-schema" inheritRefs="true">
+            <param name="dir"      value="${dest.soa.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${dest.db.oraesb.password}" />
+            <param name="enabled"  value="dest.soa.oracle.home" />
+        </antcall>
+        
+        <!-- Import ORAESB database schema in OHS dir -->
+        <antcall target="import-esb-schema" inheritRefs="true">
+            <param name="dir"      value="${dest.ohs.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${dest.db.oraesb.password}" />
+            <param name="enabled"  value="dest.ohs.oracle.home" />
+        </antcall>
+        
+        <!-- Import ORAESB database schema in OWSM dir -->
+        <antcall target="import-esb-schema" inheritRefs="true">
+            <param name="dir"      value="${dest.owsm.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${dest.db.oraesb.password}" />
+            <param name="enabled"  value="dest.owsm.oracle.home" />
+        </antcall>
+        
+        <!-- Import ORAESB database schema in ESB-DT dir -->
+        <antcall target="import-esb-schema" inheritRefs="true">
+            <param name="dir"      value="${dest.esbdt.oracle.home}" />
+            <param name="schema"   value="oraesb" />
+            <param name="desc"     value="ORAESB schema" />
+            <param name="password" value="${dest.db.oraesb.password}" />
+            <param name="enabled"  value="dest.esbdt.oracle.home" />
+        </antcall>
+
+        <!-- Run Custom SQL statement #1 if provided by user -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"        value="${dest.db.oracle.home}" />
+            <param name="user"       value="${dest.custom.sql1.username}" />
+            <param name="password"   value="${dest.custom.sql1.password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${dest.custom.sql1.statement}" />
+            <param name="enabled"    value="dest.custom.sql1.statement" />
+        </antcall>
+
+        <!-- Run Custom SQL statement #2 if provided by user -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"        value="${dest.db.oracle.home}" />
+            <param name="user"       value="${dest.custom.sql2.username}" />
+            <param name="password"   value="${dest.custom.sql2.password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${dest.custom.sql2.statement}" />
+            <param name="enabled"    value="dest.custom.sql2.statement" />
+        </antcall>
+
+        <!-- Run Custom SQL statement #3 if provided by user -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"        value="${dest.db.oracle.home}" />
+            <param name="user"       value="${dest.custom.sql3.username}" />
+            <param name="password"   value="${dest.custom.sql3.password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${dest.custom.sql3.statement}" />
+            <param name="enabled"    value="dest.custom.sql3.statement" />
+        </antcall>
+
+        <!-- Run Custom SQL statement #4 if provided by user -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"        value="${dest.db.oracle.home}" />
+            <param name="user"       value="${dest.custom.sql4.username}" />
+            <param name="password"   value="${dest.custom.sql4.password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${dest.custom.sql4.statement}" />
+            <param name="enabled"    value="dest.custom.sql4.statement" />
+        </antcall>
+
+        <!-- Run Custom SQL statement #5 if provided by user -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"        value="${dest.db.oracle.home}" />
+            <param name="user"       value="${dest.custom.sql5.username}" />
+            <param name="password"   value="${dest.custom.sql5.password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${dest.custom.sql5.statement}" />
+            <param name="enabled"    value="dest.custom.sql5.statement" />
+        </antcall>
+    </target>
+
+
+    <!-- Generic target to recreate the directory structure -->
+    <!-- Must pass four parameters: prefix, dir, desc and enabled -->
+    <target name="recreate-dir" if="${enabled}">
+        <echo message="Recreating ${desc} at ${dir} ..." />
+
+        <!-- Check existence of the directory -->
+        <condition property="${enabled}.dir.nonempty">
+            <resourcecount when="gt" count="0">
+                <fileset erroronmissingdir="false" dir="${dir}" includes="**" />
+            </resourcecount>
+        </condition>
+
+        <condition property="${enabled}.stop.nonempty">
+            <and>
+                <isset property="${enabled}.dir.nonempty" />
+                <istrue value="${dest.stop.if.dir.nonempty}" />
+            </and>
+        </condition>
+
+        <fail if="${enabled}.stop.nonempty" message="The ${desc} directory ${dir} contains one or more non-empty elements. These files will be deleted if we proceed. To bypass the non-empty directory check, you may unset the dest.stop.if.dir.nonempty parameter in ${clone.properties.file}." />
+
+        <!-- Delete the directory contents recursively -->
+        <delete quiet="true" includeemptydirs="true">
+            <fileset dir="${dir}" includes="**/*"/>
+        </delete>
+
+        <!-- Create the directory -->
+        <mkdir dir="${dir}" />
+
+        <!-- Run the unzip utility. We must run the OS-based unzip command
+             because ant's <unzip> task does not apply file permissions.
+          -->
+        <exec executable="unzip" dir="${dir}"
+              failonerror="false" resultproperty="unzip.res">
+            <arg value="-q" />
+            <arg value="${clone.zip.file.dirname}/${clone.zip.file.basename}" />
+            <arg value="${prefix}/*" />
+        </exec>
+
+        <condition property="unzip.success">
+            <equals arg1="${unzip.res}" arg2="0" />
+        </condition>
+
+        <fail unless="unzip.success">
+            Failed to unzip ${desc}. Please check the logs for more details and try again.
+        </fail>
+
+        <!-- Remove the prefix by moving all files one level higher -->
+        <move todir="${dir}" preservelastmodified="true" failonerror="true">
+            <fileset dir="${dir}/${prefix}" />
+        </move>
+
+        <!-- Remove the temporary file + prefix directory -->
+        <delete quiet="true">
+            <dirset dir="${dir}" includes="${prefix}" />
+        </delete>
+    </target>
+
+
+    <!-- Generic target to run Oracle's clone.pl script on the OH   --> 
+    <!-- Parameters: dir, desc, prefix, iasname, password and enabled   -->
+    <target name="run-clone-script" if="${enabled}">
+        <!-- Update load balancer configuration before running Oracle's clone.pl -->
+        <condition property="is.lbr.defined">
+            <and>
+                <isset property="src.lbr.virtual.hostname"/>
+                <isset property="dest.lbr.virtual.hostname"/>
+            </and>
+        </condition>
+        
+        <antcall target="update-lbr-config" inheritRefs="true">
+            <param name="dir"      value="${dir}" />
+            <param name="enabled"  value="is.lbr.defined" />
+        </antcall>
+
+        <!-- First, read config/ias.properties file -->
+        <loadproperties srcFile="${dir}/config/ias.properties">
+            <filterchain>
+                <prefixlines prefix="ias.config." />
+            </filterchain>
+        </loadproperties>
+
+        <!-- Also, read clone/config/source.properties file -->
+        <loadproperties srcFile="${dir}/clone/config/source.properties">
+            <filterchain>
+                <prefixlines prefix="clone.source." />
+            </filterchain>
+        </loadproperties>
+
+        <!-- Set Oracle Home Name to same as source -->
+        <property name="oh.name" value="${clone.source.oracle_home_name}" />
+        
+        <!-- Oracle's clone.pl does not allow you to specify the same ias name as the source. -->
+        <!-- Therefore, the new ias name is going to be iasname-hostname, for e.g., if the    -->
+        <!-- source iasname is soa10131 and the new host name is cltarget, then the new ias   -->
+        <!-- name is going to be soa10131-cltarget                                            -->
+        <iasname input="${ias.config.IASname}" property="iasname.prefix" />
+        <iasname input="${hostname.fqdn}" property="hostname.prefix" />
+        <condition property="new.iasname" else="${iasname}" 
+        	value="${iasname.prefix}-${hostname.prefix}">
+        	<equals arg1="${iasname}" arg2="" trim="true" />
+        </condition>
+
+        <!-- We need to create a temporary oraInventory location because clone.pl -->
+        <!-- uses OUI under the covers and we need to provide a temp location.    -->
+        <echo file="${dir}/clone/config/cloraInst.loc"
+              message="inventory_loc=${dir}/clone/cloraInventory${line.separator}"/>
+
+        <!-- If the source node is part of a cluster, then the script prompts whether to -->
+        <!-- keep the original cluster settings.                                         -->
+        <condition property="cluster.y" else="" value="y${line.separator}">
+            <and>
+                <isset property="clone.source.cluster_type" />
+                <not>
+                    <equals arg1="${clone.source.cluster_type}" arg2="Not yet set!!"
+                        trim="true" casesensitive="false" />
+                </not>
+                <not>
+                    <equals arg1="${clone.source.cluster_type}" arg2="Not supported"
+                        trim="true" casesensitive="false" />
+                </not>
+            </and>
+        </condition>
+
+        <!-- If you renamed the oc4j_soa OC4J instance during installation, the script -->
+        <!-- will also prompt you to enter the old password for that instance. -->
+        <pathconvert property="container.passwords" pathsep="${line.separator}"
+            setonempty="true">
+            <dirset dir="${dir}" includes="j2ee/*" erroronmissingdir="false" />
+            <globmapper from="*" to="${password}" />
+        </pathconvert>
+
+        <!-- Construct the input string -->
+	    <property name="clone.in" value="${cluster.y}${container.passwords}${line.separator}" />
+        
+        <!-- Run the supported Oracle's cloning script -->
+        <exec executable="${dir}/perl/bin/perl" failonerror="false"
+              dir="${dir}/clone/bin" resultproperty="clone.res"
+              inputstring="${clone.in}">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <env key="PERL5LIB" path="${dir}/perl/lib/5.8.3/i686-linux-thread-multi:${dir}/perl/lib/5.8.3:${dir}/perl/lib/site_perl/5.8.3/i686-linux-thread-multi" />
+            <arg value="${dir}/clone/bin/clone.pl" />
+            <arg value="ORACLE_HOME=${dir}" />
+            <arg value="ORACLE_HOME_NAME=${oh.name}" />
+            <arg value="-silent" />
+            <arg value="-instance" />
+            <arg value="${new.iasname}" />
+            <arg value="-db_vendor" />
+            <arg value="oracle" />
+            <arg value="-db_user" />
+            <arg value="${dest.db.sys.username}" />
+            <arg value="-db_password" />
+            <arg value="${dest.db.sys.password}" />
+            <arg value="-db_string" />
+            <arg value="${dest.db.hostname}:${dest.db.port}" />
+            <arg value="-db_sid" />
+            <arg value="${dest.db.servicename}" />
+            <arg value="-oc4jadmin_old_password" />
+            <arg value="${password}" />
+            <arg value="-oc4jadmin_new_password" />
+            <arg value="${password}" />
+            <arg value="-O-invPtrLoc ${dir}/clone/config/cloraInst.loc" />
+            <arg value="-Oszl_PortListSelect=&quot;{YES,${dir}/clone/config/cloraPorts.ini}&quot;" />
+        </exec>
+
+        <condition property="clone.success">
+            <equals arg1="${clone.res}" arg2="0" />
+        </condition>
+
+        <fail unless="clone.success">
+            Failed to run clone.pl on ${desc}. Please check the logs for more details and try again.
+        </fail>
+        
+        <!-- There are a few rogue files that don't get updated with the new -->
+        <!-- Oracle Home directory. Replace them manually -->
+        <replace dir="${dir}" token="${srcdir}" value="${dir}" summary="true">
+            <include name="bin/checkapache.pl"/>
+            <include name="bin/emca"/>
+            <include name="bin/getascontrolstatus.pl"/>
+            <include name="bin/getoc4jname2.pl"/>
+            <include name="bin/getoc4jname.pl"/>
+            <include name="bin/getport.pl"/>
+            <include name="bpel/system/services/install/ant-tasks/bpel_deploy_service.txt"/>
+            <include name="owsm/bin/*.properties"/>
+            <include name="owsm/config/*/logging.xml"/>
+            <include name="owsm/config/ccore/ui-config-installer.properties"/>
+            <include name="owsm/config/topology/topology.properties"/>
+        </replace>
+        
+        <!-- Another corner case. In inventory/Clone/clone.xml, the oracle -->
+        <!-- home directory is substituted with ias name in certain situations -->
+        <!-- Revert the update. -->
+        <condition property="is.clone.xml">
+            <available file="${dir}/inventory/Clone/clone.xml" />
+        </condition>
+        
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="fix inventory/Clone/clone.xml" />
+            <param name="action"   value="UpdateAttribute" />
+            <param name="xmlfile" value="${dir}/inventory/Clone/clone.xml" />
+            <param name="token"    value="/CLONE_INFO/SESSION_VARS_INFO/VAR[@NAME='ORACLE_HOME']/@VAL" />
+            <param name="name"     value="" />
+            <param name="value"    value="${dir}" />
+            <param name="enabled"  value="is.clone.xml" />
+        </antcall>
+
+        <!-- Need to shutdown OPMN and all components -->
+        <exec executable="${dir}/opmn/bin/opmnctl" failonerror="false"
+              dir="${dir}/opmn/bin">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="shutdown" />
+        </exec>
+    </target>
+
+
+    <!-- Generic target to update load balancer configuration -->
+    <!-- Parameters: dir and enabled -->
+    <target name="update-lbr-config" if="${enabled}">
+        <!-- Update source LBR with destination LBR -->
+        <replace dir="${dir}" token="${src.lbr.virtual.hostname}" 
+            value="${dest.lbr.virtual.hostname}">
+            <include name="Apache/Apache/conf/httpd.conf"/>
+            <include name="bpel/system/config/collaxa-config.xml"/>
+            <include name="bpel/utilities/ant-orabpel.properties"/>
+            <include name="clone/config/cloraEsb.properties"/>
+            <include name="integration/esb/install/ant-tasks/esb-install.properties"/>
+            <include name="owsm/config/topology/topology.properties"/>
+        </replace>
+    </target>
+
+
+    <!-- Generic target to run database configuration of the Oracle Home --> 
+    <!-- Must pass four parameters: dir, desc, password and enabled -->
+    <target name="run-db-config" if="${enabled}" >
+        <!-- Replace the data-source.xml configuration with the -->
+        <!-- updated database connect string. -->
+        <echo message="Updating data-sources.xml in ${dir} ..." />
+        <echo message="(old) HOST: ${src.db.hostname} ==> ${dest.db.hostname} (new)" />
+        <echo message="(old) PORT: ${src.db.port} ==> ${dest.db.port} (new)" />
+        <echo message="(old) SERVICE_NAME: ${src.db.servicename} ==> ${dest.db.servicename} (new)" />
+
+        <replace dir="${dir}" summary="true"
+                 includes="j2ee/*/config/data-sources.xml">
+            <replacefilter token="(HOST=${src.db.hostname})"
+                           value="(HOST=${dest.db.hostname})" />
+            <replacefilter token="(PORT=${src.db.port})"
+                           value="(PORT=${dest.db.port})" />
+            <replacefilter token="(SERVICE_NAME=${src.db.servicename})"
+                           value="(SERVICE_NAME=${dest.db.servicename})" />
+        </replace>
+                 
+        <!-- Update database connect for orawsm (for releases earlier than 10.1.3.4)?? -->
+        <!-- In files: *-config-installer.properties -->
+
+        <!-- Update jazn configuration in jazn.xml. This task updates -->
+        <!-- the password values stored for pwdforOraesb & pwForOrabpel -->
+        <!-- IMPORTANT: This task must be run in the directory of the -->
+        <!-- container where BPEL/ESB is deployed (e.g. OH/j2ee/oc4j_soa). -->
+        <pathconvert property="bpel.exec.dir">
+            <first>
+                <dirset id="bpel.container" dir="${dir}"
+                    includes="j2ee/*/applications/orabpel" />
+            </first>
+            <globmapper from="*/applications/orabpel" to="*" />
+        </pathconvert>
+
+        <condition property="is.orabpel.deployed">
+            <and>
+                <available file="${dir}/j2ee/home/jazn.jar" />
+                <resourcecount refid="bpel.container"
+                               when="greater" count="0" />
+            </and>
+        </condition>
+
+        <antcall target="update-jazn" inheritRefs="true">
+            <param name="dir"     value="${dir}" />
+            <param name="execdir" value="${bpel.exec.dir}" />
+            <param name="oc4jpwd" value="${password}" />
+            <param name="user"    value="pwForOrabpel" />
+            <param name="oldpwd"  value="${src.db.orabpel.password}" />
+            <param name="newpwd"  value="${dest.db.orabpel.password}" />
+            <param name="enabled" value="is.orabpel.deployed" />
+        </antcall>
+
+        <!-- Update ESB password if either ESB-RT/ESB-DT is deployed -->
+        <pathconvert property="esb.exec.dir">
+            <first>
+                <dirset id="esb.container" dir="${dir}">
+                    <include name="j2ee/*/applications/esb-rt" />
+                    <include name="j2ee/*/applications/esb-dt" />
+                </dirset>
+            </first>
+            <regexpmapper from="^(.*)/applications/esb-[rd]t" to="\1" />
+        </pathconvert>
+
+        <condition property="is.esb.deployed">
+            <and>
+                <available file="${dir}/j2ee/home/jazn.jar" />
+                <resourcecount refid="esb.container" when="greater" count="0" />
+            </and>
+        </condition>
+
+        <antcall target="update-jazn" inheritRefs="true">
+            <param name="dir"     value="${dir}" />
+            <param name="execdir" value="${esb.exec.dir}" />
+            <param name="oc4jpwd" value="${password}" />
+            <param name="user"    value="pwdforOraesb" />
+            <param name="oldpwd"  value="${src.db.oraesb.password}" />
+            <param name="newpwd"  value="${dest.db.oraesb.password}" />
+            <param name="enabled" value="is.esb.deployed" />
+        </antcall>
+
+        <!-- Update password/jazn for orawsm in: *-config-installer.properties -->
+    </target>
+
+
+    <!-- Generic target to update jazn configuration -->
+    <!-- Seven parameters: dir, execdir, oc4jpwd, user, oldpwd, -->
+    <!--                   newpwd, enabled                      -->
+    <target name="update-jazn" if="${enabled}" >
+        <echo message="Updating JAZN for ${user} in ${execdir} ..." />
+
+        <!-- Here is the command to update jazn config: -->
+        <!--   java -jar $OH/j2ee/home/jazn.jar -user oc4jadmin -->
+        <!--        -password welcome1 -setpasswd realm(jazn.com) -->
+        <!--        user(pwForOrabpel) oldpwd(orabpelO) newpwd(orabpelN) -->
+        <java jar="${dir}/j2ee/home/jazn.jar" dir="${execdir}" fork="true"
+              resultproperty="jazn.res" failonerror="false">
+            <arg value="-user" />
+            <arg value="oc4jadmin" />
+            <arg value="-password" />
+            <arg value="${oc4jpwd}" />
+            <arg value="-setpasswd" />
+            <arg value="jazn.com" />
+            <arg value="${user}" />
+            <arg value="${oldpwd}" />
+            <arg value="${newpwd}" />
+        </java>
+
+        <condition property="jazn.success">
+            <equals arg1="${jazn.res}" arg2="0" />
+        </condition>
+
+        <fail unless="jazn.success">
+            Failed to update JAZN configuration for user ${user}. Please check the log(s) for more details and try again.
+        </fail>
+    </target>
+
+
+    <!-- Generic target to run SQL*Plus -->
+    <!-- Parameters: dir, user, password, connectstr, statement, enabled -->
+    <target name="sqlplus" if="${enabled}" >
+        <exec executable="${dir}/bin/sqlplus" inputstring="${statement}"
+              outputproperty="sqlplus.out" resultproperty="sqlplus.res"
+              failonerror="false">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="-L" />
+            <arg value="-S" />
+            <arg value="${user}/${password}@${connectstr}" />
+        </exec>
+
+        <echo message="${sqlplus.out}" />
+
+        <!-- Also check for SP2- and ORA- errors. -->
+        <condition property="sqlplus.success">
+            <and>
+                <equals arg1="${sqlplus.res}" arg2="0" />
+                <not>
+                    <contains string="${sqlplus.out}" substring="ORA-" />
+                </not>
+                <not>
+                    <contains string="${sqlplus.out}" substring="SP2-" />
+                </not>
+            </and>
+        </condition>
+
+        <fail unless="sqlplus.success">
+            Failed to run SQL statement (${statement}). Please check the log(s) for more details and try again.
+        </fail>
+
+    </target>
+
+
+    <!-- Generic target to import a database schema -->
+    <!-- Parameters: schema, desc, password, tables, presql, -->
+    <!--             postsql, and enabled -->
+    <target name="import-schema" if="${enabled}" >
+        <echo message="Importing ${desc} ..." />
+
+        <!-- Delete any existing files lying around -->
+        <delete quiet="true">
+            <fileset dir="." includes="${schema}.dmp,${schema}.log,sqlnet.log"/>
+        </delete>
+
+        <!-- Unzip the dmp file -->
+        <unzip src="${clone.zip.filename}" dest="." overwrite="true">
+            <patternset includes="${zip.prefix.db}/${schema}.dmp" />
+            <globmapper from="${zip.prefix.db}/*" to="*" />
+        </unzip>
+
+
+        <!-- Run pre-import SQL statements (such as truncate) -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"      value="${dest.db.oracle.home}" />
+            <param name="user"     value="${schema}" />
+            <param name="password" value="${password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${presql}" />
+            <param name="enabled"    value="db.${schema}.preimp.sql" />
+        </antcall>
+
+
+        <!-- Run the import utility -->
+        <exec failonerror="false" executable="${dest.db.oracle.home}/bin/imp"
+              output="${schema}.log" resultproperty="imp.res">
+            <env key="ORACLE_HOME" value="${dest.db.oracle.home}" />
+            <arg value="${schema}/${password}@(DESCRIPTION\=(ADDRESS\=(PROTOCOL\=tcp)(HOST\=${dest.db.hostname})(PORT\=${dest.db.port}))(CONNECT_DATA\=(SERVICE_NAME\=${dest.db.servicename})))" />
+            <arg value="file=${schema}.dmp" />
+            <arg value="fromuser=${schema}" />
+            <arg value="touser=${schema}" />
+            <arg value="tables=${tables}" />
+            <arg value="statistics=none" />
+            <arg value="ignore=y" />
+        </exec>
+
+        <condition property="imp.success">
+            <equals arg1="${imp.res}" arg2="0" />
+        </condition>
+
+        <fail unless="imp.success">
+            Failed to import ${desc}. Please check the log file ${schema}.log for more details and try again.
+        </fail>
+
+
+        <!-- Run post-import SQL statements -->
+        <antcall target="sqlplus" inheritRefs="true">
+            <param name="dir"      value="${dest.db.oracle.home}" />
+            <param name="user"     value="${schema}" />
+            <param name="password" value="${password}" />
+            <param name="connectstr" value="(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="statement"  value="${postsql}" />
+            <param name="enabled"    value="db.${schema}.postimp.sql" />
+        </antcall>
+
+
+        <!-- Delete any existing files (except for *.log) lying around -->
+        <delete quiet="true">
+            <fileset dir="." includes="${schema}.dmp,sqlnet.log"/>
+        </delete>
+    </target>
+
+
+	<!-- Generic target to import ESB params -->
+	<!-- Parameters: dir, schema, desc, password, and enabled -->
+    <target name="import-esb-schema" if="${enabled}">
+        <echo message="Importing ${desc} ..." />
+
+        <!-- Do we need to run ESB import-params in this dir? -->
+        <condition property="is.esb.installed">
+        	<and>
+        		<isset property="dest.db.oraesb.password" />
+        		<available file="${dir}/clone/config/cloraEsb.properties" />
+        	</and>
+        </condition>
+        
+        <antcall target="run-esb-params" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+        	<param name="jdbcurl"  value="jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=${dest.db.hostname})(PORT=${dest.db.port}))(CONNECT_DATA=(SERVICE_NAME=${dest.db.servicename})))" />
+            <param name="schema"   value="${schema}" />
+            <param name="password" value="${password}" />
+            <param name="target"   value="import-params" />
+            <param name="enabled"  value="is.esb.installed" />
+        </antcall>
+    </target>
+
+
+	<!-- Generic target to configure OWSM in destination -->
+	<!-- Parameters: dir, desc, oc4jpwd, and enabled -->
+    <target name="run-owsm-config" if="${enabled}">
+    	<!-- First, read config/ias.properties file -->
+        <loadproperties srcFile="${dir}/config/ias.properties">
+            <filterchain>
+                <prefixlines prefix="ias.config." />
+            </filterchain>
+        </loadproperties>
+
+        <!-- WSM cloning is Oracle-supported from 10.1.3.4 onwards. -->
+        <!-- For earlier releases, we need to run alternate steps. -->
+        <condition property="is.10134.or.later">
+        	<not>
+        		<matches string="${ias.config.Version}" pattern="10.1.3.[0123].*" />
+        	</not>
+        </condition>
+        
+        <!-- Do we need to run OWSM applyTopology in this dir? -->
+        <condition property="is.wsm.installed">
+        	<and>
+        		<isset property="is.10134.or.later" />
+        		<available file="${dir}/owsm/config/topology/topology.properties" />
+        	</and>
+        </condition>
+        
+        <antcall target="run-wsmadmin.sh-apply" inheritRefs="true">
+        	<param name="dir"      value="${dir}" />
+        	<param name="desc"     value="${desc}" />
+            <param name="oc4jpwd"  value="${oc4jpwd}" />
+            <param name="enabled"  value="is.wsm.installed" />
+        </antcall>
+    </target>
+
+
+	<!-- Generic target to run "wsmadmin.sh applyTopology" -->
+	<!-- Parameters: dir, desc, oc4jpwd, and enabled -->
+    <target name="run-wsmadmin.sh-apply" if="${enabled}">
+        <echo message="Configuring OWSM in ${desc} ..." />
+        
+        <property name="wsmadmin.sh.file" value="${dir}/owsm/bin/wsmadmin.sh" />
+        <property name="topology.file" value="${dir}/owsm/config/topology/topology.properties" />
+
+        <!-- Should we configure database information? -->
+        <condition property="db.update.flag" value="true" else="false">
+            <and>
+                <isset property="dest.db.hostname" />
+                <isset property="dest.db.port" />
+                <isset property="dest.db.servicename" />
+                <isset property="dest.db.orawsm.password" />
+                <isset property="dest.phase.dbconfig" />
+            </and>
+        </condition>
+
+        <!-- Update database.update flag -->
+        <replaceregexp file="${topology.file}" match="^database\.update=.*$"
+            replace="database.update=${db.update.flag}" flags="gim" />
+
+        <!-- Update database.url property -->        
+        <property name="updated.db.url" 
+            value="jdbc:oracle:thin:@//${dest.db.hostname}:${dest.db.port}/${dest.db.servicename}" />
+        
+        <replaceregexp file="${topology.file}" match="^database\.url=(.*)$"
+            replace="database.url=${updated.db.url}" flags="gim" />
+        
+        <!-- Update database.password property -->        
+        <property name="updated.db.password" value="${dest.db.orawsm.password}" />
+
+        <replaceregexp file="${topology.file}" match="^database\.password=(.*)$"
+            replace="database.password=${updated.db.password}" flags="gim" />
+            
+        <!-- Run encodePasswords to encode database.password -->
+        <exec executable="${wsmadmin.sh.file}" failonerror="true">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="encodePasswords" />
+            <arg value="${topology.file}" />
+            <arg value="database.password" />
+        </exec>
+
+        <!-- Need to startup OPMN for wsmadmin.sh to be successful -->
+        <exec executable="${dir}/opmn/bin/opmnctl" failonerror="true"
+              dir="${dir}/opmn/bin">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="startall" />
+        </exec>
+
+        <!-- Finally, execute applyTopology -->
+        <exec executable="${wsmadmin.sh.file}" failonerror="true">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="applyTopology" />
+            <arg value="-DDBPassword=${dest.db.orawsm.password}" />
+            <arg value="-Doc4jAdminPassword=${oc4jpwd}" />
+        </exec>
+
+        <!-- Shutdown OPMN -->
+        <exec executable="${dir}/opmn/bin/opmnctl" failonerror="true"
+              dir="${dir}/opmn/bin">
+            <env key="ORACLE_HOME" value="${dir}" />
+            <arg value="shutdown" />
+        </exec>
+    </target>
+
+
+    <!-- Generic target to run the various root.sh scripts --> 
+    <target name="run-root.sh" if="${enabled}">
+        <echo message="ALERT: Configuration script(s) need to be run as root before cloning can complete. Leaving this window open, open another window and run the following scripts as root:${line.separator}" />
+
+        <!-- Compile list of root.sh scripts -->
+        <pathconvert pathsep="${line.separator}" property="root.sh.list">
+            <path>
+                <fileset dir="${dest.soa.oracle.home}" includes="root.sh"
+                         erroronmissingdir="false" />
+                <fileset dir="${dest.ohs.oracle.home}" includes="root.sh"
+                         erroronmissingdir="false" />
+                <fileset dir="${dest.owsm.oracle.home}" includes="root.sh"
+                         erroronmissingdir="false" />
+                <fileset dir="${dest.esbdt.oracle.home}" includes="root.sh"
+                         erroronmissingdir="false" />
+            </path>
+        </pathconvert>
+
+        <echo message="${root.sh.list}${line.separator}" />
+        <echo/>
+    </target>
+
+
+	<!-- Externally callable target to apply endpoint map -->
+	<!-- Parameters: dir (REQUIRED), filename (OPTIONAL) -->
+	<target name="apply-endpoints" depends="load-properties">
+
+		<!-- Usage statement -->
+		<fail unless="dir">Required parameter dir is missing.
+    Parameters
+    (1) dir:      (Required) Oracle Home where endpoints are to be applied
+    (2) filename: (Optional) Name of map file (default = endpoint-map.xml)
+		</fail>
+		
+		<!-- Validate that directory exists and readable -->
+		<fail>
+            Failed to find or read the directory ${dir}. Please ensure that it is available and readable.
+			<condition>
+				<not>
+			        <available file="${dir}" type="dir"/>
+		    	</not>
+			</condition>
+		</fail>
+
+		<condition property="endpoint.map.file" value="${filename}"	else="endpoint-map.xml">
+			<isset property="filename" />
+		</condition>
+
+		<!-- Validate that map file exists and readable -->
+		<fail>
+            Failed to find or read the map file ${endpoint.map.file}. Please ensure that it is available and readable.
+			<condition>
+				<not>
+			        <available file="${endpoint.map.file}" type="file"/>
+		    	</not>
+			</condition>
+		</fail>
+
+		<!-- Call the internal helper -->
+        <antcall target="apply-endpoint-map-epmx" inheritRefs="true">
+        	<param name="prefix"   value="" />
+        	<param name="dir"      value="${dir}" />
+        	<param name="desc"     value="directory ${dir}" />
+        	<param name="filename" value="${endpoint.map.file}" />
+        	<param name="enabled"  value="true" />
+        </antcall>
+        
+        <!-- Print success message -->
+        <echo message="Endpoint map ${endpoint.map.file} applied successfully to ${dir}" />
+    </target>
+
+
+    <!-- Generic target to apply changes in endpoint mapping file -->
+    <!-- Parameters: prefix, dir, desc, filename, and enabled -->
+    <target name="apply-endpoint-map-epmx" if="${enabled}">
+        <echo message="Applying changes in mapping file for ${desc} ..." />
+        
+		<!-- Use specified filename if passed as parameter -->
+		<condition property="endpoint.map.file" value="${filename}" 
+			else="${prefix}-endpoint-map.xml">
+			<isset property="filename" />
+		</condition>
+        
+        <property name="epapply.xslt.file" value="epapply.xslt" />
+        <property name="epapply.tmp.file" value="epapply.tmp" />
+        <property name="epapply.properties.file" value="epapply.properties" />
+
+        <!-- Delete any existing files -->
+        <delete quiet="true">
+            <file file="${epapply.xslt.file}" />
+            <file file="${epapply.tmp.file}" />
+            <file file="${epapply.properties.file}" />
+        </delete>
+
+        <!-- Create endpoint.apply.xslt file -->
+        <echo message="${epapply.epmx.xslt}" file="${epapply.xslt.file}" />
+        
+        <!-- Run the endpoint.apply.xslt file against the user-updated
+             mapping file and generate the XSLT file to be run against
+             the oc4j-ra.xml and data-sources.xml file
+          -->
+        <xslt style="${epapply.xslt.file}"
+              in="${endpoint.map.file}" 
+              out="${epapply.tmp.file}">
+            <param name="oh" expression="${dir}" />
+        </xslt>
+
+        <!-- Insert group #s for each set of XML update properties -->
+        <exec executable="awk" inputstring=""
+              output="${epapply.properties.file}" failonerror="true">
+              <arg value="{ sub(&quot;XX&quot;, sprintf(&quot;%d&quot;, (NR + 5)/5)); print $0 }" />
+              <arg value="${epapply.tmp.file}" />
+        </exec>
+        
+        <!-- Get number of properties gathered -->
+        <resourcecount property="count.xmlupdate.actions">
+          <tokens id="count.xmlupdate.actions.tokens">
+            <concat>
+              <filterchain>
+                <tokenfilter>
+                  <containsregex pattern="epmx.[0-9]*.action" flags="i"/>
+                </tokenfilter>
+              </filterchain>
+              <fileset file="${epapply.properties.file}"/>
+            </concat>
+          </tokens>
+        </resourcecount>
+
+        <!-- Read the properties -->
+        <loadproperties srcFile="${epapply.properties.file}" />
+        
+        <!-- Iterate over the XML update actions -->
+        <if>
+        <resourcecount refid="count.xmlupdate.actions.tokens" when="greater" count="0" />
+        <then>
+            <for param="i" end="1" begin="${count.xmlupdate.actions}" step="-1">
+              <sequential>
+                  <antcall target="run-xmlupdate-redirect" inheritRefs="true">
+                      <param name="idx" value="@{i}" />
+                  </antcall>
+              </sequential>
+            </for>
+        </then>
+        </if>
+        
+        <!-- Delete any temporary files -->
+        <delete quiet="true">
+            <file file="${epapply.xslt.file}" />
+            <file file="${epapply.tmp.file}" />
+            <file file="${epapply.properties.file}" />
+        </delete>
+    </target>
+    
+
+    <!-- Generic target to help redirect calls to run-xmlupdate -->
+    <!-- Parameters: idx -->
+    <target name="run-xmlupdate-redirect">
+        <propertycopy property="action"   from="epmx.${idx}.action" />
+        <propertycopy property="xmlfile"  from="epmx.${idx}.filename" />
+        <propertycopy property="token"    from="epmx.${idx}.token" />
+        <propertycopy property="name"     from="epmx.${idx}.name" silent="true" />
+        <propertycopy property="value"    from="epmx.${idx}.value" />
+            
+        <antcall target="run-xmlupdate" inheritRefs="true">
+            <param name="desc"     value="Endpoint Map XML Update #${idx}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="epmx.${idx}.filename" />
+        </antcall>
+    </target>
+    
+
+    <!-- Generic target to apply changes in endpoint mapping file -->
+    <!-- Parameters: prefix, dir, desc, filename, and enabled -->
+    <!-- NOTE: DEPRECATED IN FAVOR OF apply-endpoint-map-epmx which uses XML Update -->
+    <target name="apply-endpoint-map" if="${enabled}">
+        <echo message="Applying changes in mapping file for ${desc} ..." />
+
+		<!-- Use specified filename if passed as parameter -->
+		<condition property="endpoint.map.file" value="${filename}" 
+			else="${prefix}-endpoint-map.xml">
+			<isset property="filename" />
+		</condition>
+        
+        <property name="endpoint.apply.xslt.file" value="endpoint.apply.xslt" />
+        <property name="endpoint.apply.p2.xslt.file" value="endpoint.apply.p2.xslt" />
+
+        <!-- Create endpoint.apply.xslt file -->
+        <echo message="${endpoint.apply.xslt}" file="${endpoint.apply.xslt.file}" />
+
+        <!-- Run the endpoint.apply.xslt file against the user-updated
+             mapping file and generate the XSLT file to be run against
+             the oc4j-ra.xml and data-sources.xml file
+          -->
+        <xslt style="${endpoint.apply.xslt.file}"
+              in="${endpoint.map.file}"
+              out="${endpoint.apply.p2.xslt.file}" />
+
+        <!-- Validate the resultant XML file -->
+        <xmlvalidate lenient="true" file="${endpoint.apply.p2.xslt.file}" />
+
+        <!-- Backup the relevant files first -->
+        <backup todir="${dir}">
+            <fileset dir="${dir}">
+                <include name="j2ee/*/application-deployments/**/oc4j-ra.xml" />
+                <include name="j2ee/*/config/data-sources.xml" />
+            </fileset>
+        </backup>
+            
+        <!-- Transform the oc4j-ra.xml & data-sources.xml files -->
+        <xslt style="${endpoint.apply.p2.xslt.file}"
+              filenameparameter="filename" filedirparameter="filedir"
+              basedir="${dir}" destdir="${dir}" force="true">
+            <include name="j2ee/*/application-deployments/**/oc4j-ra.xml" />
+            <include name="j2ee/*/config/data-sources.xml" />
+            <globmapper from="*" to="*.CLN"/>
+        </xslt>
+
+        <move todir="${dir}" verbose="false">
+            <fileset dir="${dir}">
+                <include name="j2ee/*/application-deployments/**/oc4j-ra.xml.CLN" />
+                <include name="j2ee/*/config/data-sources.xml.CLN" />
+            </fileset>
+            <globmapper from="*.CLN" to="*" />
+        </move>
+              
+        <!-- Delete the temporary files -->
+        <!-- (if we've reached this far, then it's been successful) -->
+        <delete quiet="true">
+            <file file="${endpoint.apply.xslt.file}" />
+            <file file="${endpoint.apply.p2.xslt.file}" />
+        </delete>
+    </target>
+
+
+    <!-- Generic target to run custom script provided by user -->
+    <!-- Parameters: command, desc, and enabled -->
+    <target name="run-custom-script" if="${enabled}">
+        <echo message="Running ${desc} ..." />
+        <echo message="${command}" />
+
+        <exec executable="/bin/sh" inputstring=""
+              failonerror="false" resultproperty="custom.res">
+            <arg value="-c" />
+            <arg value="${command}" />
+        </exec>
+
+        <condition property="custom.success">
+            <equals arg1="${custom.res}" arg2="0" />
+        </condition>
+
+        <fail unless="custom.success">
+            Failed to run ${desc}. Please check the log for more details and try again.
+        </fail>
+    </target>
+
+
+    <!-- Update environment variables in opmn.xml -->
+    <!-- Parameters: enabled -->
+    <target name="update-opmn-env-vars" if="${enabled}">
+        <property name="opmn.env.apply.xslt.file" value="opmn.env.apply.xslt" />
+        <echo message="${opmn.env.apply.xslt}" file="${opmn.env.apply.xslt.file}" />
+
+        <!-- Are any variables defined by user? -->        
+        <condition property="any.envs.defined">
+            <or>
+                <isset property="dest.opmn.env1.name"/>
+                <isset property="dest.opmn.env2.name"/>
+                <isset property="dest.opmn.env3.name"/>
+                <isset property="dest.opmn.env4.name"/>
+                <isset property="dest.opmn.env5.name"/>
+            </or>
+        </condition>
+
+        <!-- Update OPMN env vars for SOA Suite install -->
+        <condition property="soa.update.opmn.env">
+            <and>
+                <isset property="any.envs.defined" />
+                <isset property="dest.soa.oracle.home" />
+            </and>
+        </condition>
+        
+        <antcall target="run-opmn-env-xslt" inheritRefs="true">
+            <param name="dir"     value="${dest.soa.oracle.home}" />
+            <param name="desc"    value="Oracle SOA install" />
+            <param name="enabled" value="soa.update.opmn.env" />
+        </antcall>
+
+        <!-- Update OPMN env vars for OHS install -->
+        <condition property="ohs.update.opmn.env">
+            <and>
+                <isset property="any.envs.defined" />
+                <isset property="dest.ohs.oracle.home" />
+            </and>
+        </condition>
+        
+        <antcall target="run-opmn-env-xslt" inheritRefs="true">
+            <param name="dir"     value="${dest.ohs.oracle.home}" />
+            <param name="desc"    value="Oracle HTTP Server install" />
+            <param name="enabled" value="ohs.update.opmn.env" />
+        </antcall>
+
+        <!-- Update OPMN env vars for OWSM install -->
+        <condition property="owsm.update.opmn.env">
+            <and>
+                <isset property="any.envs.defined" />
+                <isset property="dest.owsm.oracle.home" />
+            </and>
+        </condition>
+        
+        <antcall target="run-opmn-env-xslt" inheritRefs="true">
+            <param name="dir"     value="${dest.owsm.oracle.home}" />
+            <param name="desc"    value="Oracle WSM install" />
+            <param name="enabled" value="owsm.update.opmn.env" />
+        </antcall>
+
+        <!-- Update OPMN env vars for ESB-DT install -->
+        <condition property="esbdt.update.opmn.env">
+            <and>
+                <isset property="any.envs.defined" />
+                <isset property="dest.esbdt.oracle.home" />
+            </and>
+        </condition>
+        
+        <antcall target="run-opmn-env-xslt" inheritRefs="true">
+            <param name="dir"     value="${dest.esbdt.oracle.home}" />
+            <param name="desc"    value="Oracle ESB-DT install" />
+            <param name="enabled" value="esbdt.update.opmn.env" />
+        </antcall>
+
+        <!-- Cleanup -->
+        <delete quiet="true">
+            <file file="${opmn.env.apply.xslt.file}" />
+        </delete>
+    </target>
+
+
+    <!-- Run opmn.env.apply.xslt stylesheet on opmn.xml -->
+    <!-- Parameters: dir, desc and enabled -->
+    <target name="run-opmn-env-xslt" if="${enabled}">
+        <echo message="Updating OPMN environment variables in ${desc} ..." />
+
+        <!-- Backup the file -->
+        <backup>
+          <file file="${dir}/opmn/conf/opmn.xml" />
+        </backup>
+
+        <xslt style="${opmn.env.apply.xslt.file}" force="true"
+              in="${dir}/opmn/conf/opmn.xml" out="${dir}/opmn/conf/opmn.xml.ENVS">
+            <param name="env1name" expression="${dest.opmn.env1.name}" />
+            <param name="env1value" expression="${dest.opmn.env1.value}" />
+            <param name="env2name" expression="${dest.opmn.env2.name}" />
+            <param name="env2value" expression="${dest.opmn.env2.value}" />
+            <param name="env3name" expression="${dest.opmn.env3.name}" />
+            <param name="env3value" expression="${dest.opmn.env3.value}" />
+            <param name="env4name" expression="${dest.opmn.env4.name}" />
+            <param name="env4value" expression="${dest.opmn.env4.value}" />
+            <param name="env5name" expression="${dest.opmn.env5.name}" />
+            <param name="env5value" expression="${dest.opmn.env5.value}" />
+        </xslt>
+
+        <move file="${dir}/opmn/conf/opmn.xml.ENVS"
+            tofile="${dir}/opmn/conf/opmn.xml"
+            verbose="false" />
+    </target>
+
+
+    <!-- Generic target to run xml update -->
+    <!-- Parameters: desc, action, xmlfile, token, name, value, enabled -->
+    <target name="run-xmlupdate" if="${enabled}">
+        <echo message="Running ${desc} ..." />
+        
+        <condition property="is.absolute">
+            <matches string="${xmlfile}" pattern="^/.*" />
+        </condition>
+        
+        <condition property="is.absolute.file.missing">
+            <and>
+                <isset property="is.absolute" />
+                <not> <available file="${xmlfile}" /> </not>
+            </and>
+        </condition>
+        
+        <fail if="is.absolute.file.missing">
+            File ${xmlfile} is either unavailable or unreadable. Please check the parameter and try again.
+        </fail>
+
+        <!-- Run with absolute xmlfile -->
+        <antcall target="xmlupdate-helper" inheritRefs="true">
+            <param name="desc"     value="${desc}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="is.absolute" />
+        </antcall>
+        
+        <!-- Run with SOA relative xmlfile -->
+        <condition property="run.soa.relative">
+            <and>
+                <not> <isset property="is.absolute" /> </not>
+                <isset property="dest.soa.oracle.home" />
+                <available file="${dest.soa.oracle.home}/${xmlfile}" />
+            </and>
+        </condition>
+        
+        <antcall target="xmlupdate-helper" inheritRefs="true">
+            <param name="desc"     value="${desc}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${dest.soa.oracle.home}/${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="run.soa.relative" />
+        </antcall>
+        
+        <!-- Run with OHS relative xmlfile -->
+        <condition property="run.ohs.relative">
+            <and>
+                <not> <isset property="is.absolute" /> </not>
+                <isset property="dest.ohs.oracle.home" />
+                <available file="${dest.ohs.oracle.home}/${xmlfile}" />
+            </and>
+        </condition>
+        
+        <antcall target="xmlupdate-helper" inheritRefs="true">
+            <param name="desc"     value="${desc}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${dest.ohs.oracle.home}/${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="run.ohs.relative" />
+        </antcall>
+        
+        <!-- Run with OWSM relative xmlfile -->
+        <condition property="run.owsm.relative">
+            <and>
+                <not> <isset property="is.absolute" /> </not>
+                <isset property="dest.owsm.oracle.home" />
+                <available file="${dest.owsm.oracle.home}/${xmlfile}" />
+            </and>
+        </condition>
+        
+        <antcall target="xmlupdate-helper" inheritRefs="true">
+            <param name="desc"     value="${desc}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${dest.owsm.oracle.home}/${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="run.owsm.relative" />
+        </antcall>
+        
+        <!-- Run with ESB-DT relative xmlfile -->
+        <condition property="run.esbdt.relative">
+            <and>
+                <not> <isset property="is.absolute" /> </not>
+                <isset property="dest.esbdt.oracle.home" />
+                <available file="${dest.esbdt.oracle.home}/${xmlfile}" />
+            </and>
+        </condition>
+        
+        <antcall target="xmlupdate-helper" inheritRefs="true">
+            <param name="desc"     value="${desc}" />
+            <param name="action"   value="${action}" />
+            <param name="xmlfile"  value="${dest.esbdt.oracle.home}/${xmlfile}" />
+            <param name="token"    value="${token}" />
+            <param name="name"     value="${name}" />
+            <param name="value"    value="${value}" />
+            <param name="enabled"  value="run.esbdt.relative" />
+        </antcall>
+    </target>
+
+
+    <!-- Generic helper to run xml update -->
+    <!-- Parameters: desc, action, xmlfile, token, name, value, enabled -->
+    <target name="xmlupdate-helper" if="${enabled}">
+        <property name="xmlupdate.xslt.file" value="xmlupdate.xslt" />
+        <property name="tempfile" value="${xmlfile}.UPD" />
+
+        <!-- Valid action = this must be case sensitive -->
+        <condition property="valid.cmd">
+            <or>
+                <equals arg1="${action}" arg2="CreateAttribute" />
+                <equals arg1="${action}" arg2="UpdateAttribute" />
+                <equals arg1="${action}" arg2="DeleteAttribute" />
+                <equals arg1="${action}" arg2="CreateElement" />
+                <equals arg1="${action}" arg2="UpdateElement" />
+                <equals arg1="${action}" arg2="DeleteElement" />
+            </or>
+        </condition>
+                
+        <fail unless="valid.cmd">
+            Invalid XML Update action (${action}). Please check the logs for more details and try again.
+        </fail>
+
+        <!-- Name cannot be null -->
+        <condition property="nonnull.name" value="${name}" else="$${name}">
+            <length string="${name}" when="gt" length="0" />
+        </condition>
+
+        <!-- Instantiate the xmlupdate.xslt file -->
+        <echo message="${xmlupdate.xslt}" file="${xmlupdate.xslt.file}" />
+        <replace file="${xmlupdate.xslt.file}">
+            <replacefilter token="%TOKEN%" value="${token}" />
+            <replacefilter token="%NAME%"  value="${nonnull.name}" />
+            <replacefilter token="%VALUE%" value="${value}" />
+            <replacefilter token="%ACTION%" value="${action}" />
+        </replace>
+
+        <!-- Backup the file -->
+        <backup>
+          <file file="${xmlfile}" />
+        </backup>
+
+        <!-- Run the XSLT on the file -->
+        <xslt style="${xmlupdate.xslt.file}" force="true"
+          in="${xmlfile}" out="${tempfile}">
+        </xslt>
+
+        <move file="${tempfile}" tofile="${xmlfile}" verbose="false" />
+
+        <!-- Remove instantiated file -->        
+        <delete quiet="true">
+            <file file="${xmlupdate.xslt.file}" />
+        </delete>
+    </target>
+    <!-- ................................................................ -->
+
+
+    <!-- ................................................................ -->
+    <!-- Target: LOAD-PROPERTIES                                          -->
+    <target name="load-properties" depends="load-xslt-properties">
+
+        <!-- Global properties -->
+        <property name="clone.properties.file" value="clone.properties" />
+        <property environment="env" />
+        <property name="true" value="true" />
+
+        <property name="zip.prefix.soa" value="SOA" />
+        <property name="zip.prefix.ohs" value="OHS" />
+        <property name="zip.prefix.owsm" value="OWSM" />
+        <property name="zip.prefix.esbdt" value="ESBDT" />
+        <property name="zip.prefix.db" value="DB" />
+        <property name="zip.prefix.inv1" value="INV1" />
+        <property name="zip.prefix.inv2" value="INV2" />
+        <property name="zip.prefix.custom1" value="CUSTOM1" />
+        <property name="zip.prefix.custom2" value="CUSTOM2" />
+        <property name="zip.prefix.custom3" value="CUSTOM3" />
+        <property name="zip.prefix.custom4" value="CUSTOM4" />
+        <property name="zip.prefix.custom5" value="CUSTOM5" />
+
+        <tstamp>
+            <format property="dstamp.now" pattern="MM-dd-yyyy_HHmm" />
+        </tstamp>
+
+        <!-- Get current host's fully qualified domain name (FQDN) -->
+        <exec executable="hostname"
+              failonerror="false" resultproperty="hostname.res"
+              outputproperty="hostname.fqdn" errorproperty="hostname.err">
+            <arg value="-f" />
+        </exec>
+
+        <condition property="hostname.success">
+            <equals arg1="${hostname.res}" arg2="0" />
+        </condition>
+
+        <condition property="hostname.message" value=""
+                   else="${hostname.fqdn}${line.separator}${hostname.err}">
+            <isset property="hostname.success" />
+        </condition>
+
+        <echo message="${hostname.message}" />
+
+        <fail unless="hostname.success">
+            Failed to get hostname (${hostname.res}). Please check the logs for more details and try again.
+        </fail>
+
+        <!-- Set default clone.zip.filename -->
+        <condition property="clone.zip.filename"
+                   value="clone-${hostname.fqdn}-${dstamp.now}.zip">
+            <not>
+                <isset property="clone.zip.filename" />
+            </not>
+        </condition>
+
+        <available file="${clone.properties.file}"
+                   property="properties.file.present"/>
+
+        <fail unless="properties.file.present">
+            Failed to find or read the properties file ${clone.properties.file}. Please ensure that it is available and readable.
+        </fail>
+
+        <loadproperties srcFile="${clone.properties.file}"/>
+
+        <!-- Create a PATH element for common utilities -->
+        <path id="src.fmw.bin">
+            <pathelement path="${env.PATH}" />
+            <pathelement location="${src.soa.oracle.home}/bin" />
+            <pathelement location="${src.ohs.oracle.home}/bin" />
+            <pathelement location="${src.owsm.oracle.home}/bin" />
+            <pathelement location="${src.esbdt.oracle.home}/bin" />
+        </path>
+
+        <!-- Clone file properties -->
+        <basename file="${ant.file}" property="clone.xml.file.basename" />
+        <basename file="${clone.properties.file}"
+                  property="clone.properties.file.basename" />
+        <basename file="${clone.zip.filename}"
+                  property="clone.zip.file.basename" />
+
+        <dirname file="${ant.file}" property="clone.xml.file.dirname" />
+        <dirname file="${clone.properties.file}"
+                 property="clone.properties.file.dirname" />
+        <dirname file="${clone.zip.filename}"
+                 property="clone.zip.file.dirname" />
+        
+        <!-- Macro definitions -->
+        <macrodef name="backup">
+          <element name="files" optional="false" implicit="true" />
+          <attribute name="ext" default="${dstamp.now}" />
+          <attribute name="todir" default="/" />
+          <sequential>
+            <!-- Update timestamp of existing backup files to prevent over-writing -->
+            <touch mkdirs="false">
+              <resources>
+                <restrict>
+                  <mappedresources>
+                    <files/>
+                    <globmapper from="*" to="*.@{ext}" />
+                  </mappedresources>
+                  <exists/>
+                </restrict>
+              </resources>
+            </touch>
+
+            <!-- Backup new files -->
+            <copy overwrite="false" todir="@{todir}">
+            <resources>
+                <files/>
+            </resources>
+            <globmapper from="*" to="*.@{ext}"/>
+            </copy>
+          </sequential>
+        </macrodef>
+    </target>
+    <!-- ................................................................ -->
+
+
+    <!-- ................................................................ -->
+    <!-- Target: USAGE                                                    -->
+    <!-- Print Usage statement (default task)                             -->
+    <target name="usage">
+        <echo message="Exilor - Oracle SOA 10.1.3.x Cloning Utility"/>
+        <echo message="  ant -f clone.xml capture|apply"/>
+        <echo message="    capture: Capture source install into zipfile"/>
+        <echo message="    apply:   Apply zipfile to new install"/>
+        <echo/>
+        <echo message="  ant -f clone.xml capture-endpoints|apply-endpoints"/>
+        <echo message="    capture-endpoints: Capture and create endpoint map file" />
+        <echo message="    apply-endpoints: Apply endpoint map file" />
+    </target>
+    <!-- ................................................................ -->
+
+    <!-- ................................................................ -->
+    <!-- Given an input such as soa10131.hostname.domain.com, this macro  -->
+    <!-- returns the prefix, i.e. soa10131                                -->
+    <macrodef name="iasname">
+        <attribute name="input" />
+        <attribute name="property" />
+        <sequential>
+            <pathconvert property="@{property}" pathsep="">
+                <file file="@{input}" />
+                <chainedmapper>
+                    <flattenmapper/>
+                    <regexpmapper from="^([^.]*).*$" to="\1" />
+                </chainedmapper>
+            </pathconvert>
+        </sequential>
+    </macrodef>
+    <!-- ................................................................ -->
+
+    <!-- ................................................................ -->
+    <!-- Target: LOAD-XSLT-PROPERTIES                                     -->
+    <target name="load-xslt-properties">
+
+    <!-- ................... ENDPOINT.CAPTURE.XSLT ...................... -->
+    <!-- The endpoint.capture.xslt stylesheet is used to capture    -->
+    <!-- <config-property> elements of every <connector-factory>    -->
+    <!-- element for every adapter. The resultant file is presented -->
+    <!-- to the user for modification of endpoints if necessary.    -->
+    <property name="endpoint.capture.xslt"><![CDATA[<?xml version="1.0"?>
+        <xsl:stylesheet version="1.0"
+             xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+            <xsl:param name="filedir" />
+            <xsl:param name="filename" />
+            <xsl:param name="OH" />
+
+            <xsl:output method="xml" indent="yes" omit-xml-declaration="yes" />
+
+            <xsl:template match="/">
+              <file xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                <xsl:attribute name="file">
+                  <xsl:value-of select="concat($filedir, '/', $filename)" />
+                </xsl:attribute>
+                <xsl:apply-templates/>
+              </file>
+            </xsl:template>
+
+            <!-- Process endpoints in oc4j-ra.xml -->
+            <xsl:template match="/oc4j-connector-factories/connector-factory">
+              <xsl:copy>
+                <xsl:copy-of select="@*"/>
+                <xsl:for-each select="config-property">
+                  <xsl:copy-of select="."/>
+                </xsl:for-each>
+              </xsl:copy>
+            </xsl:template>
+
+            <!-- Process endpoints in data-sources.xml -->
+            <xsl:template match="/data-sources/connection-pool">
+              <xsl:copy>
+                <xsl:copy-of select="@*"/>
+                <xsl:for-each select="connection-factory">
+                  <xsl:copy-of select="."/>
+                </xsl:for-each>
+              </xsl:copy>
+            </xsl:template>
+
+            <xsl:template match="@* | node()">
+              <xsl:apply-templates select="@* | node()"/>
+            </xsl:template>
+          </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- ................... ENDPOINT.CAPTURE.XSLT ...................... -->
+
+
+    <!-- ................... ENDPOINT.APPLY.XSLT ........................ -->
+    <!-- NOTE: DEPRECATED IN FAVOR OF EPAPPLY.EPMX.XSLT which uses XML Update! -->
+    <!-- The endpoint.apply.xslt stylesheet is used to create a 2nd    -->
+    <!-- stylesheet that's applied to oc4j-ra.xml & data-sources.xml   -->
+    <!-- It extracts newvalue/newurl/newuser/newpassword attributes    -->
+    <!-- and creates another XSLT to do the replace in all adapter and -->
+    <!-- data-sources.xml endpoints.                                   -->
+    <property name="endpoint.apply.xslt"><![CDATA[<?xml version="1.0"?>
+
+        <xsl:stylesheet version="1.0"
+            xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  
+          <xsl:output method="xml" indent="yes" />
+          <xsl:preserve-space elements="*"/>
+
+          <xsl:template match="/">
+            <xsl:element name="xsl:stylesheet">
+              <xsl:attribute name="version">1.0</xsl:attribute>
+
+              <!-- Representation of the following XSL fragment
+                <xsl:param name="filedir" />
+                <xsl:param name="filename" />
+                <xsl:param name="OH" />
+                <xsl:output method="xml" indent="yes"/>
+               -->
+              <xsl:element name="xsl:param">
+                <xsl:attribute name="name">filedir</xsl:attribute>
+              </xsl:element>
+              <xsl:element name="xsl:param">
+                <xsl:attribute name="name">filename</xsl:attribute>
+              </xsl:element>
+              <xsl:element name="xsl:param">
+                <xsl:attribute name="name">OH</xsl:attribute>
+              </xsl:element>
+              <xsl:element name="xsl:output">
+                <xsl:attribute name="method">xml</xsl:attribute>
+                <xsl:attribute name="indent">yes</xsl:attribute>
+              </xsl:element>
+
+              <xsl:apply-templates select="@* | node()"/>
+              
+              <!-- Representation of the following XSL fragment
+                <xsl:template match="@* | node()">
+                  <xsl:copy>
+                    <xsl:apply-templates select="@* | node()"/>
+                  </xsl:copy>
+                </xsl:template>
+              -->
+              <xsl:element name="xsl:template">
+                <xsl:attribute name="match">@* | node()</xsl:attribute>
+                <xsl:element name="xsl:copy">
+                  <xsl:element name="xsl:apply-templates">
+                    <xsl:attribute name="select">@* | node()</xsl:attribute>
+                  </xsl:element>
+                </xsl:element>
+              </xsl:element>
+        
+            </xsl:element>
+          </xsl:template>
+
+          <xsl:template match="file/connector-factory/config-property[@newvalue]">
+            <!-- Representation of the following XSL fragment:
+            <xsl:template match="connector-factory[@location='eis/DB/DBConnection1']/config-property[@name='dataSourceName']/@value">
+              <xsl:choose>
+                <xsl:when test="concat($filedir, '/', $filename) = 'a/b'">
+                  <xsl:attribute name="{name()}">NEWVALUE</xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="."/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:template>
+            -->
+            <xsl:element name="xsl:template">
+              <xsl:attribute name="match">connector-factory[@location='<xsl:value-of select="../@location"/>']/config-property[@name='<xsl:value-of select="@name"/>']/@value</xsl:attribute>
+              <xsl:element name="xsl:choose">
+                <xsl:element name="xsl:when">
+                  <xsl:attribute name="test">concat($filedir, '/', $filename) = '<xsl:value-of select="../../@file" />'</xsl:attribute>
+                  <xsl:element name="xsl:attribute">
+                    <xsl:attribute name="name">{name()}</xsl:attribute>
+                    <xsl:value-of select="@newvalue"/>
+                  </xsl:element>
+                </xsl:element>
+                <xsl:element name="xsl:otherwise">
+                  <xsl:element name="xsl:copy-of">
+                    <xsl:attribute name="select">.</xsl:attribute>
+                  </xsl:element>
+                </xsl:element>
+              </xsl:element>
+            </xsl:element>
+          </xsl:template>
+
+
+          <xsl:template match="file/connection-pool/connection-factory/@newurl |
+                        file/connection-pool/connection-factory/@newuser |
+                        file/connection-pool/connection-factory/@newpassword">
+            <!-- Representation of the following XSL fragment:
+            <xsl:template match="connection-pool[@name='Example Connection Pool']/connection-factory/@url">
+              <xsl:choose>
+                <xsl:when test="concat($filedir, '/', $filename) = 'a/b'">
+                  <xsl:attribute name="{name()}">(DESCRIPTION=(HOST=NEWURL))</xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:copy-of select="."/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:template>
+            -->
+            <xsl:element name="xsl:template">
+              <xsl:attribute name="match">connection-pool[@name='<xsl:value-of select="../../@name"/>']/connection-factory/@<xsl:value-of select="substring(name(), 4)"/></xsl:attribute>
+              <xsl:element name="xsl:choose">
+                <xsl:element name="xsl:when">
+                  <xsl:attribute name="test">concat($filedir, '/', $filename) = '<xsl:value-of select="../../../@file" />'</xsl:attribute>
+                  <xsl:element name="xsl:attribute">
+                    <xsl:attribute name="name">{name()}</xsl:attribute>
+                    <xsl:value-of select="."/>
+                  </xsl:element>
+                </xsl:element>
+                <xsl:element name="xsl:otherwise">
+                  <xsl:element name="xsl:copy-of">
+                    <xsl:attribute name="select">.</xsl:attribute>
+                  </xsl:element>
+                </xsl:element>
+              </xsl:element>
+            </xsl:element>
+          </xsl:template>
+
+
+          <xsl:template match="@* | node()">
+              <xsl:apply-templates select="@* | node()"/>
+          </xsl:template>
+        </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- ................... ENDPOINT.APPLY.XSLT ........................ -->
+
+
+    <!-- ................... EPAPPLY.EPMX.XSLT ........................ -->
+    <!-- The epapply.epmx.xslt stylesheet is a revision of endpoint    -->
+    <!-- mapping using XML update calls instead of a 2nd XSLT.         -->
+    <!-- It extracts newvalue/newurl/newuser/newpassword attributes    -->
+    <!-- and then runs XML Update to do the replace in all adapter and -->
+    <!-- data-sources.xml endpoints.                                   -->
+    <property name="epapply.epmx.xslt"><![CDATA[<?xml version="1.0"?>
+        <xsl:stylesheet version="1.0"
+            xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  
+          <xsl:output method="text" indent="no" />
+          <xsl:param name="oh" />
+          
+          <xsl:template match="file/connector-factory/config-property/@newvalue">
+            <xsl:text>epmx.XX.action=UpdateAttribute&#10;</xsl:text>
+            
+            <xsl:text>epmx.XX.filename=</xsl:text>
+                <xsl:value-of select="concat ($oh, '/')"/>
+                <xsl:value-of select="../../../@file" />
+            <xsl:text>&#10;</xsl:text>
+            
+            <xsl:text>epmx.XX.token=/oc4j-connector-factories/connector-factory[@location='</xsl:text>
+                <xsl:value-of select="../../@location"/>
+            <xsl:text>']/config-property[@name='</xsl:text>
+                <xsl:value-of select="../@name"/>
+            <xsl:text>']/@value&#10;</xsl:text>
+            
+            <xsl:text>epmx.XX.value=</xsl:text>
+                <xsl:value-of select="."/>
+            <xsl:text>&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
+          </xsl:template>
+          
+
+          <xsl:template match="file/connection-pool/connection-factory/@newurl |
+                        file/connection-pool/connection-factory/@newuser |
+                        file/connection-pool/connection-factory/@newpassword">
+            
+            <xsl:text>epmx.XX.action=UpdateAttribute&#10;</xsl:text>
+            
+            <xsl:text>epmx.XX.filename=</xsl:text>
+                <xsl:value-of select="concat ($oh, '/')"/>
+                <xsl:value-of select="../../../@file" />
+            <xsl:text>&#10;</xsl:text>
+            
+            <xsl:text>epmx.XX.token=/data-sources/connection-pool[@name='</xsl:text>
+                <xsl:value-of select="../../@name"/>
+            <xsl:text>']/connection-factory/@</xsl:text>
+                <xsl:value-of select="substring(name(), 4)"/>
+            <xsl:text>&#10;</xsl:text>
+                
+            <xsl:text>epmx.XX.value=</xsl:text>
+                <xsl:value-of select="."/>
+            <xsl:text>&#10;</xsl:text>
+            <xsl:text>&#10;</xsl:text>
+          </xsl:template>
+          
+
+          <xsl:template match="@* | node()">
+              <xsl:apply-templates select="@* | node()"/>
+          </xsl:template>
+        </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- ................... EPAPPLY.EPMX.XSLT ........................ -->
+    
+
+    <!-- .................... OPMN.ENV.APPLY.XSLT ........................ -->
+    <!-- The opmn.env.apply.xslt stylesheet is used to update the env vars -->
+    <!-- in opmn.xml with the new value specified by the user.             -->
+    <property name="opmn.env.apply.xslt"><![CDATA[<?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                        xmlns:opmn="http://www.oracle.com/ias-instance">
+
+          <xsl:param name="env1name"/>
+          <xsl:param name="env2name"/>
+          <xsl:param name="env3name"/>
+          <xsl:param name="env4name"/>
+          <xsl:param name="env5name"/>
+
+          <xsl:param name="env1value"/>
+          <xsl:param name="env2value"/>
+          <xsl:param name="env3value"/>
+          <xsl:param name="env4value"/>
+          <xsl:param name="env5value"/>
+  
+          <xsl:output method="xml" indent="yes"/>
+
+          <xsl:template match="opmn:environment/opmn:variable/@value">
+            <xsl:choose>
+              <xsl:when test="../@id = $env1name">
+                <xsl:attribute name="{name()}">
+                  <xsl:value-of select="$env1value"/>
+                </xsl:attribute>
+              </xsl:when>
+
+              <xsl:when test="../@id = $env2name">
+                <xsl:attribute name="{name()}">
+                  <xsl:value-of select="$env2value"/>
+                </xsl:attribute>
+              </xsl:when>
+              
+              <xsl:when test="../@id = $env3name">
+                <xsl:attribute name="{name()}">
+                  <xsl:value-of select="$env3value"/>
+                </xsl:attribute>
+              </xsl:when>
+              
+              <xsl:when test="../@id = $env4name">
+                <xsl:attribute name="{name()}">
+                  <xsl:value-of select="$env4value"/>
+                </xsl:attribute>
+              </xsl:when>
+              
+              <xsl:when test="../@id = $env5name">
+                <xsl:attribute name="{name()}">
+                  <xsl:value-of select="$env5value"/>
+                </xsl:attribute>
+              </xsl:when>
+
+              <xsl:otherwise>
+                <xsl:copy-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:template>
+
+          <xsl:template match="@* | node()">
+            <xsl:copy>
+              <xsl:apply-templates select="@* | node()"/>
+            </xsl:copy>
+          </xsl:template>
+        </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- .................... OPMN.ENV.APPLY.XSLT ........................ -->
+
+
+    <!-- ................... ONS.PORTS.CAPTURE.XSLT ...................... -->
+    <!-- This stylesheet is used to capture the notification-server ports  -->
+    <!-- specified in opmn.xml and generate a staticports.ini file         -->
+    <property name="ons.ports.capture.xslt"><![CDATA[<?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+            xmlns:opmn="http://www.oracle.com/ias-instance">
+
+        <xsl:output method="text" indent="no"/>
+
+        <xsl:template match="/opmn:opmn/opmn:notification-server/opmn:port/@local">
+          <xsl:text>Oracle Notification Server Local port = </xsl:text>
+          <xsl:value-of select="."/>
+          <xsl:text>&#10;</xsl:text>
+        </xsl:template>
+
+        <xsl:template match="/opmn:opmn/opmn:notification-server/opmn:port/@request">
+          <xsl:text>Oracle Notification Server Request port = </xsl:text>
+          <xsl:value-of select="."/>
+          <xsl:text>&#10;</xsl:text>
+        </xsl:template>
+
+        <xsl:template match="/opmn:opmn/opmn:notification-server/opmn:port/@remote">
+          <xsl:text>Oracle Notification Server Remote port = </xsl:text>
+          <xsl:value-of select="."/>
+          <xsl:text>&#10;</xsl:text>
+        </xsl:template>
+
+        <xsl:template match="@* | node()">
+          <xsl:apply-templates select="@* | node()"/>
+        </xsl:template>
+
+        </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- ................... ONS.PORTS.CAPTURE.XSLT ...................... -->
+
+
+    <!-- ....................... XMLUPDATE.XSLT .......................... -->
+    <!-- The xmlupdate.xslt stylesheet is used to update the token with    -->
+    <!-- new value specified by the user. Before running this xslt, be     -->
+    <!-- sure to update the %*% tokens to their proper values              -->
+    <property name="xmlupdate.xslt"><![CDATA[<?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                        xmlns:opmn="http://www.oracle.com/ias-instance">
+
+          <xsl:param name="action">%ACTION%</xsl:param>
+          <xsl:output method="xml" indent="yes"/>
+
+          <xsl:template match="%TOKEN%">
+            <xsl:choose>
+            
+              <xsl:when test="$action = 'CreateAttribute'">
+                <xsl:copy>
+                  <xsl:attribute name="%NAME%">%VALUE%</xsl:attribute>
+                  <xsl:apply-templates select="@* | node()"/>
+                </xsl:copy>
+              </xsl:when>
+              
+              <xsl:when test="$action = 'CreateElement'">
+                <xsl:copy>
+                  <xsl:apply-templates select="@*"/>
+                  <xsl:element name="%NAME%">%VALUE%</xsl:element>
+                  <xsl:apply-templates select="node()"/>
+                </xsl:copy>
+              </xsl:when>
+
+              <xsl:when test="$action = 'UpdateAttribute'">
+                <xsl:attribute name="{name()}">%VALUE%</xsl:attribute>
+              </xsl:when>
+              
+              <xsl:when test="$action = 'UpdateElement'">
+                  <xsl:element name="{name()}">
+                    <xsl:apply-templates select="@*"/>
+                    %VALUE%
+                  </xsl:element>
+              </xsl:when>
+              
+              <xsl:when test="$action = 'DeleteAttribute'" />
+              <xsl:when test="$action = 'DeleteElement'" />
+              
+              <xsl:otherwise>
+                <xsl:copy-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:template>
+
+          <xsl:template match="@* | node()">
+            <xsl:copy>
+              <xsl:apply-templates select="@* | node()"/>
+            </xsl:copy>
+          </xsl:template>
+        </xsl:stylesheet>
+        ]]>
+    </property>
+    <!-- ....................... XMLUPDATE.XSLT .......................... -->
+    
+    
+    <!-- ................... ESB.PARAMS.SH ........................ -->
+    <!-- Shell script to export/import ESB parameters. Usage:       -->
+    <!--   esb.params.sh export-params | import-params              -->
+    <property name="esb.params.sh"><![CDATA[#!/bin/sh
+
+		# The following env variables must be set before calling this script.
+		# ORACLE_HOME, DB_URL, DB_USER, DB_PASSWORD, ANT_HOME
+
+		PARAMFILE=$ORACLE_HOME/clone/config/cloraEsb.properties
+		RV=1
+
+		if [ "$1" == "export-params" ]; then
+    		# Remove any existing file
+    		rm -f $PARAMFILE;
+
+		    . $ORACLE_HOME/integration/esb/bin/esbsetenv.sh
+    		$ANT_HOME/bin/ant \
+        		-Dparamfile=$PARAMFILE \
+        		-DDB_URL=$DB_URL \
+        		-DDB_USER=$DB_USER \
+        		-DDB_PASSWORD=$DB_PASSWORD \
+        		-DDB_DRIVER=oracle.jdbc.driver.OracleDriver \
+        		-f $ORACLE_HOME/integration/esb/bin/build.xml \
+        		export-params 
+        	RV=$?
+		elif [ "$1" == "import-params" ]; then
+    		. $ORACLE_HOME/integration/esb/bin/esbsetenv.sh
+    		$ANT_HOME/bin/ant \
+        		-Dparamfile=$PARAMFILE \
+        		-DDB_URL=$DB_URL \
+        		-DDB_USER=$DB_USER \
+        		-DDB_PASSWORD=$DB_PASSWORD \
+        		-DDB_DRIVER=oracle.jdbc.driver.OracleDriver \
+        		-f $ORACLE_HOME/integration/esb/bin/build.xml \
+        		import-params 
+        	RV=$?
+		else
+		    echo "Usage: `basename $0` export-params | import-params"
+		    RV=1
+		fi
+		
+		exit $RV;
+        ]]>
+    </property>
+    <!-- ................... ESB.PARAMS.SH ........................ -->
+
+
+    </target>
+    <!-- ................................................................ -->
+</project>

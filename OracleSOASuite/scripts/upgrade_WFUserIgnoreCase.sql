@@ -1,0 +1,81 @@
+Rem
+Rem $Header: bpel/everest/src/modules/server/database/scripts/upgrade_WFUserIgnoreCase.sql /st_pcbpel_10.1.3.1/2 2010/06/02 09:09:01 wageorge Exp $
+Rem
+Rem upgrade_WFUserIgnoreCase.sql
+Rem
+Rem Copyright (c) 2008, 2010, Oracle and/or its affiliates. 
+Rem All rights reserved. 
+Rem
+Rem    NAME
+Rem      upgrade_WFUserIgnoreCase.sql - <one-line expansion of the name>
+Rem
+Rem    DESCRIPTION
+Rem      <short description of component this file declares/defines>
+Rem
+Rem    NOTES
+Rem      <other useful comments, qualifications, etc.>
+Rem
+Rem    MODIFIED   (MM/DD/YY)
+Rem    wageorge    05/27/10 - Backport wageorge_bug-8486557 from
+Rem                           st_pcbpel_10.1.3.1
+Rem    wstallar    03/11/08 - 
+Rem    rarangas    03/11/08 - Upgrade workflow data from case sensitive to case
+Rem                           agnostic system
+Rem    rarangas    03/11/08 - Created
+Rem
+
+SET ECHO ON
+SET FEEDBACK 1
+SET NUMWIDTH 10
+SET LINESIZE 80
+SET TRIMSPOOL ON
+SET TAB OFF
+SET PAGESIZE 100
+
+UPDATE WFTASK SET 
+   ACQUIREDBY = LOWER(ACQUIREDBY),
+   ASSIGNEEUSERS = LOWER(ASSIGNEEUSERS),
+   CREATOR = LOWER(CREATOR),
+   OWNERUSER = LOWER(OWNERUSER),
+   APPROVERS = LOWER(APPROVERS),
+   FROMUSER = LOWER(FROMUSER),
+   ORIGINALASSIGNEEUSER = LOWER(ORIGINALASSIGNEEUSER),
+   UPDATEDBY = LOWER(UPDATEDBY),
+   ASSIGNEEGROUPS = LOWER(ASSIGNEEGROUPS),
+   OWNERGROUP = LOWER(OWNERGROUP);
+
+UPDATE WFTASKHISTORY SET 
+   ACQUIREDBY = LOWER(ACQUIREDBY),
+   ASSIGNEEUSERS = LOWER(ASSIGNEEUSERS),
+   CREATOR = LOWER(CREATOR),
+   OWNERUSER = LOWER(OWNERUSER),
+   APPROVERS = LOWER(APPROVERS),
+   FROMUSER = LOWER(FROMUSER),
+   ORIGINALASSIGNEEUSER = LOWER(ORIGINALASSIGNEEUSER),
+   UPDATEDBY = LOWER(UPDATEDBY),
+   ASSIGNEEGROUPS = LOWER(ASSIGNEEGROUPS),
+   OWNERGROUP = LOWER(OWNERGROUP);
+
+UPDATE WFCOMMENTS SET 
+   UPDATEDBY = LOWER(UPDATEDBY);
+
+UPDATE WFATTACHMENT SET 
+   UPDATEDBY = LOWER(UPDATEDBY);
+
+UPDATE WFASSIGNEE SET
+   ASSIGNEE = LOWER(ASSIGNEE);
+
+UPDATE WFUSERVACATION SET 
+   USERID = LOWER(USERID);
+
+UPDATE WFUSERTASKVIEW SET 
+   VIEWOWNER = LOWER(VIEWOWNER);
+
+UPDATE WFUSERTASKVIEWGRANT SET 
+   GRANTEE = LOWER(GRANTEE);
+
+UPDATE WFUSERPREFERENCE SET 
+   USERNAME = LOWER(USERNAME);
+
+COMMIT;
+
