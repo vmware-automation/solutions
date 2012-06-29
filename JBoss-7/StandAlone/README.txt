@@ -1,5 +1,4 @@
-This example demonstrates creating a service which deploys a JBoss 7 standalone intance followed by a sample petcare application deployed to it.  
-To add the JBoss 7 Application Server to vFabric Application Director follow the steps below.
+This demonstrates creating a standalone JBoss 7 service.
   
 !! IMPORTANT POINT REGARDING PROPERTIES !!
 When dealing with setting up properties in this demo take care to notice the Property Type.
