@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 . $global_conf
@@ -39,4 +40,3 @@ cp $host_slave $JBOSS_HOME/domain/configuration/host.xml
 # Base64 pw needs to be set in host.xml secret field
 base64pw=`echo -n $slave_password | base64`
 sed -i.bak "s/^\(\s*<secret\s*value=\"\)\(.*\)\(\".*\)$/\1$base64pw\3/" $JBOSS_HOME/domain/configuration/host.xml
-

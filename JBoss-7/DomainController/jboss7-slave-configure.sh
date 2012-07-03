@@ -82,7 +82,7 @@ addUserAndPassword $JBOSS_MGMT_USER $JBOSS_MGMT_PWD
 
 # Setup properties file
 cat > $JBOSS_HOME/system.properties << EOF
-jboss.domain.master.address=<domain controller ip needs to be set> # This needs to be set to the address of the domain controller
+jboss.domain.master.address=$master_ip
 jboss.bind.address.management=$self_ip
 jboss.bind.address=$self_ip
 jboss.bind.address.unsecure=$self_ip
