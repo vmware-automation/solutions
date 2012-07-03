@@ -60,6 +60,7 @@ Creating Services
   domain_init_script - The slave service script (downloadable content)
   host_slave - The JBoss 7 host.xml file for the slave configuration (downloadable content)
   self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
+  master_ip - Bind this to the domain controllers ip in the blueprint, this is set in the JBOSS_HOME/system.properties to communicate with controller.
   zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
   JBOSS_MGMT_USER - the mgmt user free to chose
   JBOSS_MGMT_PWD - the mgmt password free to chose
