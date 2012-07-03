@@ -115,13 +115,9 @@ When you are done it should look something like: jbossdomaincontrollerbp.png
 Now you can deploy, step through each of the steps verifying the values configured in the blueprint and deploy in the final step.
 You should see the deployment succeed and look something like: jbossdomaincontrollerdeployed.png
 
-One Final Step
---------------
 
-At the moment the slaves themselves are unaware of the domain controller and need one property set before they can be started.
-- With an editor, edit $JBOSS_HOME/system.properties
-- After the jboss.domain.master.address= replace the text with the address or fully qualified hostname of the controller
-- Start jboss service by issuing the command as root: service jboss start
-
-After that you can monitor the logs in each of the master and slave in /var/log/jboss-as/console.log to verify that each slave was registered
-with the domain controller.
+Some additional files of interest
+---------------------------------
+/etc/jboss-as/jboss-as.conf - Contains properties for controlling jboss service startup and shutdown
+/etc/init.d/jboss - The jboss service script
+/var/log/jboss-as/console.log - The service log output
