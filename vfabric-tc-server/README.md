@@ -14,8 +14,8 @@ To create a vFabric tc Server service in vFabric Application Director, follow th
 
 2.   When entering details about the new service, use the following values, as shown in [this screenshot](service-create.png):
 
-     **Name**: `vFabric tc Server 5.1.0`  
-     **Service Version**: `5.1.0`  
+     **Name**: `vFabric tc Server 2.7`  
+     **Service Version**: `2.7`  
      **Tags**: `Application Servers`  
      **Supported OSes**: `RHEL32 5.x` `RHEL64 5.x` `RHEL32 6.x` `RHEL64 6.x`  
      **Supported Components**:  `JAR`, `WAR`, `SCRIPT`  
