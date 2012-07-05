@@ -1,5 +1,5 @@
 #!/bin/sh
-# vFabric ApplicationDirector Sample CONFIG script for vFabric 5.1 tc Server
+# vFabric ApplicationDirector Sample CONFIG script for vFabric tc Server
 
 # This example uses the values posted below as defaults.   To change any of these
 # values, add the Property Name as shown below as individual properties in your 
