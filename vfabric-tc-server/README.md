@@ -56,7 +56,7 @@ After you create a vFabric tc Server service in Application Director, you can st
 
 3.   On the Blueprint canvas, drag and drop the RHEL 5 or 6 OS template from the Logical Templates menu.
 
-4.   From the Services menu, select **vFabric tc Server 5.1.0** and drop it under the OS.  
+4.   From the Services menu, select **vFabric tc Server 2.7** and drop it under the OS.  
 
 5.   Save the Application.
 
