@@ -1,0 +1,96 @@
+#!/usr/bin/ksh
+#
+
+# Import global conf 
+. $global_conf
+
+# Declare Library Utilities / Procedure Calls
+#
+
+Proc_Log()
+{
+echo "`date` - ${S_PROC_MESSAGE} \n" | tee -a ${R_LOGFILE}
+}
+
+Error_Check()
+{
+if [ "$?" != "0" ]
+then
+        echo "********************************" | tee -a ${R_LOGFILE}
+        echo "Failure in Cloning Procedure" | tee -a ${R_LOGFILE}
+        echo "Error whilst ${S_PROC_MESSAGE} " | tee -a ${R_LOGFILE}
+        echo "********************************" | tee -a ${R_LOGFILE}
+	echo="******** Procedure Aborted *******" | tee -a ${R_LOGFILE}
+	exit 2
+fi
+}
+
+#
+# End of Internal Procedure Calls
+#
+
+# Set Runtime variables
+
+R_SCRIPTDIR="/oracle/clone/scripts"
+R_LOGFILE="${R_SCRIPTDIR}/log/Clone_DB.log"
+R_APPSINFO="${R_SCRIPTDIR}/APPS_INFO"
+R_HOST=`hostname`
+R_DBCREATESCRIPT="${R_SCRIPTDIR}/Create_DB.sh"
+
+# Create New Log Files and APPS_INFO
+
+touch ${R_LOGFILE} ${R_APPSINFO}
+chown -R oracle:oinstall ${R_LOGFILE} ${R_APPSINFO}
+
+# Obtain required Runtime Data
+
+#
+S_PROC_MESSAGE=" Obtain Cloning Runtime INFO"; Proc_Log
+#
+
+R_SID=$SID
+R_PORT=$PORT_POOL
+R_APPS=$NEW_APPS_PASS
+R_SYS=$SYS_PASS
+R_SYSADMIN=$SYSADMIN_PASS
+R_SEC=$CUR_APPS_PASS
+R_DBHOST=$DB_HOSTNAME
+R_DBSNMP=$DBSNMP_PASS
+R_XXVM=$XXVM_PASS
+R_APPSRDONLY=$APPSRDONLY_PASS
+R_VERTEX=$VERTEX_PASS
+R_XXVMPORTAL=$XXVMPORTAL_PASS
+R_XXVMMYLEARN=$XXVM_MYLEARN_PASS
+R_EBSINTGR=$EBS_INTGR_PASS
+R_PORTALREADONLY=$PORTAL_READONLY_PASS
+R_XXVMHRBPCUSER=$XXVM_HR_BPC_USER_PASS
+R_CSSHT=$CSSHT_PASS
+R_FINBILOADUSER=$FINBI_LOAD_USER_PASS
+R_HRREADONLY=$HRREADONLY_PASS
+
+
+echo "sid=${R_SID}" | tee -a ${R_APPSINFO}
+echo "port=${R_PORT}" | tee -a ${R_APPSINFO}
+echo "apps=${R_APPS}" | tee -a ${R_APPSINFO}
+echo "system=${R_SYS}" | tee -a ${R_APPSINFO}
+echo "sysadmin=${R_SYSADMIN}" | tee -a ${R_APPSINFO}
+echo "sec=${R_SEC}" | tee -a ${R_APPSINFO}
+echo "dbhost=${R_DBHOST}" | tee -a ${R_APPSINFO}
+echo "dbsnmp=${R_DBSNMP}" | tee -a ${R_APPSINFO}
+echo "xxvm=${R_XXVM}" | tee -a ${R_APPSINFO}
+echo "appsrdonly=${R_APPSRDONLY}" | tee -a ${R_APPSINFO}
+echo "vertex=${R_VERTEX}" | tee -a ${R_APPSINFO}
+echo "xxvmportal=${R_XXVMPORTAL}" | tee -a ${R_APPSINFO}
+echo "xxvmmylearn=${R_XXVMMYLEARN}" | tee -a ${R_APPSINFO}
+echo "ebsintgr=${R_EBSINTGR}" | tee -a ${R_APPSINFO}
+echo "portalreadonly=${R_PORTALREADONLY}" | tee -a ${R_APPSINFO}
+echo "xxvmhrbpcuser=${R_XXVMHRBPCUSER}" | tee -a ${R_APPSINFO}
+echo "cssht=${R_CSSHT}" | tee -a ${R_APPSINFO}
+echo "finbiloaduser=${R_FINBILOADUSER}" | tee -a ${R_APPSINFO}
+echo "hrreadonly=${R_HRREADONLY}" | tee -a ${R_APPSINFO}
+
+#
+# Login as oracle and run the DB creation script
+#
+
+su - oracle -c $R_DBCREATESCRIPT

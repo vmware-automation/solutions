@@ -1,0 +1,16 @@
+#!/usr/bin/ksh
+
+# Import global conf 
+. $global_conf
+
+hostname $CM_HOSTNAME
+
+sed "s/OEL-EBS-CCM/$CM_HOSTNAME/g" /etc/hosts > /etc/hostsnew
+mv /etc/hostsnew /etc/hosts
+
+sed "s/vmware.com/vf.vmware.com/g" /etc/hosts > /etc/hostsnew1
+mv /etc/hostsnew1 /etc/hosts
+
+sed "s/OEL-EBS-CCM/$CM_HOSTNAME/g" /etc/sysconfig/network > /etc/sysconfig/newnetwork.txt
+mv /etc/sysconfig/newnetwork.txt /etc/sysconfig/network
+

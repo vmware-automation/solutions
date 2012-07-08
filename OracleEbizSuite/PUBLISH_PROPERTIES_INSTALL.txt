@@ -1,0 +1,22 @@
+#!/usr/bin/ksh
+# script to publish EBS properties to perforce
+
+
+# Temporarily set these variables if not called from vCO
+ENV_NAME=dev1
+HOST_NAME=`hostname`
+
+PORTPOOL=$PORT_POOL
+PORT_NUM=`expr 1521 + $PORTPOOL`
+
+EBS_PROPERTIES="/tmp/ebs.properties"
+
+echo "EBS_DB_HOST=$DB_HOSTNAME" >> $EBS_PROPERTIES
+echo "EBS_DB_SID=$SID" >> $EBS_PROPERTIES
+echo "EBS_DB_PORT=$PORT_NUM" >> $EBS_PROPERTIES
+echo "EBS_DB_APPS_USER=apps" >> $EBS_PROPERTIES
+echo "EBS_DB_APPS_PASS=$APPS_PASS" >> $EBS_PROPERTIES
+echo "EBS_DB_XXVMPORTAL_USER=XXVMPORTAL" >> $EBS_PROPERTIES
+echo "EBS_DB_XXVMPORTAL_PASS=$XXVMPORTAL_PASS" >> $EBS_PROPERTIES
+
+## Publish these properties to Repo for autowiring.
