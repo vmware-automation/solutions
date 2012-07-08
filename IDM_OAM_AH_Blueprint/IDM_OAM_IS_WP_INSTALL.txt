@@ -1,0 +1,351 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MOUNTPOINTLOCATION=/tmp/mount
+INSTALLERTMPDIR="/oracle/install/tmp"
+ORAINVENTORYDIR="/etc/oraInventory"
+
+IDMINSTALLERALLLOCATION="/oracle/install/OAMinstaller"
+IDMORAINSTFILE="$IDMINSTALLERALLLOCATION/Templates/oraInst.loc"
+
+IDMOHSINSTALLERLOCATION="/oracle/install/OHSinstaller"
+IDMOHSINSTALLSCRIPT="$IDMOHSINSTALLERLOCATION/OHS_runinstaller.sh"
+IDMOHSRESPONSEFILE="$IDMOHSINSTALLERLOCATION/ohs_install.rsp"
+IDMOHSRESPONSEFILETEMPLATE="$IDMOHSINSTALLERLOCATION/Templates/ohs_install.rsp"
+IDMOHSPORTINIFILE="$IDMOHSINSTALLERLOCATION/staticports.ini"
+IDMOHSPORTINIFILETEMPLATE="$IDMOHSINSTALLERLOCATION/Templates/staticports.ini"
+ORACLE_HOME=$ORACLE_HOME_BASE/oam_idm
+OHS_ORACLE_HOME="$ORACLE_HOME_BASE/oam_admin"
+OHS_ORACLE_HOME_NAME="oam_admin"
+
+ROOTSHRESPONSEFILENAME="rootsh_rsp.txt"
+
+IDMISINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101401"
+IDMISINSTALLSCRIPT="$IDMISINSTALLERLOCATION/IS_runinstaller.sh"
+IDMISRESPONSEFILE="$IDMISINSTALLERLOCATION/is_install_options.txt"
+IDMISRESPONSEFILETEMPLATE="$IDMINSTALLERALLLOCATION/Templates/is_install_options.txt"
+
+WP_ORACLE_HOME="$OHS_ORACLE_HOME/webcomponent/webpass"
+IDMWPINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101401"
+IDMWPINSTALLSCRIPT="$IDMWPINSTALLERLOCATION/WP_runinstaller.sh"
+IDMWPRESPONSEFILE="$IDMWPINSTALLERLOCATION/wp_install_options.txt"
+IDMWPRESPONSEFILETEMPLATE="$IDMINSTALLERALLLOCATION/Templates/wp_install_options.txt"
+WPSERVERID=$ENVIRONMENTNAME"_webpass_admin_7785"
+
+OIDCONFIGLOCATION="/oracle/config/OID"
+OIDUPDATEFILTERSCRIPT="$OIDCONFIGLOCATION/OID_update_filter.sh"
+OIDCONFIGTEMPLATESLOCATION="$MOUNTPOINTLOCATION/IDM/oid/Templates"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${NFSPATH}" = "x" ]; then
+    error_exit "NFSPATH not set."
+fi
+
+if [ "x${ORACLE_HOME}" = "x" ]; then
+    error_exit "ORACLE_HOME not set."
+fi
+
+if [ "x${JAVA_HOME}" = "x" ]; then
+    error_exit "JAVA_HOME not set."
+fi
+
+if [ "x${PASSPHRASE}" = "x" ]; then
+    error_exit "PASSPHRASE not set."
+fi
+
+if [ "x${ENVIRONMENTNAME}" = "x" ]; then
+    error_exit "ENVIRONMENTNAME not set."
+fi
+
+if [ "x${OHSPORT}" = "x" ]; then
+    error_exit "OHSPORT not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+echo_d "Mounting Oracle Installer"
+mkdir -p $MOUNTPOINTLOCATION
+mount $NFSPATH $MOUNTPOINTLOCATION
+check_error "Errors during mounting oracle installer.";
+echo_d "Mounting Oracle Installer -- DONE"
+
+#Setup Standard Users And Groups
+echo_d "Adding Oracle User"
+/usr/sbin/groupadd oinstall
+/usr/sbin/useradd -m -g oinstall oracle
+check_error "Errors during setting up user accounts.";
+echo_d "Adding Oracle User -- DONE"
+
+#Basic Directory Structure
+echo_d "Creating Basic Directory Structure"
+mkdir -p $INSTALLERTMPDIR
+mkdir -p $OHS_ORACLE_HOME
+mkdir -p $ORACLE_HOME
+mkdir -p $ORAINVENTORYDIR
+chown -R oracle:oinstall $INSTALLERTMPDIR
+chmod -R 775 $INSTALLERTMPDIR
+chown -R oracle:oinstall $OHS_ORACLE_HOME
+chmod -R 775 $OHS_ORACLE_HOME
+chown -R oracle:oinstall $ORACLE_HOME
+chmod -R 775 $ORACLE_HOME
+chown -R oracle:oinstall $ORAINVENTORYDIR
+chmod -R 775 $ORAINVENTORYDIR
+check_error "Errors during creating basic directory structure.";
+echo_d "Creating Basic Directory Structure -- DONE"
+
+#echo_d "Modifying the bash profile oracle user"
+echo "export ORACLE_HOME=$ORACLE_HOME" >> /home/oracle/.bash_profile
+echo "export TMP=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+echo "export TMPDIR=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+#echo_d "Modifying the bash profile oracle user -- DONE"
+
+# Copy IDM OAM Installer
+echo_d "Copying IDM OAM Installer"
+mkdir -p $IDMINSTALLERALLLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/oam/* $IDMINSTALLERALLLOCATION/.
+mkdir -p $IDMOHSINSTALLERLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/ohs/* $IDMOHSINSTALLERLOCATION/.
+check_error "Errors during copying IDM OAM Installer.";
+echo_d "Copying IDM OAM Installer -- DONE"
+
+#Copy oraInst.loc file
+cp -rp $IDMORAINSTFILE "/etc/oraInst.loc"
+
+# Change ownership of IDM OAM Installer
+echo_d "Change ownership of IDM OAM Installer"
+chown -R oracle:oinstall $IDMINSTALLERALLLOCATION
+chmod -R 775 $IDMINSTALLERALLLOCATION
+chown -R oracle:oinstall $IDMOHSINSTALLERLOCATION
+chmod -R 775 $IDMOHSINSTALLERLOCATION
+check_error "Errors during change ownership of IDM OAM installer.";
+echo_d "Change ownership of IDM OAM Installer -- DONE"
+
+echo_d "Making IDM OHS Installer Script"
+touch $IDMOHSINSTALLSCRIPT
+chown oracle:oinstall $IDMOHSINSTALLSCRIPT
+chmod a+x $IDMOHSINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMOHSINSTALLSCRIPT
+echo "cd $IDMOHSINSTALLERLOCATION" >> $IDMOHSINSTALLSCRIPT
+echo "echo y | ./runInstaller -silent -responseFile $IDMOHSRESPONSEFILE 3>&1 | cat" >> $IDMOHSINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMOHSINSTALLSCRIPT
+echo_d "Making IDM OHS Installer Script -- DONE"
+
+#Make oid_install.rsp
+
+echo_d "Prepare response file for IDM OHS Installer"
+HOSTNAME=$(hostname)
+DOMAINNAME=$(dnsdomainname)
+SERVERNAME=$HOSTNAME.$DOMAINNAME
+ISSERVERID=$HOSTNAME"_ois"
+
+cp -rp $IDMOHSRESPONSEFILETEMPLATE $IDMOHSRESPONSEFILE
+
+replace_string_in_file $IDMOHSRESPONSEFILE "<UNIX_GROUP_NAME>" "oinstall"
+replace_string_in_file $IDMOHSRESPONSEFILE "<FROM_LOCATION>" "$IDMOHSINSTALLERLOCATION/stage/products.xml"
+replace_string_in_file $IDMOHSRESPONSEFILE "<OHS_ORACLE_HOME>" "$OHS_ORACLE_HOME"
+replace_string_in_file $IDMOHSRESPONSEFILE "<OHS_ORACLE_HOME_NAME>" "$OHS_ORACLE_HOME_NAME"
+replace_string_in_file $IDMOHSRESPONSEFILE "<OUI_HOSTNAME>" "$SERVERNAME"
+replace_string_in_file $IDMOHSRESPONSEFILE "<s_asInstanceName>" "oam_admin"
+replace_string_in_file $IDMOHSRESPONSEFILE "<szl_PortListSelect_iniFile>" "$IDMOHSPORTINIFILE"
+
+echo_d "Prepare response file for IDM OHS Installer -- DONE"
+
+echo_d "Prepare port ini file for IDM OHS Installer"
+
+cp -rp $IDMOHSPORTINIFILETEMPLATE $IDMOHSPORTINIFILE
+
+replace_string_in_file $IDMOHSPORTINIFILE "<Oracle HTTP Server port>" "$OHSPORT"
+
+echo_d "Prepare port ini file for IDM OHS Installer -- DONE"
+
+echo_d "Running IDM OHS Installer Script"
+su - oracle -c $IDMOHSINSTALLSCRIPT
+echo_d "Running IDM OHS Installer Script -- DONE"
+
+echo_d "Running post OHS installation script root.sh"
+cp $IDMOHSINSTALLERLOCATION/Templates/$ROOTSHRESPONSEFILENAME $IDMOHSINSTALLERLOCATION/.
+$OHS_ORACLE_HOME/root.sh < $IDMOHSINSTALLERLOCATION/$ROOTSHRESPONSEFILENAME
+echo_d "Running post OHS installation script root.sh -- DONE"
+
+echo_d "Making IDM OAM IS Installer Script"
+touch $IDMISINSTALLSCRIPT
+chown oracle:oinstall $IDMISINSTALLSCRIPT
+chmod a+x $IDMISINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMISINSTALLSCRIPT
+echo "cd $IDMISINSTALLERLOCATION" >> $IDMISINSTALLSCRIPT
+echo "./Oracle_Access_Manager10_1_4_0_1_linux_Identity_Server -options $IDMISRESPONSEFILE  -silent" >> $IDMISINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMISINSTALLSCRIPT
+echo_d "Making IDM OAM IS Installer Script -- DONE"
+
+#Make is_install_options.txt
+
+echo_d "Prepare response file for IDM OAM IS Installer"
+
+cp -rp $IDMISRESPONSEFILETEMPLATE $IDMISRESPONSEFILE
+
+replace_string_in_file $IDMISRESPONSEFILE "<gccLibraryLocationBean.libraryLocation>" "$IDMINSTALLERALLLOCATION/gcc_lib"
+replace_string_in_file $IDMISRESPONSEFILE "<ois.installLocation>" "$ORACLE_HOME/identity"
+replace_string_in_file $IDMISRESPONSEFILE "<oisInfoBean.hostName>" "$SERVERNAME"
+replace_string_in_file $IDMISRESPONSEFILE "<oisInfoBean.serverID>" "$ISSERVERID"
+replace_string_in_file $IDMISRESPONSEFILE "<simpleModeBean.passphrase>" "$PASSPHRASE"
+replace_string_in_file $IDMISRESPONSEFILE "<dsInfoInput.dsName>" "$OVDHOSTNAME"
+replace_string_in_file $IDMISRESPONSEFILE "<dsInfoInput.dsPortNumber>" "$OVDPORT"
+replace_string_in_file $IDMISRESPONSEFILE "<dsInfoInput.bindDN>" "$OVDADMINUSER"
+replace_string_in_file $IDMISRESPONSEFILE "<dsInfoInput.password>" "$OVDADMINPASSWORD"
+replace_string_in_file $IDMISRESPONSEFILE "<OblixdsInfoInput.dsName>" "$OIDHOSTNAME"
+replace_string_in_file $IDMISRESPONSEFILE "<OblixdsInfoInput.dsPortNumber>" "$OIDPORT"
+replace_string_in_file $IDMISRESPONSEFILE "<OblixdsInfoInput.bindDN>" "$OIDADMINUSER"
+replace_string_in_file $IDMISRESPONSEFILE "<OblixdsInfoInput.password>" "$OIDADMINPASSWORD"
+
+echo_d "Prepare response file for IDM OAM IS Installer -- DONE"
+
+#Fix for IS installation permission issue
+chown -R oracle:oinstall "/oracle"
+
+echo_d "Running IDM OAM IS Installer Script"
+su - oracle -c $IDMISINSTALLSCRIPT
+echo_d "Running IDM OAM IS Installer Script -- DONE"
+
+echo_d "Making IDM OAM WP Installer Script"
+mkdir -p $WP_ORACLE_HOME
+chown -R oracle:oinstall $WP_ORACLE_HOME
+chmod -R 775 $WP_ORACLE_HOME
+
+touch $IDMWPINSTALLSCRIPT
+chown oracle:oinstall $IDMWPINSTALLSCRIPT
+chmod a+x $IDMWPINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMWPINSTALLSCRIPT
+echo "cd $IDMWPINSTALLERLOCATION" >> $IDMWPINSTALLSCRIPT
+echo "./Oracle_Access_Manager10_1_4_0_1_linux_OHS_WebPass -options $IDMWPRESPONSEFILE  -silent" >> $IDMWPINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMWPINSTALLSCRIPT
+echo_d "Making IDM OAM WP Installer Script -- DONE"
+
+#Make wp_install_options.txt
+
+echo_d "Prepare response file for IDM OAM WP Installer"
+
+cp -rp $IDMWPRESPONSEFILETEMPLATE $IDMWPRESPONSEFILE
+
+replace_string_in_file $IDMWPRESPONSEFILE "<gccLibraryLocationBean.libraryLocation>" "$IDMINSTALLERALLLOCATION/gcc_lib"
+replace_string_in_file $IDMWPRESPONSEFILE "<webpass.installLocation>" "$WP_ORACLE_HOME/identity"
+replace_string_in_file $IDMWPRESPONSEFILE "<webpassInfoBean.hostName>" "$SERVERNAME"
+replace_string_in_file $IDMWPRESPONSEFILE "<webpassInfoBean.webpassID>" "$WPSERVERID"
+replace_string_in_file $IDMWPRESPONSEFILE "<simpleModeBean.passphrase>" "$PASSPHRASE"
+replace_string_in_file $IDMWPRESPONSEFILE "<simpleModeBean.passphraseVerify>" "$PASSPHRASE"
+replace_string_in_file $IDMWPRESPONSEFILE "<askConfFilePathBean.askConfFilePathField>" "$OHS_ORACLE_HOME/Apache/Apache/conf/httpd.conf"
+
+echo_d "Prepare response file for IDM OAM WP Installer -- DONE"
+
+echo_d "Running IDM OAM WP Installer Script"
+su - oracle -c $IDMWPINSTALLSCRIPT
+echo_d "Running IDM OAM WP Installer Script -- DONE"
+
+#Create OID Config Directory Structure
+echo_d "Creating OID Config Directory Structure"
+mkdir -p $OIDCONFIGLOCATION
+chown -R oracle:oinstall $OIDCONFIGLOCATION
+chmod -R 775 $OIDCONFIGLOCATION
+check_error "Errors during creating OID config directory structure.";
+echo_d "Creating OID Config Directory Structure -- DONE"
+
+#Copy OID Configuration Template
+echo_d "Copying OID Configuration Template"
+cp -rp $OIDCONFIGTEMPLATESLOCATION/*.ldif $OIDCONFIGLOCATION/.
+chown -R oracle:oinstall $OIDCONFIGLOCATION
+check_error "Errors during copying OID ldif files.";
+echo_d "Copying OID Configuration Template -- DONE"
+
+#Create OID Update Filter Script
+echo_d "Create OID Update Filter Script"
+
+touch $OIDUPDATEFILTERSCRIPT
+chown oracle:oinstall $OIDUPDATEFILTERSCRIPT
+chmod a+x $OIDUPDATEFILTERSCRIPT
+
+echo '#!/bin/bash' >> $OIDUPDATEFILTERSCRIPT
+echo "cd $OIDCONFIGLOCATION" >> $OIDUPDATEFILTERSCRIPT
+echo "ldapmodify -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/update_filter.ldif" >> $OIDUPDATEFILTERSCRIPT
+echo "exit \"$?\"" >> $OIDUPDATEFILTERSCRIPT
+
+echo_d "Create OID Update Filter Script -- DONE"
+
+#Run OID Update Filter Script
+echo_d "Running OID Update Filter Script"
+su - oracle -c $OIDUPDATEFILTERSCRIPT
+check_error "Failed to update filter.";
+echo_d "Running OID Update Filter Script -- DONE"

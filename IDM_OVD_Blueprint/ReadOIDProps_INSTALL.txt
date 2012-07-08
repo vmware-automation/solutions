@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#IDM_OID_HOST=
+#IDM_OID_PORT=
+#IDM_OID_ADMIN_USER=
+#IDM_OID_ADMIN_PASS=
+#ENV_NAME=
+
+###########Shared Functions##################
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+####################SCRIPT EXECUTION ##################
+
+echo_d "Get environment information from vCO"
+# set Hostname variable
+
+echo $ENV_NAME
+echo_d "Get environment information from vCO -- Done"
+
+echo_d "Get oid.properties file from Perforce"
+
+echo_d "Import OID properties as environment variables"
+export $(cat oid.properties)
+echo $IDM_OID_HOST
+echo $IDM_OID_PORT
+echo $IDM_OID_ADMIN_USER
+echo $IDM_OID_ADMIN_PASS
+echo_d "Import OID properties as environment variables -- Done"

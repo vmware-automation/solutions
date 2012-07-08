@@ -1,0 +1,11 @@
+dn: cn=dsaconfig, cn=configsets, cn=oracle internet directory
+changetype: modify
+replace: orclinmemfiltprocess
+orclinmemfiltprocess: (|(obuseraccountcontrol=activated)(!(obuseraccountcontrol=*)))
+orclinmemfiltprocess: (|(!(obuseraccountcontrol=*))(obuseraccountcontrol=activated))
+orclinmemfiltprocess: (obapp=groupservcenter) (!(obdynamicparticipantsset=*))
+orclinmemfiltprocess: (objectclass=oblixorgperson)
+orclinmemfiltprocess: (objectclass=inetorgperson)
+orclinmemfiltprocess: (objectclass=vmwperson)
+orclinmemfiltprocess: (objectclass=oblixworkflowinstance)
+orclinmemfiltprocess: (objectclass=oblixworkflowstepinstance)

@@ -1,0 +1,322 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+#INSTALLATION PARAMETERS
+DATABASE_HOST_PORT="$DATABASE_HOST:$DATABASE_PORT"
+TABLESPACE_LOCATION="/oracle/oradata/$DATABASE_SID"
+MW_HOME=$MW_BASE/products/10.1.4/RepCA
+MOUNTPOINTLOCATION=/tmp/mount
+INSTALLERTMPDIR="/oracle/install/tmp"
+ORAINVENTORYDIR="/etc/oraInventory"
+
+IDMINSTALLERLOCATION="/oracle/install/RepCAinstaller"
+IDMCALLINSTALLSCRIPT="$IDMINSTALLERLOCATION/Disk1/RepCA_callinstaller.sh"
+IDMINSTALLSCRIPT="$IDMINSTALLERLOCATION/Disk1/RepCA_runinstaller.sh"
+IDMRESPONSEFILE="$IDMINSTALLERLOCATION/Disk1/repca_install_load.rsp"
+IDMRESPONSEFILETEMPLATE="$IDMINSTALLERLOCATION/Templates/repca_install_load.rsp"
+IDMORAINSTFILE="$IDMINSTALLERLOCATION/Templates/oraInst.loc"
+ROOTSHRESPONSEFILENAME="rootsh_rsp.txt"
+
+#CONFIGURATION PARAMETERS
+ORACLE_HOME=$MW_BASE/products/10.1.4/RepCA
+
+CONFIGTEMPLATESLOCATION="/oracle/install/RepCAinstaller/Templates"
+IDMCONFIGLOCATION="/oracle/config/RepCA"
+REPCARESPONSEFILE="$IDMCONFIGLOCATION/repca.rsp"
+IDMCONFIGLOADDBCRIPT="$IDMCONFIGLOCATION/RepCA_loadDB.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${NFSPATH}" = "x" ]; then
+    error_exit "NFSPATH not set."
+fi
+
+if [ "x${MW_BASE}" = "x" ]; then
+    error_exit "MW_BASE not set."
+fi
+
+if [ "${USE64BITJDK}" != "True" ] && [ "${USE64BITJDK}" != "False" ]; then
+    error_exit "USE64BITJDK not set or invalid, please set it True or False."
+fi
+
+if [ "x${ORACLE_HOME}" = "x" ]; then
+    error_exit "ORACLE_HOME not set."
+fi
+
+if [ "x${DATABASE_ORACLE_HOME}" = "x" ]; then
+    error_exit "DATABASE_ORACLE_HOME not set."
+fi
+
+if [ "x${DATABASE_HOST_PORT}" = "x" ]; then
+    error_exit "DATABASE_HOST_PORT not set."
+fi
+
+if [ "x${DATABASE_SERVICE_NAME}" = "x" ]; then
+    error_exit "DATABASE_SERVICE_NAME not set."
+fi
+
+if [ "x${DATABASE_PASSWORD}" = "x" ]; then
+    error_exit "DATABASE_PASSWORD not set."
+fi
+
+if [ "x${TABLESPACE_LOCATION}" = "x" ]; then
+    error_exit "TABLESPACE_LOCATION not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+echo_d "Mounting Oracle Installer"
+mkdir -p $MOUNTPOINTLOCATION
+#Mounting the NFS Drive
+#DIST=`cat /etc/redhat-release |sed s/\ release.*//`
+#if [ "$DIST" = "CentOS" ] ; then
+#    /sbin/service portmap start
+#else
+#    /sbin/service rpcbind start
+#fi
+mount $NFSPATH $MOUNTPOINTLOCATION
+check_error "Errors during mounting oracle installer.";
+echo_d "Mounting Oracle Installer -- DONE"
+
+#Setup Standard Users Ands Groups
+echo_d "Adding Oracle User"
+/usr/sbin/groupadd oinstall
+/usr/sbin/useradd -m -g oinstall oracle
+check_error "Errors during setting up user accounts.";
+echo_d "Adding Oracle User -- DONE"
+
+#Basic Directory Structure
+echo_d "Creating Basic Directory Structure"
+mkdir -p $INSTALLERTMPDIR
+mkdir -p $MW_HOME
+mkdir -p $ORAINVENTORYDIR
+chown -R oracle:oinstall $INSTALLERTMPDIR
+chmod -R 775 $INSTALLERTMPDIR
+chown -R oracle:oinstall $MW_HOME
+chmod -R 775 $MW_HOME
+chown -R oracle:oinstall $ORAINVENTORYDIR
+chmod -R 775 $ORAINVENTORYDIR
+check_error "Errors during creating basic directory structure.";
+echo_d "Creating Basic Directory Structure -- DONE"
+
+#Modify the bash profile oracle user
+echo_d "Modifying the bash profile oracle user"
+echo "export JAVA_HOME=$JAVA_HOME_64BIT" >> /home/oracle/.bash_profile
+echo "export TMP=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+echo "export TMPDIR=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+echo_d "Modifying the bash profile oracle user -- DONE"
+
+# Copy IDM RepCA Installer
+echo_d "Copying IDM RepCA Installer"
+mkdir -p $IDMINSTALLERLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/repca/* $IDMINSTALLERLOCATION/.
+check_error "Errors during copying IDM RepCA Installer.";
+echo_d "Copying IDM RepCA Installer -- DONE"
+
+# Change ownership of IDM RepCA Installer
+echo_d "Change ownership of IDM RepCA Installer"
+chown -R oracle:oinstall $IDMINSTALLERLOCATION
+chmod -R 775 $IDMINSTALLERLOCATION
+check_error "Errors during Change ownership of IDM RepCA installer.";
+echo_d "Change ownership of IDM RepCA Installer -- DONE"
+
+echo_d "Making Script to call IDM Installer"
+touch $IDMCALLINSTALLSCRIPT
+chown oracle:oinstall $IDMCALLINSTALLSCRIPT
+chmod a+x $IDMCALLINSTALLSCRIPT
+echo '#!/bin/bash' >> $IDMCALLINSTALLSCRIPT
+echo "linux32 bash +x $IDMINSTALLSCRIPT" >> $IDMCALLINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMCALLINSTALLSCRIPT
+echo_d "Making Script to call IDM Installer -- DONE"
+
+echo_d "Making IDM Installer Script"
+touch $IDMINSTALLSCRIPT
+chown oracle:oinstall $IDMINSTALLSCRIPT
+chmod a+x $IDMINSTALLSCRIPT
+
+echo '#!/bin/bash' >> $IDMINSTALLSCRIPT
+echo "unset LD_ASSUME_KERNEL" >> $IDMINSTALLSCRIPT
+echo "export ORACLE_HOME=$MW_HOME" >> $IDMINSTALLSCRIPT
+echo "cd $IDMINSTALLERLOCATION/Disk1" >> $IDMINSTALLSCRIPT
+echo "echo y | ./runInstaller PREREQ_CONFIG_LOCATION=$IDMINSTALLERLOCATION/1014repca/prereq  -paramFile $IDMINSTALLERLOCATION/1014repca/oraparam.ini -silent -responsefile $IDMRESPONSEFILE 3>&1 | cat" >> $IDMINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMINSTALLSCRIPT
+echo_d "Making IDM Installer Script -- DONE"
+
+#Make repca_install_load.rsp
+
+cp -rp $IDMRESPONSEFILETEMPLATE $IDMRESPONSEFILE
+replace_string_in_file $IDMRESPONSEFILE "<FROM_LOCATION>" "$IDMINSTALLERLOCATION/Disk1/stage/products.xml"
+replace_string_in_file $IDMRESPONSEFILE "<ORACLE_HOME>" "$ORACLE_HOME"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.options.ano.sns:PROD_HOME>" "$ORACLE_HOME/oracle.options.ano.sns"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.networking.netclt:PROD_HOME>" "$ORACLE_HOME/oracle.networking.netclt"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.networking.netmgr:PROD_HOME>" "$ORACLE_HOME/oracle.networking.netmgr"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.networking.netca:PROD_HOME>" "$ORACLE_HOME/oracle_networking_netca"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.options.ano.ssl:PROD_HOME>" "$ORACLE_HOME/oracle_options_ano_ssl"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.options.ano.ssl.owm:PROD_HOME>" "$ORACLE_HOME/oracle_options_ano_ssl_owm"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.assistants.acf:PROD_HOME>" "$ORACLE_HOME/oracle.assistants.acf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.utilities.util:PROD_HOME>" "$ORACLE_HOME/oracle_utilities_util"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.sqlldr:PROD_HOME>" "$ORACLE_HOME/oracel_rdbms_sqlldr"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.occi:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_occi"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.oci:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_oci"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.expimp:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_expimp"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.sqlplus:PROD_HOME>" "$ORACLE_HOME/oracle.rdbms.sqlplus"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.utilities.util_common:PROD_HOME>" "$ORACLE_HOME/oracle_utilities_util_common"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.p2k.precomp_common:PROD_HOME>" "$ORACLE_HOME/oracle.p2k.precomp_common"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.ssl_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_ssl_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.agent_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_agent_rsf_agent_rsf_cmp"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.clntsh_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_clntsh_rsf_clntsh_rsf_cmp"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.otrace_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_otrace_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.rdbms_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_rdbms_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.oid.tools:PROD_HOME>" "$ORACLE_HOME"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.xdk_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_rdbms_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.dbjava_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_dbjava_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.sqlplus_rsf:PROD_HOME>" "$ORACLE_HOME/oracle.rsf.sqlplus_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.nlsrtl_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_nlsrtl_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.install.instcommon:PROD_HOME>" "$ORACLE_HOME/oracle_install_instcommon"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.javavm.javatools:PROD_HOME>" "$ORACLE_HOME/oracle.java.javavm.javatools"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.javavm.visiorb:PROD_HOME>" "$ORACLE_HOME/oracle_java_javavm_visiorb"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.jdbc.thin11:PROD_HOME>" "$ORACLE_HOME/oracle_java_jdbc_thin11"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.xml.xsu:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_xml_xsu"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.jdbc.thin14:PROD_HOME>" "$ORACLE_HOME/oracle_java_jdbc_thin14"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.jdbc.oci_common:PROD_HOME>" "$ORACLE_HOME/oracle_java_jdbc_oci_common"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.jdbc.thin12:PROD_HOME>" "$ORACLE_HOME/oracle_java_jdbc_thin12"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.ldap_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_ldap_rsf_cmp"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.net_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_net_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.precomp_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_precomp_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.aqapi:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_aqapi"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rdbms.dbscripts:PROD_HOME>" "$ORACLE_HOME/oracle_rdbms_dbscripts"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.doc_rsf:PROD_HOME>" "$ORACLE_HOME/dcommon"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.oracore_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_oracore_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.platform_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_platform_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.rsf.plsql_rsf:PROD_HOME>" "$ORACLE_HOME/oracle_rsf_plsql_rsf"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.java.jdbc.jdbc_common:PROD_HOME>" "$ORACLE_HOME/oracle_java_jdbc_jdbc_common"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.xml.parser.java:PROD_HOME>" "$ORACLE_HOME/oracle.xml.parser.java"
+
+echo_d "Running IDM Installer Script"
+cp -rp $IDMORAINSTFILE "/etc/oraInst.loc"
+su - oracle -c $IDMCALLINSTALLSCRIPT
+check_error "Failed to install RepCA.";
+echo_d "Running IDM Installer Script -- DONE"
+
+echo_d "Running post installation script root.sh"
+cp -rp $IDMINSTALLERLOCATION/Templates/$ROOTSHRESPONSEFILENAME $IDMINSTALLERLOCATION/Disk1/.
+$MW_HOME/root.sh < $IDMINSTALLERLOCATION/Disk1/$ROOTSHRESPONSEFILENAME
+echo_d "Running post installation script root.sh -- DONE"
+
+#Create Config Directory Structure
+echo_d "Creating Config Directory Structure"
+mkdir -p $IDMCONFIGLOCATION
+chown -R oracle:oinstall $IDMCONFIGLOCATION
+chmod -R 775 $IDMCONFIGLOCATION
+check_error "Errors during creating config directory structure.";
+echo_d "Creating Config Directory Structure -- DONE"
+
+#Copy Configuration Template
+echo_d "Copying Configuration Template"
+
+cp $CONFIGTEMPLATESLOCATION/repca.rsp $REPCARESPONSEFILE
+
+check_error "Errors during copying repca.rsp.";
+chown oracle:oinstall $REPCARESPONSEFILE
+
+replace_string_in_file $REPCARESPONSEFILE "<DATABASE_ORACLE_HOME>" "$DATABASE_ORACLE_HOME"
+replace_string_in_file $REPCARESPONSEFILE "<LOG_DIRECTORY>" "$ORACLE_HOME/assistants/repca/log"
+replace_string_in_file $REPCARESPONSEFILE "<DATABASE_HOST_PORT>" "$DATABASE_HOST_PORT"
+replace_string_in_file $REPCARESPONSEFILE "<DATABASE_SERVICE_NAME>" "$DATABASE_SERVICE_NAME"
+replace_string_in_file $REPCARESPONSEFILE "<DATABASE_PASSWORD>" "$DATABASE_PASSWORD"
+replace_string_in_file $REPCARESPONSEFILE "<TABLESPACE_LOCATION>" "$TABLESPACE_LOCATION"
+
+echo_d "Copying Configuration Template -- DONE"
+
+#Create OVD Add Adapters Script
+echo_d "Create RepCA load DB Script"
+
+touch $IDMCONFIGLOADDBCRIPT
+chown oracle:oinstall $IDMCONFIGLOADDBCRIPT
+chmod a+x $IDMCONFIGLOADDBCRIPT
+
+echo '#!/bin/bash' >> $IDMCONFIGLOADDBCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $IDMCONFIGLOADDBCRIPT
+echo "export ORACLE_HOME=$ORACLE_HOME" >> $IDMCONFIGLOADDBCRIPT
+echo "$ORACLE_HOME/runRepca -SILENT -RESPONSEFILE repca.rsp" >> $IDMCONFIGLOADDBCRIPT
+echo "exit \"$?\"" >> $IDMCONFIGLOADDBCRIPT
+
+echo_d "Create RepCA load DB Script -- DONE"
+
+#Run RepCA load DB Script
+echo_d "Running RepCA load DB Script"
+su - oracle -c $IDMCONFIGLOADDBCRIPT
+check_error "Failed to load DB by RepCA.";
+echo_d "Running RepCA load DB Script -- DONE"
+
+return 0

@@ -1,0 +1,17 @@
+-W gccLibraryLocationBean.libraryLocation="<gccLibraryLocationBean.libraryLocation>"
+# Log file for this installation is located at /tmp/WebPass.log
+-P webpass.installLocation="<webpass.installLocation>"
+-W localePanel.defaultLang="en-us"
+-W localePanel.installLanguages="en-us;"
+-W userInfoBean.user="oracle"
+-W userInfoBean.group="oinstall"
+-W securityModeBean.securityModeChoices="simple"
+-W webpassInfoBean.hostName="<webpassInfoBean.hostName>"
+-W webpassInfoBean.webpassID="<webpassInfoBean.webpassID>"
+-W webpassInfoBean.portNumber="6022"
+# The following are suggested to be entered as command line arguments.
+-W simpleModeBean.passphrase="<simpleModeBean.passphrase>"
+-W simpleModeBean.passphraseVerify="<simpleModeBean.passphrase>"
+-W askAutoUpdateWSBean.askAutoUpdateWSField="Yes"
+-W askConfFilePathBean.askConfFilePathField="<askConfFilePathBean.askConfFilePathField>"
+-W askLaunchBrowserBean.launchBrowser="No"

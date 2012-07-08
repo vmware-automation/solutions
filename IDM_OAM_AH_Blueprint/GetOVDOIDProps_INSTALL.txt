@@ -1,0 +1,45 @@
+#!/bin/bash
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#IDM_OID_HOST=
+#IDM_OID_PORT=
+#IDM_OID_ADMIN_USER=
+#IDM_OID_ADMIN_PASS=
+
+#IDM_OVD_HOST=
+#IDM_OVD_PORT=
+#IDM_OVD_ADMIN_USER=
+#IDM_OVD_ADMIN_PASS=
+
+#ENV_NAME=
+
+###########Shared Functions##################
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+####################SCRIPT EXECUTION ##################
+# set Hostname variable
+# Use ENV_NAME if specified.
+
+echo_d "Get oid.properties file from repo -- Done"
+
+echo_d "Import OID properties as environment variables"
+export $(cat oid.properties)
+echo $IDM_OID_HOST
+echo $IDM_OID_PORT
+echo $IDM_OID_ADMIN_USER
+echo $IDM_OID_ADMIN_PASS
+echo_d "Import OID properties as environment variables -- Done"
+
+echo_d "Get ovd.properties file from repo"
+
+echo_d "Import OVD properties as environment variables"
+export $(cat ovd.properties)
+echo $IDM_OVD_HOST
+echo $IDM_OVD_PORT
+echo $IDM_OVD_ADMIN_USER
+echo $IDM_OVD_ADMIN_PASS
+echo_d "Import OVD properties as environment variables -- Done"

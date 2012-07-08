@@ -1,0 +1,237 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MW_HOME=$MW_BASE/products/fmw
+ORACLE_HOME=$MW_HOME/asinst_1
+WLS_INSTALL_DIR=$MW_HOME/wlserver_10.3
+MOUNTPOINTLOCATION=/tmp/mount
+INSTALLERTMPDIR="/oracle/install/tmp"
+ORAINVENTORYDIR="/etc/oraInventory"
+
+WEBLOGICINSTALLERLOCATION="/oracle/install/wlsinstaller"
+WEBLOGICINSTALLSCRIPT="$WEBLOGICINSTALLERLOCATION/wls_runinstaller.sh"
+WEBLOGICSILENTXML="$WEBLOGICINSTALLERLOCATION/silent.xml"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${NFSPATH}" = "x" ]; then
+    error_exit "NFSPATH not set."
+fi
+
+if [ "x${MW_BASE}" = "x" ]; then
+    error_exit "MW_BASE not set."
+fi
+
+if [ "${USE64BITJDK}" != "True" ] && [ "${USE64BITJDK}" != "False" ]; then
+    error_exit "USE64BITJDK not set or invalid, please set it True or False."
+fi
+
+if [ "x${LISTENPORT}" = "x" ]; then 
+    error_exit "LISTENPORT not set."
+else
+   if ! valid_int $LISTENPORT; then
+      error_exit "Invalid parameter LISTENPORT"
+   fi
+fi
+
+if [ ${SSLENABLE} != "True" ] && [ ${SSLENABLE} != "False" ]; then
+    error_exit "SSLENABLE not set or invalid, please set it True or False."
+fi
+
+if [ "x${SSLLISTENPORT}" = "x" ]; then 
+    error_exit "SSLLISTENPORT not set."
+else
+   if ! valid_int $SSLLISTENPORT; then
+      error_exit "Invalid parameter SSLLISTENPORT"
+   fi
+fi
+
+if [ "x${WLSUSER}" = "x" ]; then
+    error_exit "WLSUSER not set."
+fi
+
+if [ "x${WLSPASSWORD}" = "x" ]; then
+    error_exit "WLSPASSWORD not set."
+else
+   if ! valid_length $WLSPASSWORD; then
+      error_exit "Invalid parameter WLSPASSWORD, password must be more than 8 character"
+   fi
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+basearch=`uname -p`
+
+echo_d "Mounting Oracle Installer"
+mkdir -p $MOUNTPOINTLOCATION
+mount $NFSPATH $MOUNTPOINTLOCATION
+check_error "Errors during mounting oracle installer.";
+echo_d "Mounting Oracle Installer -- DONE"
+
+#Setup Standard Users Ands Groups
+echo_d "Adding Oracle User"
+/usr/sbin/groupadd oinstall
+/usr/sbin/useradd -m -g oinstall oracle
+check_error "Errors during setting up user accounts.";
+echo_d "Adding Oracle User -- DONE"
+
+#Basic Directory Structure
+echo_d "Creating Basic Directory Structure"
+mkdir -p $WEBLOGICINSTALLERLOCATION
+mkdir -p $INSTALLERTMPDIR
+mkdir -p $MW_HOME
+mkdir -p $ORAINVENTORYDIR
+chown -R oracle:oinstall $WEBLOGICINSTALLERLOCATION
+chmod -R 775 $WEBLOGICINSTALLERLOCATION
+chown -R oracle:oinstall $INSTALLERTMPDIR
+chmod -R 775 $INSTALLERTMPDIR
+chown -R oracle:oinstall $MW_HOME
+chmod -R 775 $MW_HOME
+chown -R oracle:oinstall $ORAINVENTORYDIR
+chmod -R 775 $ORAINVENTORYDIR
+check_error "Errors during creating basic directory structure.";
+echo_d "Creating Basic Directory Structure -- DONE"
+
+# Copy Weblogic Installer
+echo_d "Copying Weblogic Installer"
+cp $MOUNTPOINTLOCATION/IDM/wls/wls1032_generic.jar $WEBLOGICINSTALLERLOCATION
+check_error "Errors during copying Weblogic installer.";
+chown oracle:oinstall $WEBLOGICINSTALLERLOCATION/wls1032_generic.jar
+check_error "Errors during changemode Weblogic installer.";
+echo_d "Copying Weblogic Installer -- DONE"
+
+#Modify the bash profile oracle user
+echo_d "Modifying the bash profile oracle user"
+echo "export MW_HOME=$MW_HOME" >> /home/oracle/.bash_profile
+echo "umask 027" >> /home/oracle/.bash_profile
+echo "export JAVA_HOME=$JAVA_HOME_64BIT" >> /home/oracle/.bash_profile
+echo "export ORACLE_HOME=$ORACLE_HOME" >> /home/oracle/.bash_profile
+echo "export TMP=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+echo "export TMPDIR=$INSTALLERTMPDIR" >> /home/oracle/.bash_profile
+echo_d "Modifying the bash profile oracle user -- DONE"
+
+#Make INSTALLER
+echo_d "Making Weblogic Installer Script"
+
+touch $WEBLOGICINSTALLSCRIPT
+chown oracle:oinstall $WEBLOGICINSTALLSCRIPT
+chmod a+x $WEBLOGICINSTALLSCRIPT
+
+echo "#!/bin/bash -x" > $WEBLOGICINSTALLSCRIPT
+echo "cd $WEBLOGICINSTALLERLOCATION" >> $WEBLOGICINSTALLSCRIPT
+echo "java -Djava.io.tmpdir=$INSTALLERTMPDIR -jar wls1032_generic.jar -mode=silent -silent_xml=silent.xml -log=silent_install.log" >> $WEBLOGICINSTALLSCRIPT
+echo "exit \"$?\"" >> $WEBLOGICINSTALLSCRIPT
+
+#Make silent.xml
+touch $WEBLOGICSILENTXML
+chown oracle:oinstall $WEBLOGICSILENTXML
+
+cat > $WEBLOGICSILENTXML << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<bea-installer> 
+  <input-fields>
+    <data-value name="BEAHOME" value="$MW_HOME" />
+    <data-value name="WLS_INSTALL_DIR" value="$WLS_INSTALL_DIR" />
+    <data-value name="COMPONENT_PATHS"
+      value="WebLogic Server/Core Application Server|WebLogic Server/Administration Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|WebLogic Server/WebLogic SCA" />  
+    <data-value name="INSTALL_NODE_MANAGER_SERVICE" value="yes"  />
+    <data-value name="NODEMGR_PORT" value="5559" />
+    <data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="yes"/>
+    <data-value name="LOCAL_JVMS" value="$JAVA_HOME_64BIT"/>
+   </input-fields> 
+</bea-installer>
+EOF
+
+echo_d "Making Weblogic Installer Script -- DONE"
+
+#Switch Oracle User
+echo_d "Starting Weblogic Installer"
+su - oracle -c $WEBLOGICINSTALLSCRIPT
+#bash $WEBLOGICINSTALLSCRIPT
+
+check_error "Unsuccessfull Weblogic Installation";
+
+for (( ; ; ))
+do
+  if [ $? -eq 0 ]
+  then
+    grep -q "The installation was successfull" $WEBLOGICINSTALLERLOCATION/silent_install.log
+    if [ $? -eq 0 ]
+    then
+      echo_d "*** Success: WebLogic Installed"
+      break
+    fi
+  fi
+  echo_d "*** Error: WebLogic Not Installed"
+  exit 1
+done

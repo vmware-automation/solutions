@@ -1,0 +1,233 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MOUNTPOINTLOCATION=/tmp/mount
+
+IDMINSTALLERALLLOCATION="/oracle/install/OAMinstaller"
+
+IDMWGINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101401"
+IDMWGINSTALLSCRIPT="$IDMWGINSTALLERLOCATION/WG_runinstaller.sh"
+IDMWGRESPONSEFILE="$IDMWGINSTALLERLOCATION/wg_install_options.txt"
+IDMWGRESPONSEFILETEMPLATE="$IDMINSTALLERALLLOCATION/Templates/wg_install_options.txt"
+
+IDMPATCHINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101420_patchset"
+IDMPATCHINSTALLSCRIPT="$IDMPATCHINSTALLERLOCATION/WG_PATCH_runinstaller.sh"
+IDMBPINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101420_BP"
+IDMBPINSTALLSCRIPT="$IDMBPINSTALLERLOCATION/WG_BP_runinstaller.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${NFSPATH}" = "x" ]; then
+    error_exit "NFSPATH not set."
+fi
+
+if [ "x${JAVA_HOME}" = "x" ]; then
+    error_exit "JAVA_HOME not set."
+fi
+
+if [ "x${OAM_HOSTNAME}" = "x" ]; then
+    error_exit "OAM_HOSTNAME not set."
+fi
+
+if [ "x${PASSPHRASE}" = "x" ]; then
+    error_exit "PASSPHRASE not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+# Update /etc/hosts
+echo_d "Add OAM host information to WG server"
+echo "$OAM_ADMIN_IP    $OAM_ADMIN_HOST     $OAM_HOSTNAME" >> /etc/hosts
+check_error "Error during adding OAM host information to WG server";
+echo_d "Add OAM host information to WG server -- DONE"
+
+echo_d "Mounting Oracle Installer"
+mkdir -p $MOUNTPOINTLOCATION
+mount $NFSPATH $MOUNTPOINTLOCATION
+check_error "Errors during mounting oracle installer.";
+echo_d "Mounting Oracle Installer -- DONE"
+
+#Setup Standard Users And Groups
+echo_d "Adding Oracle User"
+/usr/sbin/groupadd oinstall
+/usr/sbin/useradd -m -g oinstall oracle
+check_error "Errors during setting up user accounts.";
+echo_d "Adding Oracle User -- DONE"
+
+#Basic Directory Structure
+echo_d "Creating Basic Directory Structure"
+mkdir -p $WG_ORACLE_HOME
+chown -R oracle:oinstall $WG_ORACLE_HOME
+chmod -R 775 $WG_ORACLE_HOME
+check_error "Errors during creating basic directory structure.";
+echo_d "Creating Basic Directory Structure -- DONE"
+
+#echo_d "Modifying the bash profile oracle user"
+echo "export ORACLE_HOME=$WG_ORACLE_HOME" >> /home/oracle/.bash_profile
+#echo_d "Modifying the bash profile oracle user -- DONE"
+
+# Copy IDM OAM Installer
+echo_d "Copying IDM OAM Installer"
+mkdir -p $IDMINSTALLERALLLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/oam/* $IDMINSTALLERALLLOCATION/.
+check_error "Errors during copying IDM OAM Installer.";
+echo_d "Copying IDM OAM Installer -- DONE"
+
+# Change ownership of IDM OAM Installer
+echo_d "Change ownership of IDM OAM Installer"
+chown -R oracle:oinstall $IDMINSTALLERALLLOCATION
+chmod -R 775 $IDMINSTALLERALLLOCATION
+check_error "Errors during change ownership of IDM OAM installer.";
+echo_d "Change ownership of IDM OAM Installer -- DONE"
+
+echo_d "Making IDM OAM WG Installer Script"
+
+touch $IDMWGINSTALLSCRIPT
+chown oracle:oinstall $IDMWGINSTALLSCRIPT
+chmod a+x $IDMWGINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMWGINSTALLSCRIPT
+echo "cd $IDMWGINSTALLERLOCATION" >> $IDMWGINSTALLSCRIPT
+echo "./Oracle_Access_Manager10_1_4_0_1_linux_APACHE_WebGate -options $IDMWGRESPONSEFILE  -silent" >> $IDMWGINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMWGINSTALLSCRIPT
+echo_d "Making IDM OAM WG Installer Script -- DONE"
+
+#Make wg_install_options.txt
+
+echo_d "Prepare response file for IDM OAM WG Installer"
+
+cp -rp $IDMWGRESPONSEFILETEMPLATE $IDMWGRESPONSEFILE
+
+replace_string_in_file $IDMWGRESPONSEFILE "<gccLibraryLocationBean.libraryLocation>" "$IDMINSTALLERALLLOCATION/gcc_lib"
+replace_string_in_file $IDMWGRESPONSEFILE "<webgate.installLocation>" "$WG_ORACLE_HOME/access"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.serverID>" "$ACCESSSERVERID"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.hostName>" "$OAM_HOSTNAME"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.webgateID>" "$WGSERVERID"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.password>" "$WGPASSWORD"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.passphrase>" "$PASSPHRASE"
+replace_string_in_file $IDMWGRESPONSEFILE "<simpleModeBean.passphraseVerify>" "$PASSPHRASE"
+replace_string_in_file $IDMWGRESPONSEFILE "<askConfFilePathBean.askConfFilePathField>" "/usr/local/apache/conf/httpd.conf"
+
+echo_d "Prepare response file for IDM OAM WG Installer -- DONE"
+
+#Fix for WG installation permission issue
+chown -R oracle:oinstall "/apps/oracle"
+
+#Grant ownership to oracle user when updating apache conf file
+ls -ld /usr/local/apache/conf
+ls -ltr /usr/local/apache/conf
+chown -R oracle:oinstall "/usr/local/apache/conf"
+
+echo_d "Running IDM OAM WG Installer Script"
+su - oracle -c $IDMWGINSTALLSCRIPT
+echo_d "Running IDM OAM WG Installer Script -- DONE"
+
+#Revert ownership back after updating apache conf file
+chown -R root:root "/usr/local/apache/conf"
+ls -ld /usr/local/apache/conf
+ls -ltr /usr/local/apache/conf
+
+#Create OAM WG Patch Installation Script
+echo_d "Create OAM WG Patch Installation Script"
+
+touch $IDMPATCHINSTALLSCRIPT
+chown oracle:oinstall $IDMPATCHINSTALLSCRIPT
+chmod a+x $IDMPATCHINSTALLSCRIPT
+
+echo '#!/bin/bash' >> $IDMPATCHINSTALLSCRIPT
+echo "cd $IDMPATCHINSTALLERLOCATION" >> $IDMPATCHINSTALLSCRIPT
+echo "$IDMPATCHINSTALLERLOCATION/webgate/apache/Oracle_Access_Manager10_1_4_2_0_Patch_linux_APACHE_WebGate_binary_parameter/patchinst -id $WG_ORACLE_HOME/access" >> $IDMPATCHINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMPATCHINSTALLSCRIPT
+
+echo_d "Create OAM WG Patch Installation Script -- DONE"
+
+echo_d "Running OAM WG Patch Installation Script"
+su - oracle -c $IDMPATCHINSTALLSCRIPT
+echo_d "Running OAM WG Patch Installation Script -- DONE"
+
+#Create OAM WG BP Installation Script
+echo_d "Create OAM WG BP Installation Script"
+
+touch $IDMBPINSTALLSCRIPT
+chown oracle:oinstall $IDMBPINSTALLSCRIPT
+chmod a+x $IDMBPINSTALLSCRIPT
+
+echo '#!/bin/bash' >> $IDMBPINSTALLSCRIPT
+echo "cd $IDMBPINSTALLERLOCATION" >> $IDMBPINSTALLSCRIPT
+echo "$IDMBPINSTALLERLOCATION/webgate/apache/Oracle_Access_Manager10_1_4_2_0_BP05_Patch_linux_APACHE_WebGate_binary_parameter/patchinst -id $WG_ORACLE_HOME/access" >> $IDMBPINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMBPINSTALLSCRIPT
+
+echo_d "Create OAM WG BP Installation Script -- DONE"
+
+echo_d "Running OAM WG BP Installation Script"
+su - oracle -c $IDMBPINSTALLSCRIPT
+echo_d "Running OAM WG BP Installation Script -- DONE"

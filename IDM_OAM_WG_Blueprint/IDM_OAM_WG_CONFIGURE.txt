@@ -1,0 +1,161 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#WG_ORACLE_HOME=/oracle/webcomponent/webgate
+
+#########SCRIPT INTERNAL PARAMETERS#########
+CONFIGTEMPLATESLOCATION="/oracle/install/OAMinstaller/Templates"
+IDMCONFIGLOCATION="/apps/oracle/config/OAM"
+
+OAMFIXROOTCASCRIPT="$IDMCONFIGLOCATION/OAM_fix_root_ca_WG.sh"
+OAMCONFIGWGSCRIPT="$IDMCONFIGLOCATION/OAM_config_WG.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${CONFIGTEMPLATESLOCATION}" = "x" ]; then
+    error_exit "CONFIGTEMPLATESLOCATION not set."
+fi
+
+if [ "x${IDMCONFIGLOCATION}" = "x" ]; then
+    error_exit "IDMCONFIGLOCATION not set."
+fi
+
+if [ "x${WG_ORACLE_HOME}" = "x" ]; then
+    error_exit "WG_ORACLE_HOME not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#Create Config Directory Structure
+echo_d "Creating Config Directory Structure"
+mkdir -p $IDMCONFIGLOCATION
+chown -R oracle:oinstall $IDMCONFIGLOCATION
+chmod -R 775 $IDMCONFIGLOCATION
+check_error "Errors during creating config directory structure.";
+echo_d "Creating Config Directory Structure -- DONE"
+
+#Copy Configuration Files
+echo_d "Copying Configuration Files"
+cp -rp $CONFIGTEMPLATESLOCATION/simpleCA.tar $IDMCONFIGLOCATION/.
+check_error "Errors during copying configuration files.";
+echo_d "Copying Configuration Files -- DONE"
+
+#Create OAM Fix Root CA Script
+echo_d "Create OAM Fix Root CA Script"
+
+touch $OAMFIXROOTCASCRIPT
+chown oracle:oinstall $OAMFIXROOTCASCRIPT
+chmod a+x $OAMFIXROOTCASCRIPT
+
+echo '#!/bin/bash' >> $OAMFIXROOTCASCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $OAMFIXROOTCASCRIPT
+echo "mv $WG_ORACLE_HOME/access/oblix/tools/openssl/simpleCA $WG_ORACLE_HOME/access/oblix/tools/openssl/simpleCA.orig" >> $OAMFIXROOTCASCRIPT
+echo "mkdir $WG_ORACLE_HOME/access/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "tar xf simpleCA.tar -C $WG_ORACLE_HOME/access/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "exit \"$?\"" >> $OAMFIXROOTCASCRIPT
+
+echo_d "Create OAM Fix Root CA Script -- DONE"
+
+#Run Fix Root CA Script
+echo_d "Running OAM Fix Root CA Script"
+su - oracle -c $OAMFIXROOTCASCRIPT
+check_error "Failed to fix Root CA of OAM IS and WP.";
+echo_d "Running OAM Fix Root CA Script -- DONE"
+
+#Create OAM Configure WG Script
+echo_d "Create OAM Configure WG Script"
+
+touch $OAMCONFIGWGSCRIPT
+chown oracle:oinstall $OAMCONFIGWGSCRIPT
+chmod a+x $OAMCONFIGWGSCRIPT
+
+echo '#!/bin/bash' >> $OAMCONFIGWGSCRIPT
+echo "cd $WG_ORACLE_HOME/access/oblix/tools/configureWebGate" >> $OAMCONFIGWGSCRIPT
+echo "./start_configureWebGate -i $WG_ORACLE_HOME/access -t WebGate -w $WGSERVERID -m simple -c install -S -P $WGPASSWORD -h $OAM_HOSTNAME -p 6021 -a $ACCESSSERVERID -r $PASSPHRASE" >> $OAMCONFIGWGSCRIPT
+echo "exit \"$?\"" >> $OAMCONFIGWGSCRIPT
+
+echo_d "Create OAM Configure WG Script -- DONE"
+
+#Run OAM Configure WG Script
+echo_d "Running OAM Configure WG Script"
+su - oracle -c $OAMCONFIGWGSCRIPT
+check_error "Failed to configure OAM WG.";
+echo_d "Running OAM Configure WG Script -- DONE"
+
+#Run OAM Restart WG HTTP Server Script
+echo_d "Running OAM Restart WG HTTP Server Script"
+/usr/local/apache/bin/apachectl stop
+sleep 10
+/usr/local/apache/bin/apachectl start
+sleep 10
+check_error "Failed to restart OAM WG HTTP Server .";
+echo_d "Running OAM Restart WG HTTP Server Script -- DONE"
