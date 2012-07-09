@@ -12,14 +12,14 @@ To create a vFabric tc Server service in vFabric Application Director, follow th
 
 1.   [Add a new service to the catalog.](http://pubs.vmware.com/appdirector-1/topic/com.vmware.appdirector.using.doc/GUID-68665799-52B6-4B70-82CE-9F03C60958FB.html)
 
-2.   When entering details about the new service, use the following values, as shown in [this screenshot](service-create.png):
+2.   When entering details about the new service, use the following values, as shown in [this screenshot](vfabric-tc-server/service-create.png):
 
      **Name**: `vFabric tc Server 2.7`  
      **Service Version**: `2.7`  
      **Tags**: `Application Servers`  
      **Supported OSes**: `RHEL32 5.x` `RHEL64 5.x` `RHEL32 6.x` `RHEL64 6.x`  
      **Supported Components**:  `JAR`, `WAR`, `SCRIPT`  
-3.   Add the following required Properties to the service, as shown in [this screenshot](service-properties.png):
+3.   Add the following required Properties to the service, as shown in [this screenshot](vfabric-tc-server/service-properties.png):
 <table border=1>
     <tr>
       <th style="background-color:#F0F0F0">Property Name</th>
@@ -42,7 +42,7 @@ To create a vFabric tc Server service in vFabric Application Director, follow th
         <td>`/opt/vmware/vfabric-tc-server-standard`</td>
     </tr> 
 </table>
-4.  Copy and paste the contents of the `tcserver-install.sh`, `tcserver-config.sh`, and `tcserver-start.sh` scripts to the corresponding service lifecycle stages under the Action tab, as shown in [this screenshot](service-actions.png).
+4.  Copy and paste the contents of the `tcserver-install.sh`, `tcserver-config.sh`, and `tcserver-start.sh` scripts to the corresponding service lifecycle stages under the Action tab, as shown in [this screenshot](vfabric-tc-server/service-actions.png).
 
 # Creating and Deploying an Application that Uses a vFabric tc Server Service  
 
