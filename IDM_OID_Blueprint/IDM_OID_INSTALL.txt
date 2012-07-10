@@ -1,0 +1,287 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+DBHOSTPORT="$DBHOST:$DBPORT"
+
+MOUNTPOINTLOCATION=/tmp/mount
+INSTALLERTMPDIR="/oracle/install/tmp"
+ORAINVENTORYDIR="/etc/oraInventory"
+
+IDMINSTALLERALLLOCATION="/oracle/install/OIDinstaller"
+
+IDMINSTALLERLOCATION="/oracle/install/OIDinstaller/oid_101401"
+IDMCALLINSTALLSCRIPT="$IDMINSTALLERLOCATION/Disk1/OID_callinstaller.sh"
+IDMINSTALLSCRIPT="$IDMINSTALLERLOCATION/Disk1/OID_runinstaller.sh"
+IDMRESPONSEFILE="$IDMINSTALLERLOCATION/Disk1/oid_install.rsp"
+IDMRESPONSEFILETEMPLATE="$IDMINSTALLERLOCATION/../Templates/oid_install.rsp"
+
+IDMPATCHINSTALLERLOCATION="/oracle/install/OIDinstaller/oid_101430"
+IDMPATCHCALLINSTALLSCRIPT="$IDMPATCHINSTALLERLOCATION/Disk1/OID_patch_callinstaller.sh"
+IDMPATCHINSTALLSCRIPT="$IDMPATCHINSTALLERLOCATION/Disk1/OID_patch_runinstaller.sh"
+IDMPATCHRESPONSEFILE="$IDMPATCHINSTALLERLOCATION/Disk1/oid_patch_install.rsp"
+IDMPATCHRESPONSEFILETEMPLATE="$IDMPATCHINSTALLERLOCATION/../Templates/oid_patch_install.rsp"
+
+ROOTSHRESPONSEFILENAME="rootsh_rsp.txt"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${NFSPATH}" = "x" ]; then
+    error_exit "NFSPATH not set."
+fi
+
+if [ "x${ORACLE_HOME}" = "x" ]; then
+    error_exit "ORACLE_HOME not set."
+fi
+
+if [ "${USE64BITJDK}" != "True" ] && [ "${USE64BITJDK}" != "False" ]; then
+    error_exit "USE64BITJDK not set or invalid, please set it True or False."
+fi
+
+if [ "x${JAVA_HOME_64BIT}" = "x" ]; then
+    error_exit "JAVA_HOME_64BIT not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#echo_d "Updating pre-requiste packages"
+#YUM_OID_DEPS="gcc-* setarch* sysstat* libstdc++* compat-* control-center-* glibc-* binutils-* make-* openmotif* xorg-x11-libs-*"
+#yum --nogpgcheck -y install $YUM_OID_DEPS
+#echo_d "Updating pre-requiste packages -- DONE"
+
+#echo_d "Mounting Oracle Installer" -- commented as this step is covered by RepCA installation
+#mkdir -p $MOUNTPOINTLOCATION
+#Mounting the NFS Drive
+#DIST=`cat /etc/redhat-release |sed s/\ release.*//`
+#if [ "$DIST" = "CentOS" ] ; then
+#    /sbin/service portmap start
+#else
+#    /sbin/service rpcbind start
+#fi
+#mount $NFSPATH $MOUNTPOINTLOCATION
+#check_error "Errors during mounting oracle installer.";
+#echo_d "Mounting Oracle Installer -- DONE"
+
+#Setup Standard Users And Groups -- commented as this step is covered by RepCA installation
+#echo_d "Adding Oracle User"
+#/usr/sbin/groupadd oinstall
+#/usr/sbin/useradd -m -g oinstall oracle
+#check_error "Errors during setting up user accounts.";
+#echo_d "Adding Oracle User -- DONE"
+
+#Basic Directory Structure
+echo_d "Creating Basic Directory Structure"
+mkdir -p $INSTALLERTMPDIR
+mkdir -p $ORACLE_HOME
+mkdir -p $ORAINVENTORYDIR
+chown -R oracle:oinstall $INSTALLERTMPDIR
+chmod -R 775 $INSTALLERTMPDIR
+chown -R oracle:oinstall $ORACLE_HOME
+chmod -R 775 $ORACLE_HOME
+chown -R oracle:oinstall $ORAINVENTORYDIR
+chmod -R 775 $ORAINVENTORYDIR
+check_error "Errors during creating basic directory structure.";
+echo_d "Creating Basic Directory Structure -- DONE"
+
+echo_d "Modifying the bash profile oracle user"
+echo "export ORACLE_HOME=$ORACLE_HOME" >> /home/oracle/.bash_profile
+echo_d "Modifying the bash profile oracle user -- DONE"
+
+#Copy oraInst.loc file -- commented as this step is covered by RepCA installation
+#cp -rp $IDMORAINSTFILE "/etc/oraInst.loc"
+
+# Copy IDM OID Installer
+echo_d "Copying IDM OID Installer"
+mkdir -p $IDMINSTALLERALLLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/oid/* $IDMINSTALLERALLLOCATION/.
+check_error "Errors during copying IDM OID Installer.";
+echo_d "Copying IDM OID Installer -- DONE"
+
+# Change ownership of IDM OID Installer
+echo_d "Change ownership of IDM OID Installer"
+chown -R oracle:oinstall $IDMINSTALLERALLLOCATION
+chmod -R 775 $IDMINSTALLERALLLOCATION
+check_error "Errors during change ownership of IDM OID installer.";
+echo_d "Change ownership of IDM OID Installer -- DONE"
+
+echo_d "Making Script to call IDM Installer"
+touch $IDMCALLINSTALLSCRIPT
+chown oracle:oinstall $IDMCALLINSTALLSCRIPT
+chmod a+x $IDMCALLINSTALLSCRIPT
+echo '#!/bin/bash' >> $IDMCALLINSTALLSCRIPT
+echo "linux32 bash +x $IDMINSTALLSCRIPT" >> $IDMCALLINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMCALLINSTALLSCRIPT
+echo_d "Making Script to call IDM Installer -- DONE"
+
+echo_d "Making IDM Installer Script"
+touch $IDMINSTALLSCRIPT
+chown oracle:oinstall $IDMINSTALLSCRIPT
+chmod a+x $IDMINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMINSTALLSCRIPT
+echo "cd $IDMINSTALLERLOCATION/Disk1" >> $IDMINSTALLSCRIPT
+echo "echo y | ./runInstaller PREREQ_CONFIG_LOCATION=$IDMINSTALLERLOCATION/../1014im/prereq -paramFile $IDMINSTALLERLOCATION/../1014im/oraparam.ini -silent -responseFile $IDMRESPONSEFILE 3>&1 | cat" >> $IDMINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMINSTALLSCRIPT
+echo_d "Making IDM Installer Script -- DONE"
+
+#Make oid_install.rsp
+
+echo_d "Prepare response file for IDM Installer"
+HOSTNAME=$(hostname)
+DOMAINNAME=$(dnsdomainname)
+SERVERNAME=$HOSTNAME.$DOMAINNAME
+
+cp -rp $IDMRESPONSEFILETEMPLATE $IDMRESPONSEFILE
+
+replace_string_in_file $IDMRESPONSEFILE "<UNIX_GROUP_NAME>" "oinstall"
+replace_string_in_file $IDMRESPONSEFILE "<FROM_LOCATION>" "$IDMINSTALLERLOCATION/Disk1/stage/products.xml"
+replace_string_in_file $IDMRESPONSEFILE "<LOCATION_FOR_DISK2>" "$IDMINSTALLERLOCATION/Disk2"
+replace_string_in_file $IDMRESPONSEFILE "<ORACLE_HOME>" "$ORACLE_HOME"
+replace_string_in_file $IDMRESPONSEFILE "<ORACLE_HOME_NAME>" "$ORACLE_HOME_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<OUI_HOSTNAME>" "$SERVERNAME"
+replace_string_in_file $IDMRESPONSEFILE "<sl_ocmInfo>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<sl_ocmInfo_again>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.iappserver.instance:szl_Instance_name>" "$OIDINSTANCENAME"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.iappserver.instance:szl_Instance_password>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.iappserver.instance:szl_Instance_password_again>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<oracle.iappserver.infrastructure:szl_InstanceInformation>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<OIDpassword>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<OIDhost>" "$SERVERNAME"
+replace_string_in_file $IDMRESPONSEFILE "<OIDadminName>" "$OIDADMINUSER"
+replace_string_in_file $IDMRESPONSEFILE "<szl_RepositoryUserInput_Username>" "SYS"
+replace_string_in_file $IDMRESPONSEFILE "<szl_RepositoryUserInput_Password>" "$DBSYSPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<szl_RepositoryUserInput_ServiceName>" "$DBSERVICENAME"
+replace_string_in_file $IDMRESPONSEFILE "<szl_RepositoryUserInput_HostnamePort>" "$DBHOSTPORT"
+replace_string_in_file $IDMRESPONSEFILE "<HAhostName>" "$SERVERNAME"
+replace_string_in_file $IDMRESPONSEFILE "<SSOhost>" "$SERVERNAME"
+replace_string_in_file $IDMRESPONSEFILE "<DBhostPort>" "$DBHOSTPORT"
+replace_string_in_file $IDMRESPONSEFILE "<DBUsername>" "SYS"
+replace_string_in_file $IDMRESPONSEFILE "<DBServiceName>" "$DBSERVICENAME"
+replace_string_in_file $IDMRESPONSEFILE "<DBPassword>" "$DBSYSPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<s_group>" "oinstall"
+echo_d "Prepare response file for IDM Installer -- DONE"
+
+
+echo_d "Running IDM Installer Script"
+su - oracle -c $IDMCALLINSTALLSCRIPT
+echo_d "Running IDM Installer Script -- DONE"
+
+echo_d "Running post installation script root.sh"
+cp -rp $IDMINSTALLERLOCATION/../Templates/$ROOTSHRESPONSEFILENAME $IDMINSTALLERLOCATION/Disk1/.
+$ORACLE_HOME/root.sh < $IDMINSTALLERLOCATION/Disk1/$ROOTSHRESPONSEFILENAME
+echo_d "Running post installation script root.sh -- DONE"
+
+echo_d "Making Script to call IDM Patch Installer"
+touch $IDMPATCHCALLINSTALLSCRIPT
+chown oracle:oinstall $IDMPATCHCALLINSTALLSCRIPT
+chmod a+x $IDMPATCHCALLINSTALLSCRIPT
+echo '#!/bin/bash' >> $IDMPATCHCALLINSTALLSCRIPT
+echo "linux32 bash +x $IDMPATCHINSTALLSCRIPT" >> $IDMPATCHCALLINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMPATCHCALLINSTALLSCRIPT
+echo_d "Making Script to call IDM Patch Installer -- DONE"
+
+echo_d "Making IDM Patch Installer Script"
+touch $IDMPATCHINSTALLSCRIPT
+chown oracle:oinstall $IDMPATCHINSTALLSCRIPT
+chmod a+x $IDMPATCHINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMPATCHINSTALLSCRIPT
+echo "cd $IDMPATCHINSTALLERLOCATION/Disk1" >> $IDMPATCHINSTALLSCRIPT
+echo "echo y | ./runInstaller -silent -responseFile $IDMPATCHRESPONSEFILE 3>&1 | cat" >> $IDMPATCHINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMPATCHINSTALLSCRIPT
+echo_d "Making IDM Patch Installer Script -- DONE"
+
+#Make oid_install.rsp
+echo_d "Prepare response file for IDM Patch Installer"
+cp -rp $IDMPATCHRESPONSEFILETEMPLATE $IDMPATCHRESPONSEFILE
+replace_string_in_file $IDMPATCHRESPONSEFILE "<UNIX_GROUP_NAME>" "oinstall"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<FROM_LOCATION>" "$IDMPATCHINSTALLERLOCATION/Disk1/stage/products.xml"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<ORACLE_HOME>" "$ORACLE_HOME"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<ORACLE_HOME_NAME>" "$ORACLE_HOME_NAME"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<OUI_HOSTNAME>" "$SERVERNAME"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<oracle.iappserver.st_infrastructure:szl_InstanceInformation>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<oracle.iappserver.st_infrastructure:szlSpecifyOIDLogin_user>" "$OIDADMINUSER"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<oracle.iappserver.st_infrastructure:szlSpecifyOIDLogin_password>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<szl_SYSPassword>" "$DBSYSPASSWORD"
+replace_string_in_file $IDMPATCHRESPONSEFILE "<DBhostPort>" "$DBHOSTPORT"
+echo_d "Prepare response file for IDM Patch Installer -- DONE"
+
+echo_d "Running IDM Patch Installer Script"
+su - oracle -c $IDMPATCHCALLINSTALLSCRIPT
+echo_d "Running IDM Patch Installer Script -- DONE"
+
+echo_d "Running post installation script root.sh"
+cp -rp $IDMPATCHINSTALLERLOCATION/../Templates/$ROOTSHRESPONSEFILENAME $IDMPATCHINSTALLERLOCATION/Disk1/.
+$ORACLE_HOME/root.sh < $IDMPATCHINSTALLERLOCATION/Disk1/$ROOTSHRESPONSEFILENAME
+echo_d "Running post installation script root.sh -- DONE"
+
+return 0

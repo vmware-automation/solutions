@@ -1,0 +1,15 @@
+#!/usr/bin/ksh
+
+# Import global conf 
+. $global_conf
+
+hostname $DB_HOSTNAME
+
+sed -i '1i\127.0.0.1    localhost.localdomain localhost' /etc/hosts
+sed -i "s/OEL-EBS-DB/$DB_HOSTNAME/g" /etc/hosts 
+
+sed -i "s/OEL-EBS-DB/$DB_HOSTNAME/g" /etc/sysconfig/network
+
+sed "s/vmware.com/vf.vmware.com/g" /etc/resolv.conf > /etc/resolvnew.conf
+mv /etc/resolvnew.conf /etc/resolv.conf
+

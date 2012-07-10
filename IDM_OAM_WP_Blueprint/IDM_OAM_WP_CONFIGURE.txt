@@ -1,0 +1,226 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#ORACLE_HOME_BASE=/oracle/products/10.1.4.0.1
+
+#########SCRIPT INTERNAL PARAMETERS#########
+CONFIGTEMPLATESLOCATION="/oracle/install/OAMinstaller/Templates"
+IDMCONFIGLOCATION="/oracle/config/OAM"
+OHS_ORACLE_HOME="$ORACLE_HOME_BASE/oam_web"
+
+OAMFIXOPMNXMLSCRIPT="$IDMCONFIGLOCATION/OAM_fix_opmn_xml.sh"
+OAMFIXROOTCASCRIPT="$IDMCONFIGLOCATION/OAM_fix_root_ca_WP.sh"
+OAMRESTARTWPSCRIPT="$IDMCONFIGLOCATION/OAM_restart_WP.sh"
+
+MOUNTPOINTLOCATION=/tmp/mount
+SETUPHOME="/oracle/config"
+SETUPLOCATION="$SETUPHOME/workflows"
+WFSCRIPT="$SETUPLOCATION/workflow_wsdl_setup.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${CONFIGTEMPLATESLOCATION}" = "x" ]; then
+    error_exit "CONFIGTEMPLATESLOCATION not set."
+fi
+
+if [ "x${IDMCONFIGLOCATION}" = "x" ]; then
+    error_exit "IDMCONFIGLOCATION not set."
+fi
+
+if [ "x${ORACLE_HOME_BASE}" = "x" ]; then
+    error_exit "ORACLE_HOME_BASE not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#Create Config Directory Structure
+echo_d "Creating Config Directory Structure"
+mkdir -p $IDMCONFIGLOCATION
+chown -R oracle:oinstall $IDMCONFIGLOCATION
+chmod -R 775 $IDMCONFIGLOCATION
+check_error "Errors during creating config directory structure.";
+echo_d "Creating Config Directory Structure -- DONE"
+
+#Copy Configuration Files
+echo_d "Copying Configuration Files"
+cp -rp $CONFIGTEMPLATESLOCATION/opmn_fix.xml $IDMCONFIGLOCATION/.
+cp -rp $CONFIGTEMPLATESLOCATION/simpleCA.tar $IDMCONFIGLOCATION/.
+check_error "Errors during copying configuration files.";
+echo_d "Copying Configuration Files -- DONE"
+
+# Copy WF Configuration LDIFs
+echo_d "Copying WF Configuration LDIFs"
+cp -rp $MOUNTPOINTLOCATION/IDM/oam/Templates/workflows $SETUPHOME/.
+check_error "Error during copying WF Configuration LDIFs"
+echo_d "Copying WF Configuration LDIFs -- DONE"
+
+# Change ownership of OAM WF Configuration Scripts
+echo_d "Change ownership of OAM WF Configuration Scripts"
+chown -R oracle:oinstall $SETUPLOCATION
+chmod -R 775 $SETUPLOCATION
+check_error "Errors during ownership of OAM WF Configuration Scripts"
+echo_d "Change ownership of OAM WF Configuration Scripts -- DONE"
+
+#Create OAM Fix opmn.xml Script
+echo_d "Create OAM Fix opmn.xml Script"
+
+touch $OAMFIXOPMNXMLSCRIPT
+chown oracle:oinstall $OAMFIXOPMNXMLSCRIPT
+chmod a+x $OAMFIXOPMNXMLSCRIPT
+
+echo '#!/bin/bash' >> $OAMFIXOPMNXMLSCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $OAMFIXOPMNXMLSCRIPT
+echo "mv $OHS_ORACLE_HOME/opmn/conf/opmn.xml $OHS_ORACLE_HOME/opmn/conf/opmn.xml.orig" >> $OAMFIXOPMNXMLSCRIPT
+echo "sed '/<process-type id=\"HTTP_Server\" module-id=\"OHS\">/ r opmn_fix.xml' < $OHS_ORACLE_HOME/opmn/conf/opmn.xml.orig > $OHS_ORACLE_HOME/opmn/conf/opmn.xml" >> $OAMFIXOPMNXMLSCRIPT
+echo "exit \"$?\"" >> $OAMFIXOPMNXMLSCRIPT
+
+echo_d "Create OAM Fix opmn.xml Script -- DONE"
+
+#Run Fix opmn.xml Script
+echo_d "Running OAM Fix opmn.xml Script"
+su - oracle -c $OAMFIXOPMNXMLSCRIPT
+check_error "Failed to fix opmn.xml of OAM OHS.";
+echo_d "Running OAM Fix opmn.xml Script -- DONE"
+
+#Create OAM Fix Root CA Script
+echo_d "Create OAM Fix Root CA Script"
+
+touch $OAMFIXROOTCASCRIPT
+chown oracle:oinstall $OAMFIXROOTCASCRIPT
+chmod a+x $OAMFIXROOTCASCRIPT
+
+echo '#!/bin/bash' >> $OAMFIXROOTCASCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $OAMFIXROOTCASCRIPT
+echo "mv $OHS_ORACLE_HOME/webcomponent/webpass/identity/oblix/tools/openssl/simpleCA $OHS_ORACLE_HOME/webcomponent/webpass/identity/oblix/tools/openssl/simpleCA.orig" >> $OAMFIXROOTCASCRIPT
+echo "mkdir $OHS_ORACLE_HOME/webcomponent/webpass/identity/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "tar xf simpleCA.tar -C $OHS_ORACLE_HOME/webcomponent/webpass/identity/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "exit \"$?\"" >> $OAMFIXROOTCASCRIPT
+
+echo_d "Create OAM Fix Root CA Script -- DONE"
+
+#Run Fix Root CA Script
+echo_d "Running OAM Fix Root CA Script"
+su - oracle -c $OAMFIXROOTCASCRIPT
+check_error "Failed to fix Root CA of OAM WP.";
+echo_d "Running OAM Fix Root CA Script -- DONE"
+
+#Create OAM Workflow WSDL/XML Script
+echo_d "Create OAM Workflow WSDL/XML Script"
+
+touch $WFSCRIPT
+chown oracle:oinstall $WFSCRIPT
+chmod a+x $WFSCRIPT
+
+echo '#!/bin/bash' >> $WFSCRIPT
+echo "# Configure WSDL/XMLSchema Files on Webpass WebServer" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Copying WSDL/XMLSchema Files ..\"" >> $WFSCRIPT
+echo "cp $SETUPLOCATION/WebServices.tar $ORACLE_HOME_BASE/oam_web/webcomponent/webpass/identity/oblix" >> $WFSCRIPT
+echo "cd $ORACLE_HOME_BASE/oam_web/webcomponent/webpass/identity/oblix" >> $WFSCRIPT
+echo "tar -xvf WebServices.tar" >> $WFSCRIPT
+echo "if [ -d WebServices ]; then echo \"--Done\";else echo \"Error while copying WebServices Directory\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "echo \" Creating symbolic links for  WSDL/XMLSchema ..\"" >> $WFSCRIPT
+echo "cd $ORACLE_HOME_BASE/oam_web/Apache/Apache/htdocs" >> $WFSCRIPT
+echo "ln -s $ORACLE_HOME_BASE/oam_web/webcomponent/webpass/identity/oblix/WebServices/WSDL WSDL" >> $WFSCRIPT
+echo "ln -s $ORACLE_HOME_BASE/oam_web/webcomponent/webpass/identity/oblix/WebServices/XMLSchema XMLSchema" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+
+echo_d "Create OAM Workflow WSDL/XML Script -- DONE"
+
+#Run OAM Workflow WSDL/XML Script
+echo_d "Running OAM Workflow WSDL/XML Script"
+su - oracle -c $WFSCRIPT
+check_error "Failed to run OAM Workflow WSDL/XML script";
+echo_d "Running OAM Workflow WSDL/XML Script -- DONE"
+
+#Create OAM Restart WP Script
+echo_d "Create OAM Restart WP Script"
+
+touch $OAMRESTARTWPSCRIPT
+chown oracle:oinstall $OAMRESTARTWPSCRIPT
+chmod a+x $OAMRESTARTWPSCRIPT
+
+echo '#!/bin/bash' >> $OAMRESTARTWPSCRIPT
+echo "$OHS_ORACLE_HOME/opmn/bin/opmnctl stopall" >> $OAMRESTARTWPSCRIPT
+echo "sleep 10" >> $OAMRESTARTWPSCRIPT
+echo "$OHS_ORACLE_HOME/opmn/bin/opmnctl startall" >> $OAMRESTARTWPSCRIPT
+echo "sleep 10" >> $OAMRESTARTWPSCRIPT
+echo "exit \"$?\"" >> $OAMRESTARTWPSCRIPT
+
+echo_d "Create OAM Restart WP Script -- DONE"
+
+#Run OAM Restart WP Script
+echo_d "Running OAM Restart WP Script"
+su - oracle -c $OAMRESTARTWPSCRIPT
+check_error "Failed to restart OAM IS and WP.";
+echo_d "Running OAM Restart WP Script -- DONE"

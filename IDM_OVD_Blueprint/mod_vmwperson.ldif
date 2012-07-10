@@ -1,0 +1,41 @@
+version: 1
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.25 NAME 'customernumber' DESC 'VMware user type attribute for external users. Modified by Anas Perwez of Oracle Corporation on 10/2/2009.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.2.15 NAME 'createdBy' DESC 'CreatedBy attribute for WebServices & IDM auditing. Created by Steve Tout of Oracle Corporation on 8/14/2007.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.1 NAME 'userType' DESC 'VMware user type attribute for external users. Modified by Praveena of Oracle Corporation on 8/14/2007.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.2 NAME 'userStatus' DESC 'VMware user status attribute for users. Created by Steve Tout of Oracle Corporation on 8/14/2007.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.10 NAME 'jiveID' DESC 'VMware jiveID attribute for external users. Created by Steve Tout of Oracle Corporation on 8/14/2007.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.20 NAME 'modifiedBy' DESC 'VMware modifiedBy attribute for external users. Created by Steve Tout of Oracle Corporation on 8/14/2007.' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add:  attributetypes
+attributetypes: ( 1.3.6.1.4.1.971.21.1.2.30 NAME 'vmwEnrollmentFlag' DESC 'attribute to specify whether the user is Enrolled or not. Created by Anas Perwez for 2-step registration' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE USAGE userApplications )
+
+dn: cn=schema
+changetype: modify
+add: objectclasses
+objectclasses: ( 1.3.6.1.4.1.971.21.1.2.80 NAME 'vmwPerson' DESC 'VMware defined objectclass' SUP ( inetOrgPerson $ organizationalPerson $ person $ top ) AUXILIARY MAY ( jiveID $ userStatus $ userType $ createdBy $ modifiedBy $ customernumber $ vmwEnrollmentFlag ) )
+

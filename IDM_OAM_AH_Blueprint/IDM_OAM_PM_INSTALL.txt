@@ -1,0 +1,185 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+IDMINSTALLERALLLOCATION="/oracle/install/OAMinstaller"
+OHS_ORACLE_HOME="$ORACLE_HOME_BASE/oam_admin"
+
+PM_ORACLE_HOME="$ORACLE_HOME_BASE/oam_admin/webcomponent/webpass/access"
+IDMPMINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101401"
+IDMPMINSTALLSCRIPT="$IDMPMINSTALLERLOCATION/PM_runinstaller.sh"
+IDMPMRESPONSEFILE="$IDMPMINSTALLERLOCATION/pm_install_options.txt"
+IDMPMRESPONSEFILETEMPLATE="$IDMINSTALLERALLLOCATION/Templates/pm_install_options.txt"
+
+IDMCONFIGLOCATION="/oracle/config/OAM"
+OAMFIXROOTCASCRIPT="$IDMCONFIGLOCATION/OAM_fix_root_ca_PM.sh"
+OAMRESTARTISWPSCRIPT="$IDMCONFIGLOCATION/OAM_restart_IS_WP.sh"
+
+OIDCONFIGLOCATION="/oracle/config/OID"
+OIDOAMPMCLEANUPSCRIPT="$OIDCONFIGLOCATION/OID_OAMPM_cleanup.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${ORACLE_HOME_BASE}" = "x" ]; then
+    error_exit "ORACLE_HOME_BASE not set."
+fi
+
+if [ "x${JAVA_HOME}" = "x" ]; then
+    error_exit "JAVA_HOME not set."
+fi
+
+if [ "x${PASSPHRASE}" = "x" ]; then
+    error_exit "PASSPHRASE not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#Create OID OAM PM Clean Up Script
+echo_d "Create OID OAM PM Clean Up Script"
+
+touch $OIDOAMPMCLEANUPSCRIPT
+chown oracle:oinstall $OIDOAMPMCLEANUPSCRIPT
+chmod a+x $OIDOAMPMCLEANUPSCRIPT
+
+echo '#!/bin/bash' >> $OIDOAMPMCLEANUPSCRIPT
+echo "cd $OIDCONFIGLOCATION" >> $OIDOAMPMCLEANUPSCRIPT
+echo "ldapmodify -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/OID_oblix_schema_delete.ldif" >> $OIDOAMPMCLEANUPSCRIPT
+echo "ldapmodify -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/OID_oblix_schema_index_delete.ldif" >> $OIDOAMPMCLEANUPSCRIPT
+echo "exit \"$?\"" >> $OIDOAMPMCLEANUPSCRIPT
+
+echo_d "Create OID OAM PM Clean Up Script -- DONE"
+
+#Run OID OAM PM Clean Up Script
+echo_d "Running OID OAM PM Clean Up Script"
+su - oracle -c $OIDOAMPMCLEANUPSCRIPT
+check_error "Failed to clean up OID for OAM PM installation.";
+echo_d "Running OID OAM PM Clean Up Script -- DONE"
+
+echo_d "Making IDM OAM PM Installer Script"
+touch $IDMPMINSTALLSCRIPT
+chown oracle:oinstall $IDMPMINSTALLSCRIPT
+chmod a+x $IDMPMINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMPMINSTALLSCRIPT
+echo "cd $IDMPMINSTALLERLOCATION" >> $IDMPMINSTALLSCRIPT
+echo "./Oracle_Access_Manager10_1_4_0_1_linux_OHS_Policy_Manager -options $IDMPMRESPONSEFILE  -silent" >> $IDMPMINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMPMINSTALLSCRIPT
+echo_d "Making IDM OAM PM Installer Script -- DONE"
+
+#Make pm_install_options.txt
+
+echo_d "Prepare response file for IDM OAM PM Installer"
+
+cp -rp $IDMPMRESPONSEFILETEMPLATE $IDMPMRESPONSEFILE
+
+replace_string_in_file $IDMPMRESPONSEFILE "<gccLibraryLocationBean.libraryLocation>" "$IDMINSTALLERALLLOCATION/gcc_lib"
+replace_string_in_file $IDMPMRESPONSEFILE "<manager.installLocation>" "$PM_ORACLE_HOME"
+replace_string_in_file $IDMPMRESPONSEFILE "<dsInfoInput.dsName>" "$OIDHOSTNAME"
+replace_string_in_file $IDMPMRESPONSEFILE "<dsInfoInput.dsPortNumber>" "$OIDPORT"
+replace_string_in_file $IDMPMRESPONSEFILE "<dsInfoInput.bindDN>" "$OIDADMINUSER"
+replace_string_in_file $IDMPMRESPONSEFILE "<dsInfoInput.password>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMPMRESPONSEFILE "<simpleModeBean.passphrase>" "$PASSPHRASE"
+replace_string_in_file $IDMPMRESPONSEFILE "<askConfFilePathBean.askConfFilePathField>" "$OHS_ORACLE_HOME/Apache/Apache/conf/httpd.conf"
+
+echo_d "Prepare response file for IDM OAM PM Installer -- DONE"
+
+echo_d "Running IDM OAM PM Installer Script"
+su - oracle -c $IDMPMINSTALLSCRIPT
+echo_d "Running IDM OAM PM Installer Script -- DONE"
+
+#Create OAM Fix Root CA Script
+echo_d "Create OAM Fix Root CA Script"
+
+touch $OAMFIXROOTCASCRIPT
+chown oracle:oinstall $OAMFIXROOTCASCRIPT
+chmod a+x $OAMFIXROOTCASCRIPT
+
+echo '#!/bin/bash' >> $OAMFIXROOTCASCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $OAMFIXROOTCASCRIPT
+echo "mv $PM_ORACLE_HOME/oblix/tools/openssl/simpleCA $PM_ORACLE_HOME/oblix/tools/openssl/simpleCA.orig" >> $OAMFIXROOTCASCRIPT
+echo "mkdir $PM_ORACLE_HOME/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "tar xf simpleCA.tar -C $PM_ORACLE_HOME/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "exit \"$?\"" >> $OAMFIXROOTCASCRIPT
+
+echo_d "Create OAM Fix Root CA Script -- DONE"
+
+#Run Fix Root CA Script
+echo_d "Running OAM Fix Root CA Script"
+su - oracle -c $OAMFIXROOTCASCRIPT
+check_error "Failed to fix Root CA of OAM PM.";
+echo_d "Running OAM Fix Root CA Script -- DONE"
+
+#Run OAM Restart OHS IS Script
+echo_d "Running OAM Restart OHS IS Script"
+su - oracle -c $OAMRESTARTISWPSCRIPT
+check_error "Failed to restart OAM OHS and IS.";
+echo_d "Running OAM Restart OHS IS Script -- DONE"

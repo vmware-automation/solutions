@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Specify values for each data-value name as follows:
+
+     BEAHOME            Complete pathname to the Middleware Home directory that
+                        will contain this installation.
+
+     WLS_INSTALL_DIR    Complete pathname to the product installation
+                        directory in which to install WebLogic Server.
+
+     COMPONENT_PATHS    Components and subcomponents to be installed.
+                        To install multiple components, separate the components
+                        with a bar (|).
+                        To install subcomponents, specify a
+                        component/subcomponent combination. For example,
+                        to install Core Application Server, use
+                        "WebLogic Server/Core Application Server".
+-->
+
+<bea-installer>
+    <input-fields>
+        <data-value name="BEAHOME" value="%BEAHOME%" />
+        <data-value name="COMPONENT_PATHS" value="Common Infrastructure Engineering/Uninstall|Common Infrastructure Engineering/Patch Client|Common Infrastructure Engineering/Patch Attachment Facility|Common Infrastructure Engineering/Clone Facility|WebLogic Server/Core Application Server|WebLogic Server/Administration Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic SCA|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|WebLogic Server/Evaluation Database|WebLogic Server/Workshop Code Completion Support|Oracle Configuration Manager/Data Collector|Oracle Coherence/Coherence Product Files" />
+    </input-fields>
+</bea-installer>
+

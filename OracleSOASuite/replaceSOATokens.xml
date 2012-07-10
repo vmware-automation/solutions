@@ -1,0 +1,16 @@
+<project name="SCA template Generator" default="replaceTokens">
+	<property name="filename" value="SOA-endpoint-map.xml"/>
+	<property name="soaclonelocation" value="/tmp/mount/SOACLONE"/>		
+		
+	<target name="replaceTokens">
+		<echo message="${bpel.db.user}"/>
+		<echo message="${bpel.db.password}"/>
+		<echo message="${bpel.db.url}"/>			
+	<xslt in="${soaclonelocation}/${filename}" out="${filename}" style="${soaclonelocation}/replaceToken.xsl">
+		<param name="bpel.db.user" expression="${bpel.db.user}"/>
+		<param name="bpel.db.password" expression="${bpel.db.password}"/>
+		<param name="bpel.db.url" expression="${bpel.db.url}"/>		
+	</xslt>
+    </target>
+	
+</project>

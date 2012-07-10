@@ -1,0 +1,86 @@
+#!/usr/bin/ksh
+#
+
+# Import global conf 
+. $global_conf
+
+# Declare Library Utilities / Procedure Calls
+
+Proc_Log()
+{
+echo "`date` - ${S_PROC_MESSAGE} \n" | tee -a ${R_LOGFILE}
+}
+
+Error_Check()
+{
+if [ "$?" != "0" ]
+then
+        echo "********************************" | tee -a ${R_LOGFILE}
+        echo "Failure in Cloning Procedure" | tee -a ${R_LOGFILE}
+        echo "Error whilst ${S_PROC_MESSAGE} " | tee -a ${R_LOGFILE}
+        echo "********************************" | tee -a ${R_LOGFILE}
+	echo="******** Procedure Aborted *******" | tee -a ${R_LOGFILE}
+	exit 2
+fi
+}
+
+# End of Internal Procedure Calls
+
+
+# This NFS is used for target Application binaries. oracle/d1 will be used for application binaries
+
+mkdir /oracle/d1
+
+mount -t nfs -o hard,rsize=32768,wsize=32768 $NFS_HOST:/vfsbdropbox /oracle/d1
+
+mkdir /oracle/clone
+mkdir /oracle/clone/scripts
+mkdir /oracle/clone/scripts/log
+
+# Set Runtime variables
+
+R_SCRIPTDIR="/oracle/clone/scripts"
+R_LOGFILE="${R_SCRIPTDIR}/log/Clone_AP.log"
+R_APPSINFO="${R_SCRIPTDIR}/APPS_INFO"
+R_HOST=`hostname`
+R_APCREATESCRIPT="${R_SCRIPTDIR}/Create_AP.sh"
+
+# Create New Log Files and APPS_INFO
+
+touch ${R_LOGFILE} ${R_APPSINFO}
+
+# Copy the required scripts to configure Application tier
+
+cp /oracle/d1/EBS_SCRIPTS/new/ap/*.sh /oracle/clone/scripts/
+chown -R applmgr:dba /oracle/clone/
+chmod 755 /oracle/clone/scripts/*
+
+# Obtain required Runtime Data
+
+
+S_PROC_MESSAGE=" Obtain Cloning Runtime INFO"; Proc_Log
+
+R_SID=$SID
+R_PORT=$PORT_POOL
+R_APPS=$NEW_APPS_PASS
+R_SYS=$SYS_PASS
+R_SYSADMIN=$SYSADMIN_PASS
+R_SEC=$CUR_APPS_PASS
+R_DBHOST=$DB_HOSTNAME
+R_CMHOST=$CM_HOSTNAME
+R_APHOST=$AP_HOSTNAME
+
+echo "sid=${R_SID}" | tee -a ${R_APPSINFO}
+echo "port=${R_PORT}" | tee -a ${R_APPSINFO}
+echo "apps=${R_APPS}" | tee -a ${R_APPSINFO}
+echo "system=${R_SYS}" | tee -a ${R_APPSINFO}
+echo "sysadmin=${R_SYSADMIN}" | tee -a ${R_APPSINFO}
+echo "sec=${R_SEC}" | tee -a ${R_APPSINFO}
+echo "dbhost=${R_DBHOST}" | tee -a ${R_APPSINFO}
+echo "cmhost=${R_CMHOST}" | tee -a ${R_APPSINFO}
+echo "aphost=${R_APHOST}" | tee -a ${R_APPSINFO}
+
+
+# Login as applmgr and run the Apps Creation script
+
+su - applmgr -c $R_APCREATESCRIPT

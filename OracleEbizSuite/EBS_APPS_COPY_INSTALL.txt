@@ -1,0 +1,121 @@
+#!/usr/bin/ksh
+
+# Import global conf 
+. $global_conf
+
+#
+# Declare Library Utilities / Procedure Calls
+#
+
+Proc_Log()
+{
+echo "`date` - ${S_PROC_MESSAGE} \n" | tee -a ${R_LOGFILE}
+}
+
+Error_Check()
+{
+if [ "$?" != "0" ]
+then
+        echo "********************************" | tee -a ${R_LOGFILE}
+        echo "Failure in Cloning Procedure" | tee -a ${R_LOGFILE}
+        echo "Error whilst ${S_PROC_MESSAGE} " | tee -a ${R_LOGFILE}
+        echo "********************************" | tee -a ${R_LOGFILE}
+	echo="******** Procedure Aborted *******" | tee -a ${R_LOGFILE}
+	exit 2
+fi
+}
+
+
+# End of Internal Procedure Calls
+
+# Start of Copying Application Binaries
+# Obtain required Runtime Data
+
+S_PROC_MESSAGE="Get Database Name "; Proc_Log
+
+R_SID=$SID
+R_HOST=`hostname`
+
+echo "Sid = ${R_SID}" | tee -a ${R_LOGFILE}
+
+# NFS Mount the Source disk to copy Application Binaries 
+mkdir /oracle/backup_vmwbak
+#mount sc9-ns4-960-or:/ora-bak-ebs-shareappl /oracle/backup_vmwbak
+mount -t nfs -o hard,rsize=32768,wsize=32768 sc9-ns4-960-or:/ora-bak-ebs-shareappl /oracle/backup_vmwbak
+
+# This NFS is used for target Application binaries. - oracle/d1 will be used for application binaries
+mkdir /oracle/d1
+#mount sc9-ns120-01-m1.vmware.com:/vfsbdropbox /oracle/d1
+mount -t nfs -o hard,rsize=32768,wsize=32768 sc9-ns120-01-m1.vmware.com:/vfsbdropbox /oracle/d1
+
+sed "s/vmware.com/vf.vmware.com/g" /etc/resolv.conf > /etc/resolvnew.conf
+mv /etc/resolvnew.conf /etc/resolv.conf
+
+echo "export TIMEDPROCESS_TIMEOUT=7200000" >> /oracle/home/applmgr/.bash_profile
+echo "export TIMEDPROCESS_DEBUG=YES" >> /oracle/home/applmgr/.bash_profile
+
+# Create directories for clone scripts and logs
+
+mkdir /oracle/clone
+mkdir /oracle/clone/scripts
+mkdir /oracle/clone/scripts/log
+
+
+# Set Runtime variables
+
+R_SCRIPTDIR="/oracle/clone/scripts"
+R_LOGFILE="${R_SCRIPTDIR}/log/Copy_Apps_Binaries.log"
+
+
+# Create New Log File
+
+touch ${R_LOGFILE}
+chown -R applmgr:dba ${R_LOGFILE}
+
+# Convert SID from upper case to lower case for application directories
+
+L_SID=`expr ${R_SID}| tr '[A-Z]' '[a-z]'`
+echo "Lower case of SID is ${L_SID}" | tee -a ${R_LOGFILE}
+
+# Create Directories for Application Binaries
+
+S_PROC_MESSAGE="Creating Directories for Application Binaries"; Proc_Log
+
+#mkdir /oracle/d1/applmgr
+mkdir /oracle/d1/applmgr/${R_SID}
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}appl
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}comn
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}ora
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}ora/8.0.6
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}ora/iAS
+
+
+# Copy Application Binaries
+
+S_PROC_MESSAGE="Perform Restore of Application Binaries "; Proc_Log
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakappl/*   /oracle/d1/applmgr/${R_SID}/${L_SID}appl
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakcomn/html  /oracle/d1/applmgr/${R_SID}/${L_SID}comn
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakcomn/java /oracle/d1/applmgr/${R_SID}/${L_SID}comn
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakcomn/util /oracle/d1/applmgr/${R_SID}/${L_SID}comn
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakcomn/clone /oracle/d1/applmgr/${R_SID}/${L_SID}comn
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakora/8.0.6 /oracle/d1/applmgr/${R_SID}/${L_SID}ora
+
+cp -rp /oracle/backup_vmwbak/applmgr/vmwbakora/iAS /oracle/d1/applmgr/${R_SID}/${L_SID}ora
+
+mkdir /oracle/d1/applmgr/${R_SID}/${L_SID}comn/temp
+chmod -R a+rwx /oracle/d1/applmgr/${R_SID}/${L_SID}comn/temp
+chmod -R a+rwx /oracle/d1/applmgr/${R_SID}/${L_SID}appl/xxvm/11.5.0/reports
+
+
+# Copy the required scripts to configure Concurrent Manager tier
+
+cp /oracle/d1/EBS_SCRIPTS/new/cm/*.sh /oracle/clone/scripts/
+chown -R applmgr:dba /oracle/clone/
+chmod 777 /oracle/clone/scripts/*
+chown -R applmgr:dba /oracle/d1/applmgr/${R_SID}

@@ -1,0 +1,34 @@
+version: 1
+dn: cn=OblixAnonymous,ou=service_accounts,ou=people,dc=vmware,dc=com
+changetype: modify
+objectclass: inetOrgPerson
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: orclUserV2
+objectclass: OblixOrgPerson
+cn: OblixAnonymous
+sn: OblixAnonymous
+uid: OblixAnonymous
+orclisenabled: ENABLED
+obuseraccountcontrol: ACTIVATED
+
+dn: cn=orcladmin,ou=service_accounts,ou=people,dc=vmware,dc=com
+changetype: modify
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+objectclass: orclUser
+objectclass: orclUserV2
+objectclass: oblixorgperson
+objectclass: oblixPersonPwdPolicy
+cn: orcladmin
+sn: orcladmin
+description: Seed administrative user for subscriber.
+givenname: orcladmin
+mail: orcladmin
+obuseraccountcontrol: ACTIVATED
+obver: 10.1.4.0
+orclsamaccountname: orcladmin
+uid: orcladmin

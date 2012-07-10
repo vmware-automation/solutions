@@ -1,0 +1,194 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+NFS=/tmp/mount
+TMPDIR="/oracle/install/tmp"
+SETUPHOME="/oracle/config"
+SETUPLOCATION="$SETUPHOME/workflows"
+WFSCRIPT="$SETUPLOCATION/workflow_setup.sh"
+AUTO_LOGIN_URL="//www.$ENV.$DOMAIN/$AUTO_LOGIN_URI"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+# Copy WF Configuration LDIFs
+echo_d "Copying WF Configuration LDIFs"
+cp -rp $NFS/IDM/oam/Templates/workflows $SETUPHOME/.
+check_error "Error during copying WF Configuration LDIFs"
+echo_d "Copying WF Configuration LDIFs -- DONE"
+
+# Change ownership of OAM WF Configuration Scripts
+echo_d "Change ownership of OAM WF Configuration Scripts"
+chown -R oracle:oinstall $SETUPLOCATION
+chmod -R 775 $SETUPLOCATION
+check_error "Errors during ownership of OAM WF Configuration Scripts"
+echo_d "Change ownership of OAM WF Configuration Scripts -- DONE"
+
+echo_d "Creating OAM WF Configuration Script"
+touch $WFSCRIPT
+chown oracle:oinstall $WFSCRIPT
+chmod u+x $WFSCRIPT
+
+echo "#!/bin/bash" > $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "# Change interorgperson RDN from 'cn' to 'uid' " >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Updating RDN for inetorgperson ..\"" >> $WFSCRIPT
+echo "ldapmodify -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/mod_inetorg_rdn.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while updating RDN for inetorgperson\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "# Add 'vmwPerson' objectClass to OAM objectClasses" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Adding vmwPerson objectClass to OAM ..\"" >> $WFSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/obclass_vmwperson.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while adding vmwPerson objectClass to OAM\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "# Configure Employees Tab" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Remove existing Employees Tab ..\"" >> $WFSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -r \"obpanelid=Employees,obapp=userservcenter,o=Oblix,cn=oam,dc=company,dc=com\"" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting Employees Tab\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Configuring Employees Tab ..\"" >> $WFSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/employees_tab.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while configuring Employees Tab\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "# Configure Searchbase and Attribute Access Controls" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Remove Searchbase and AAC container ..\"" >> $WFSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -r \"obpolicyContainerId=UserDB,obcontainerId=Policies,o=Oblix,cn=oam,dc=company,dc=com\"" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting Searchbase and AAC container\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Configuring Searchbase and Attribute Access Control ..\"" >> $WFSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/aac_user_manager.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while configuring SB/AAC\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "# Configure Workflow Definition" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Remove Workflow containers ..\"" >> $WFSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -r \"obcontainerId=workflowDefinitions,o=Oblix,cn=oam,dc=company,dc=com\"" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting Workflow ID container\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -r \"obpolicyContainerId=WorkflowDB,obcontainerId=Policies,o=Oblix,cn=oam,dc=company,dc=com\"" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting Workflow DB container\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Configuring Workflows ..\"" >> $WFSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/workflows.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while configuring Workflows\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Configuring Workflow DB ..\"" >> $WFSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/workflowDB.ldif" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while configuring Workflow DB\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Setup Email Notification ..\"" >> $WFSCRIPT
+echo "cp $SETUPLOCATION/idxml2mail.pl $OAM_BASE_DIR/oam_idm/identity/oblix/unsupported/ppp/ppp_exec/" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "cp $OAM_BASE_DIR/oam_idm/identity/oblix/apps/common/bin/oblixpppcatalog.lst $OAM_BASE_DIR/oam_idm/identity/oblix/apps/common/bin/oblixpppcatalog.lst.ORIG" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "cp $SETUPLOCATION/oblixpppcatalog.lst $OAM_BASE_DIR/oam_idm/identity/oblix/apps/common/bin/" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+echo "echo \" Configure ASDK for Auto-Login ..\"" >> $WFSCRIPT
+echo "cd $OAM_BASE_DIR/oam_idm/identity/AccessServerSDK/oblix/tools/configureAccessGate" >> $WFSCRIPT
+echo "./start_configureAccessGate -i $OAM_BASE_DIR/oam_idm/identity/AccessServerSDK -t AccessGate -w $ASDK1_ID -m simple -c install -P $ASDK1_PWD -h $AAA1_HOST -p $AAA1_PORT -a $ACCESS1_ID -r $PASSPHRASE" >> $WFSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while configuring ASDK 1\";else echo \"--Done\";fi" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+
+# Configure basedbparams.xml for Auto-Login and Cache Flush
+echo_d "Configure basedbparams.xml for Auto-Login and Cache Flush .. "
+cd $OAM_BASE_DIR/oam_idm/identity/oblix/data/common
+cp basedbparams.xml basedbparams.xml.ORIG
+cp $SETUPLOCATION/basedbparams.xml .
+replace_string_in_file basedbparams.xml "<auto_url>" "$AUTO_LOGIN_URL"
+replace_string_in_file basedbparams.xml "<domain>" "$DOMAIN"
+echo_d "Configure basedbparams.xml for Auto-Login and Cache Flush -- DONE"
+
+echo "echo \" Restarting OAM services ..\"" >> $WFSCRIPT
+echo "$SETUPHOME/OAM/OAM_stop_ALL.sh" >> $WFSCRIPT
+echo "$SETUPHOME/OAM/OAM_start_ALL.sh" >> $WFSCRIPT
+echo "echo \" \"" >> $WFSCRIPT
+echo "" >> $WFSCRIPT
+
+echo_d "Creating OAM WF Configuration Script -- DONE"
+
+echo_d "Running OAM Workflow Configuration Script"
+su - oracle -c $WFSCRIPT
+echo_d "Running OAM Workflow Configuration Script -- DONE"

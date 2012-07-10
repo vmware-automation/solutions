@@ -1,0 +1,330 @@
+[GENERAL]
+#-------------------------------------------------------------------------------
+RESPONSEFILE_VERSION=10.1.4.0.1
+#-------------------------------------------------------------------------------
+
+[INSTALL_TYPE]
+#-------------------------------------------------------------------------------
+# Name : OPERATION
+# Datatype : Fixed
+# Description: The operation that will be performed in this session. 
+# 
+# Required : Yes
+# Possible values are 
+# 
+# LOAD - OracleAS Metadata Loading 
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT], [STORAGE_MECHANISM],
+# [ADVANCED]
+#
+# REGISTER - OracleAS Metadata Register 
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT], [ORACLE_INTERNET_DIRECTORY]
+#
+# LOAD_REGISTER - OracleAS Metadata Load and Register
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT], [STORAGE_MECHANISM],
+# [ORACLE_INTERNET_DIRECTORY], [ADVANCED]
+#
+# DEREGISTER - OracleAS Metadata Deregister
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT], [ORACLE_INTERNET_DIRECTORY]
+#
+# REMOVE - OracleAS Metadata Remove
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT]
+#
+# DEREGISTER_REMOVE - OracleAS Metadata Deregister and Remove
+# => Fill Sections [ORACLE_HOME], [DATABASE_CONNECT], [ORACLE_INTERNET_DIRECTORY]
+#
+# Example : OPERATION = LOAD_REGISTER
+#-------------------------------------------------------------------------------
+OPERATION=LOAD
+
+[ORACLE_HOME]
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_ORACLE_HOME
+#Datatype   : String
+#Required   : Yes
+#Description: Database Oracle Home directory
+#Example: DATABASE_ORACLE_HOME = "/private1/oracle"
+#-------------------------------------------------------------------------------
+DATABASE_ORACLE_HOME=<DATABASE_ORACLE_HOME>
+
+#-------------------------------------------------------------------------------
+#Name       : LOG_DIRECTORY
+#Datatype   : String
+#Required   : Yes
+#Description: Log Directory for the session
+#Example: LOG_DIRECTORY = "/private1/oracle/log"
+#-------------------------------------------------------------------------------
+LOG_DIRECTORY=<LOG_DIRECTORY>
+
+[DATABASE_CONNECT]
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_TYPE
+#Datatype   : Fixed
+#Required   : Yes
+#Description: Real Application Cluster Database or Single Node Instance
+#Possible values are
+# RAC - Real Application Cluster Database
+# SINGLE - Single Node Instance 
+#Example: DATABASE_TYPE = RAC
+#-------------------------------------------------------------------------------
+DATABASE_TYPE=SINGLE
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_HOST_PORT
+#Datatype   : String
+#Required   : Yes
+#Description: Database connect String of the format host:port or
+#host1:port1,host2:port2,..,hostN:portN
+#Example Single Node: DATABASE_HOST_PORT = honolulu:1521
+#Example 3 node RAC : DATABASE_HOST_PORT = rac1:1521,rac2:1521,rac3:1521
+#-------------------------------------------------------------------------------
+DATABASE_HOST_PORT=<DATABASE_HOST_PORT>
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_SERVICE_NAME
+#Datatype   : String
+#Required   : Yes
+#Description: Database connect servicename 
+#Example, DATABASE_SERVICE_NAME = orcl
+#-------------------------------------------------------------------------------
+DATABASE_SERVICE_NAME=<DATABASE_SERVICE_NAME>
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_USER
+#Datatype   : String
+#Required   : Yes
+#Description: Database User name, Can be non-sys for REGISTER, DEREGISTER options
+# A non-sys user specified should have DBA privilege
+#Default    : SYS
+#Example    : DATABASE_USER=scott
+#-------------------------------------------------------------------------------
+DATABASE_USER=SYS
+
+#-------------------------------------------------------------------------------
+#Name       : DATABASE_PASSWORD
+#Datatype   : String
+#Required   : Yes
+#Description: Database User password
+#Default    : None
+#Example    : DATABASE_PASSWORD=change_on_install
+#-------------------------------------------------------------------------------
+DATABASE_PASSWORD=<DATABASE_PASSWORD>
+
+[STORAGE_MECHANISM]
+
+#-------------------------------------------------------------------------------
+#Name       : STORAGE_TYPE
+#Datatype   : Fixed
+#Required   : Yes
+#Description: Storage Mechanism used by the Database
+#Possible values are
+# Regular or Cluster File System : FILE => Fill Section [STORAGE_MECHANISM_FILE]
+# Oracle Managed Files          : OMF  => Fill Section [STORAGE_MECHANISM_OMF]
+# Automatic Storage Management  : ASM  => Fill Section [STORAGE_MECHANISM_ASM]
+# RAW File System               : RAW  => Fill Section [STORAGE_MECHANISM_RAW]
+#Example: STORAGE_TYPE = FILE
+#-------------------------------------------------------------------------------
+STORAGE_TYPE=FILE
+
+[STORAGE_MECHANISM_FILE]
+
+#-------------------------------------------------------------------------------
+#Name       : SAME_DIRECTORY_FOR_ALL
+#Datatype   : boolean
+#Required   : Yes
+#Description: Boolean to indicate if Same directory should be used for all 
+# tablespaces
+# If value is true, fill TABLESPACE_LOCATION field, the value will be used
+# to create all the tablespaces
+# If value is false, fill TABLESPACE_LOCATION_FILE_SPEC_FILE field, the value
+# will be used to identify the tablespace map file 
+#Default    : true
+#Example    : SAME_DIRECTORY_FOR_ALL=false
+#-------------------------------------------------------------------------------
+SAME_DIRECTORY_FOR_ALL=true
+
+#-------------------------------------------------------------------------------
+#Name       : TABLESPACE_LOCATION
+#Datatype   : String
+#Required   : Yes
+#Description: Tablespace Location, applicable if SAME_DIRECTORY_FOR_ALL is true
+#Example    : TABLESPACE_LOCATION="/private1/oradata/orcl"
+#-------------------------------------------------------------------------------
+TABLESPACE_LOCATION=<TABLESPACE_LOCATION>
+
+#-------------------------------------------------------------------------------
+#Name       : TABLESPACE_LOCATION_FILE_SPEC_FILE
+#Datatype   : String
+#Required   : Yes
+#Description: Tablespace Location Specification File, applicable if 
+# SAME_DIRECTORY_FOR_ALL is set to false
+# Use the format specified in file_tablespace.map
+#Example    : TABLESPACE_LOCATION_FILE_SPEC_FILE="/private1/file_tablespace.map"
+#-------------------------------------------------------------------------------
+TABLESPACE_LOCATION_FILE_SPEC_FILE=<TABLESPACE_LOCATION_FILE_SPEC_FILE>
+
+[STORAGE_MECHANISM_OMF]
+
+#-------------------------------------------------------------------------------
+#Name       : TABLESPACE_LOCATION_OMF_SPEC_FILE
+#Datatype   : String
+#Required   : Yes
+#Description: Tablespace Location Specification File, fill if OMF chosen
+# The file pointed by this field specifies the tablespace mapping for the OMF option
+# This option creates tablespaces in the directory specified by init parameter
+# DB_CREATE_FILE_DEST
+# Use the format specified in omf_asm_tablespace.map
+#Example    : TABLESPACE_LOCATION_OMF_SPEC_FILE="/private1/omf_asm_tablespace.map"
+#-------------------------------------------------------------------------------
+TABLESPACE_LOCATION_OMF_SPEC_FILE ="/private1/omf_asm_tablespace.map"
+
+[STORAGE_MECHANISM_ASM]
+
+#-------------------------------------------------------------------------------
+#Name       : DISK_GROUP
+#Datatype   : String
+#Required   : Yes
+#Description: DiskGroup to be used for tablespace creation, fill if ASM chosen
+#Example    : DISK_GROUP="datadisk1"
+#-------------------------------------------------------------------------------
+DISK_GROUP ="datadisk1"
+
+#-------------------------------------------------------------------------------
+#Name       : TABLESPACE_LOCATION_ASM_SPEC_FILE
+#Datatype   : String
+#Required   : Yes
+#Description: Tablespace Location Specification File, fill if ASM chosen
+# The file pointed by this field specifies the tablespace mapping for the ASM option
+# Use the format specified in omf_asm_tablespace.map
+#Example    : TABLESPACE_LOCATION_ASM_SPEC_FILE="/private1/omf_asm_tablespace.map"
+#-------------------------------------------------------------------------------
+TABLESPACE_LOCATION_ASM_SPEC_FILE ="/private1/omf_asm_tablespace.map"
+
+[STORAGE_MECHANISM_RAW]
+
+#-------------------------------------------------------------------------------
+#Name       : TABLESPACE_LOCATION_RAW_SPEC_FILE
+#Datatype   : String
+#Required   : Yes
+#Description: Tablespace Location Specification File, fill if RAW chosen
+# The file pointed by this field specifies the tablespace mapping for the RAW option
+# Use the format specified in raw_tablespace.map
+#Example    : TABLESPACE_LOCATION_RAW_SPEC_FILE="/private1/raw_tablespace.map"
+#-------------------------------------------------------------------------------
+TABLESPACE_LOCATION_RAW_SPEC_FILE ="/private1/raw_tablespace.map"
+
+[ORACLE_INTERNET_DIRECTORY]
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_HOST
+#Datatype   : String
+#Required   : Yes
+#Description: Oracle Internet Directory Host
+#Example    : ORACLE_INTERNET_DIRECTORY_HOST="foo.acme.com"
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_HOST ="foo.acme.com"
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_PORT
+#Datatype   : Number
+#Required   : Yes
+#Description: Oracle Internet Directory Port
+#Example    : ORACLE_INTERNET_DIRECTORY_PORT=389
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_PORT =389
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_SSL
+#Datatype   : Boolean
+#Required   : Yes
+#Description: Oracle Internet Directory Port SSL flag
+# True if the port in ORACLE_INTERNET_DIRECTORY_PORT field is SSL port
+# false if the port in ORACLE_INTERNET_DIRECTORY_PORT field is non-SSL port
+#Example    : ORACLE_INTERNET_DIRECTORY_SSL=true
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_SSL = false
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_USER
+#Datatype   : String
+#Required   : Yes
+#Description: Oracle Internet Directory User
+#Example    : Simple user example, ORACLE_INTERNET_DIRECTORY_USER="orcladmin"
+#             Fill, ORACLE_INTERNET_DIRECTORY_REALM
+#Example    : Simple user example, ORACLE_INTERNET_DIRECTORY_USER="scott" 
+#             Fill, ORACLE_INTERNET_DIRECTORY_REALM
+#Example    : Super user example DN, ORACLE_INTERNET_DIRECTORY_USER="cn=orcladmin"
+#Example    : User example DN, "cn=orcladmin, cn=Users, dc=us,dc=acme,dc=com"
+#Example    : User example DN, "cn=scott, cn=Users, dc=us,dc=acme,dc=com"
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_USER ="cn=orcladmin"
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_PASSWORD
+#Datatype   : String
+#Required   : Yes
+#Description: Oracle Internet Directory Password
+#Example    : ORACLE_INTERNET_DIRECTORY_PASSWORD=foo1
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_PASSWORD=welcome123
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_REALM
+#Datatype   : String
+#Required   : Yes
+#Description: Oracle Internet Directory User Realm 
+# If value specified in ORACLE_INTERNET_DIRECTORY_USER field is Distinguished Name(DN)
+# this value will be ignored
+# If value specified in ORACLE_INTERNET_DIRECTORY_USER field is not a DN(simple user)
+# this value will be used as a realm of the user
+#Example    : ORACLE_INTERNET_DIRECTORY_REALM="foobar"
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_REALM ="foobar"
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_INTERNET_DIRECTORY_CONTEXT
+#Datatype   : String
+#Required   : Yes
+#Description: Oracle Internet Directory Registration Realm Context 
+#Example    : Root Oracle Context ORACLE_INTERNET_DIRECTORY_CONTEXT="cn=OracleContext"
+# Root Oracle context based registration is normally used by Application Server
+#Example    : Realm Oracle Context 
+# ORACLE_INTERNET_DIRECTORY_CONTEXT="cn=OracleContext,dc=us,dc=acme,dc=com"
+# The realm oracle context is normatlly used to setup Enterprise User Security
+#-------------------------------------------------------------------------------
+ORACLE_INTERNET_DIRECTORY_CONTEXT ="cn=OracleContext"
+
+[ADVANCED]
+
+#-------------------------------------------------------------------------------
+#Name       : PROCEED_ON_KNOWLEDGEBASE_FAILURE
+#Datatype   : Boolean
+#Required   : Yes
+#Description:default false
+#true indicates that the assistant will proceed further if knowledgebase is 
+#not found.
+#Please refer install documentation for Knowledgebase requirement
+#-------------------------------------------------------------------------------
+PROCEED_ON_KNOWLEDGEBASE_FAILURE=true
+
+#-------------------------------------------------------------------------------
+#Name       : DROP_CONFLICTING_SCHEMAS
+#Datatype   : Boolean
+#Required   : Yes
+#Description:default false
+#true indicates that the conflicting schemas will be dropped
+#-------------------------------------------------------------------------------
+DROP_CONFLICTING_SCHEMAS=false
+
+#-------------------------------------------------------------------------------
+#Name       : SYSTEM_UNDO_TABLESPACE_REQUIREMENT_MET
+#Datatype   : Boolean
+#Required   : Yes
+#Description:default false
+#true indicates that the requirements specified in the install document is met in
+#the database user for SYSTEM and UNDO tablespaces 
+#SYSTEM and UNDO tablespaces may be configured in different ways.
+#Please refer installation document to understand more about this parameter
+#-------------------------------------------------------------------------------
+SYSTEM_UNDO_TABLESPACE_REQUIREMENT_MET=true

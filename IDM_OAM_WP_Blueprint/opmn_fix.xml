@@ -1,0 +1,3 @@
+                <environment>
+                        <variable id="LD_ASSUME_KERNEL" value="2.4.19" />
+                </environment>
