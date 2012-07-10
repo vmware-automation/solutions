@@ -2,12 +2,19 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
 
-#### TO SET IPTABLES OFF
-/etc/init.d/iptables save
-/etc/init.d/iptables stop
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+PASSWORD=$password
+DOWNLOAD_URL=$download_url
+NAMENODE=$namenode
+JOBTRACKER=$jobtracker
+DFS_REPLICATION=$dfs_replication
+SELFIP=$selfip
+SLAVEIPS=$slaveips
 
 # Function To Display Error and Exit
 function error_exit()
@@ -23,22 +30,82 @@ function check_error()
    fi
 }
 
-#### MAKING CHAMGES TO THE SSHD_CONFIG FILE
+# Function To Validate Integer 
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+# PARAMETER VALIDATION 
+if [ "x${install_path}" = "x" ]; then 
+    error_exit "install_path not set."
+fi
+
+if [ "x${group_name}" = "x" ]; then 
+    error_exit "group_name not set."
+fi
+
+if [ "x${user_name}" = "x" ]; then 
+    error_exit "user_name not set."
+fi
+
+if [ "x${password}" = "x" ]; then 
+    error_exit "password not set."
+fi
+
+if [ "x${download_url}" = "x" ]; then 
+    error_exit "download_url not set."
+fi
+
+if [ "x${namenode}" = "x" ]; then 
+    error_exit "namenode not set."
+fi
+
+if [ "x${jobtracker}" = "x" ]; then 
+    error_exit "jobtracker not set."
+fi
+
+if [ "x${selfip}" = "x" ]; then 
+    error_exit "selfip not set."
+fi
+
+if [ "x${slaveips}" = "x" ]; then 
+    error_exit "slaveips not set."
+fi
+
+if [ "x${dfs_replication}" = "x" ]; then 
+    error_exit "dfs_replication not set."
+else
+   if ! valid_int $dfs_replication; then
+      error_exit "Invalid parameter dfs_replication"
+   fi
+fi
+
+# TO SET IPTABLES OFF
+/etc/init.d/iptables save
+/etc/init.d/iptables stop
+
+# MAKING CHAMGES TO THE SSHD_CONFIG FILE
 echo "RSAAuthentication yes" >> /etc/ssh/sshd_config
 echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
 /etc/init.d/sshd restart
 service sshd start 
 chkconfig sshd on 
 
-#### ADDING THE DEDICATED GROUP AND HADOOP USER
+# ADDING THE DEDICATED GROUP AND HADOOP USER
 groupadd $GROUP_NAME
 useradd -g $GROUP_NAME -s /bin/bash -d /home/$USER_NAME $USER_NAME
 
-#### CREATING INSTALLATION DIRECTORY
+# CREATING INSTALLATION DIRECTORY
 mkdir -p $INSTALL_PATH
 cd $INSTALL_PATH
 
-#### INSTALLING EXPECT PACKAGE
+# INSTALLING EXPECT PACKAGE
 if [ -f /etc/redhat-release ] ; then
 	DistroBasedOn='RedHat'
 	DIST=`cat /etc/redhat-release |sed s/\ release.*//`
@@ -72,7 +139,7 @@ elif [ "$DistroBasedOn" = "SuSe" ] ; then
 fi
 check_error "UNABLE TO INSTALL EXPECT PACKAGE.";
 
-#### CREATING THE CHANGE USER PASSWORD EXP FILE
+# CREATING THE CHANGE USER PASSWORD EXP FILE
 mkdir $INSTALL_PATH/tmp
 
 cat <<ENDpassword > $INSTALL_PATH/tmp/password.exp
@@ -87,13 +154,13 @@ ENDpassword
 
 check_error "UNABLE TO CREATE password.exp FILE.";
 
-#### CHANGING THE PERMISSION OF THE EXP FILE
+# CHANGING THE PERMISSION OF THE EXP FILE
 chmod 777 $INSTALL_PATH/tmp/password.exp
 
-#### SETTING UP THE PASSWORD FOR HADOOP USER
+# SETTING UP THE PASSWORD FOR HADOOP USER
 $INSTALL_PATH/tmp/password.exp
 
-#### DOWNLOADING AND EXTRACTING THE INSTALLER TAR BALL 
+# DOWNLOADING AND EXTRACTING THE INSTALLER TAR BALL 
 wget $DOWNLOAD_URL
 DOWNLOAD=${DOWNLOAD_URL##*/}
 tar -xzf ./$DOWNLOAD

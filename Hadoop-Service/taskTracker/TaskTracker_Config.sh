@@ -2,10 +2,18 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
 
-###########Paramter Validation Functions##################
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+NAMENODE=$namenode
+JOBTRACKER=$jobtracker
+DFS_REPLICATION=$dfs_replication
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+
 # Function To Display Error and Exit
 function check_error()
 {
@@ -151,10 +159,11 @@ check_error "UNABLE TO ADD JOBTRACKER IP TO MASTERS FILE.";
 
 ## CONFIGURATION BLOCK FOR SLAVES(TASKTRACKER)
 # DETERMINING THE NUMBER OF NODES IN CLUSTER
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 
 for (( i=0;i<$IP_ARRAY_LENGTH;i++)); do
-    HOST_NAME=`hostname` 
+    host_name=`hostname`
+    echo $host_name 
 done
 
 echo "TASKTRACKER CONFIGURATION DONE"

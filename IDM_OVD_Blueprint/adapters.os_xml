@@ -1,0 +1,541 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<adapters schvers="303" version="9" xmlns="http://www.octetstring.com/schemas/Adapters" xmlns:adapters="http://www.w3.org/2001/XMLSchema-instance">
+   <standard id="Tree Top" version="4">
+      <root>dc=vmware,dc=com</root>
+      <active>true</active>
+      <routing>
+         <critical>true</critical>
+         <priority>50</priority>
+         <inclusionFilter/>
+         <exclusionFilter/>
+         <plugin/>
+         <retrieve/>
+         <store/>
+         <visible>Yes</visible>
+         <levels>-1</levels>
+         <bind>true</bind>
+         <bind-adapters>
+            <exclude>OID</exclude>
+            <exclude>AD</exclude>
+         </bind-adapters>
+         <views/>
+         <dnpattern/>
+      </routing>
+      <pluginChains xmlns="http://xmlns.oracle.com/iam/management/ovd/config/plugins">
+         <plugins>
+            <plugin>
+               <name>Performance Monitor</name>
+               <class>com.octetstring.vde.chain.plugins.performance.MonitorPerformance</class>
+               <initParams/>
+            </plugin>
+         </plugins>
+         <default>
+            <plugin name="Performance Monitor"/>
+         </default>
+         <add/>
+         <bind/>
+         <delete/>
+         <get/>
+         <modify/>
+         <rename/>
+      </pluginChains>
+      <index>
+         <presence>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+            <attribute>description</attribute>
+            <attribute>seeAlso</attribute>
+            <attribute>objectclass</attribute>
+            <attribute>ou</attribute>
+            <attribute>uid</attribute>
+            <attribute>mail</attribute>
+         </presence>
+         <exact/>
+         <ordering>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+            <attribute>description</attribute>
+            <attribute>seeAlso</attribute>
+            <attribute>objectclass</attribute>
+            <attribute>ou</attribute>
+            <attribute>uid</attribute>
+            <attribute>mail</attribute>
+         </ordering>
+         <substring>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+         </substring>
+         <searchUnIndexed>true</searchUnIndexed>
+         <sensitiveAttributeEnabled>true</sensitiveAttributeEnabled>
+         <sensitiveAttributes>
+            <attribute>orclCSFPassword</attribute>
+            <attribute>javaSerializedData</attribute>
+         </sensitiveAttributes>
+      </index>
+      <dbname>data/localDB</dbname>
+      <transactionLogSize>20000000</transactionLogSize>
+      <cacheSize>1000</cacheSize>
+      <readOnly>false</readOnly>
+      <backup>
+         <file>backup/localDBbck</file>
+         <hour>23</hour>
+         <minute>45</minute>
+         <max>7</max>
+      </backup>
+      <passwordEncryption>SSHA</passwordEncryption>
+      <locales/>
+      <compactDatabase>false</compactDatabase>
+      <autoRdn>false</autoRdn>
+   </standard>
+   <ldap id="OID" version="4">
+      <root>ou=people,dc=vmware,dc=com</root>
+      <active>true</active>
+      <routing>
+         <critical>true</critical>
+         <priority>50</priority>
+         <inclusionFilter/>
+         <exclusionFilter/>
+         <plugin/>
+         <retrieve/>
+         <store/>
+         <visible>No</visible>
+         <levels>-1</levels>
+         <bind>true</bind>
+         <bind-adapters/>
+         <views/>
+         <dnpattern/>
+      </routing>
+      <pluginChains xmlns="http://xmlns.oracle.com/iam/management/ovd/config/plugins">
+         <plugins>
+            <plugin>
+               <name>Performance Monitor</name>
+               <class>com.octetstring.vde.chain.plugins.performance.MonitorPerformance</class>
+               <initParams/>
+            </plugin>
+         </plugins>
+         <default>
+            <plugin name="Performance Monitor"/>
+         </default>
+         <add/>
+         <bind/>
+         <delete/>
+         <get/>
+         <modify/>
+         <rename/>
+      </pluginChains>
+      <hosts>
+         <host port="389" percentage="100" readonly="false">OIDHOSTNAME</host>
+      </hosts>
+      <remoteBase>ou=people,dc=vmware,dc=com</remoteBase>
+      <secure>false</secure>
+      <failover>false</failover>
+      <passCredentials>Always</passCredentials>
+      <binddn>OIDADMINUSER</binddn>
+      <bindpass>OIDADMINPASSWORD</bindpass>
+      <dnAttributeList>
+         <attribute>manager</attribute>
+         <attribute>owner</attribute>
+         <attribute>secretary</attribute>
+         <attribute>uniqueMember</attribute>
+      </dnAttributeList>
+      <pageSize>0</pageSize>
+      <referals>false</referals>
+      <heartBeatInterval>60</heartBeatInterval>
+      <timeout>5000</timeout>
+      <maxPoolSize>50</maxPoolSize>
+      <maxPoolWait>1000</maxPoolWait>
+      <maxPoolChecks>10</maxPoolChecks>
+      <quickFail>true</quickFail>
+      <escapeSlashes>true</escapeSlashes>
+      <kerberos>false</kerberos>
+      <useDNS>No</useDNS>
+      <initialPoolSize>1</initialPoolSize>
+      <pingprotocol>tcp</pingprotocol>
+      <pingbinddn/>
+      <pingbindpass/>
+      <kerberosRetry>false</kerberosRetry>
+   </ldap>
+   <ldap id="AD - Users" version="4">
+      <root>ou=users,ou=internal,dc=vmware,dc=com</root>
+      <active>true</active>
+      <routing>
+         <critical>true</critical>
+         <priority>50</priority>
+         <inclusionFilter/>
+         <exclusionFilter/>
+         <plugin/>
+         <retrieve/>
+         <store/>
+         <visible>No</visible>
+         <levels>-1</levels>
+         <bind>true</bind>
+         <bind-adapters/>
+         <views/>
+         <dnpattern/>
+      </routing>
+      <pluginChains xmlns="http://xmlns.oracle.com/iam/management/ovd/config/plugins">
+         <plugins>
+            <plugin>
+               <name>Dump Before</name>
+               <class>com.octetstring.vde.chain.plugins.DumpTransactions.DumpTransactions</class>
+               <initParams>
+                  <param name="loglevel" value="info"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Active Directory Ranged Attributes</name>
+               <class>com.octetstring.vde.chain.plugins.adRangedAttributes.ActiveDirectoryRangedAttributes</class>
+               <initParams/>
+            </plugin>
+            <plugin>
+               <name>ObjectClass Mapper</name>
+               <class>com.octetstring.vde.chain.plugins.objectClass.ObjectClassMapper</class>
+               <initParams>
+                  <param name="filterObjectClassOnModify" value="true"/>
+                  <param name="addAttribute-group" value="samaccountname=%cn%"/>
+                  <param name="addAttribute-group" value="groupType=4"/>
+                  <param name="mapAttribute" value="uniqueMember=member"/>
+                  <param name="mapAttribute" value="owner=managedBy"/>
+                  <param name="mapAttribute" value="uid=samaccountname"/>
+                  <param name="filterAttribute-group" value="seeAlso,businessCategory,o"/>
+                  <param name="mapObjectClass" value="groupofuniquenames=group"/>
+                  <param name="mapObjectClass" value="inetorgperson=user"/>
+                  <param name="filterAttribute" value="nsAccountLock,obgroupcreator"/>
+                  <param name="filterAttribute" value="allowedAttributes, allowedAttributesEffective, allowedChildClasses, allowedChildClassesEffective, assistant"/>
+                  <param name="filterAttribute" value="bridgeheadServerListBL, canonicalName, createTimeStamp, department, distinguishedName, dSASignature, dSCorePropagationData"/>
+                  <param name="filterAttribute" value="extensionName, flags, fromEntry, frsComputerReferenceBL, fRSMemberReferenceBL, fSMORoleOwner, generationQualifier"/>
+                  <param name="filterAttribute" value="instanceTyp, isCriticalSystemObject, isDeleted, isPrivilegeHolder, lastKnownParent, managedObjects, modifyTimeStamp"/>
+                  <param name="filterAttribute" value="mS-DS-ConsistencyChildCount, mS-DS-ConsistencyGuid, name, netbootSCPBL, nonSecurityMemberBL, nTSecurityDescriptor"/>
+                  <param name="filterAttribute" value="objectCategory, objectGUID, objectVersion, partialAttributeDeletionList, partialAttributeSet, possibleInferiors"/>
+                  <param name="filterAttribute" value="queryPolicyBL, replPropertyMetaData, replUpToDateVector, revision, sDRightsEffective, serverReferenceBL"/>
+                  <param name="filterAttribute" value="showInAdvancedViewOnly, siteObjectBL, subRefs, subSchemaSubEntry, systemFlags, uSNChanged, uSNCreated"/>
+                  <param name="filterAttribute" value="uSNDSALastObjRemoved, USNIntersite, uSNLastObjRem, uSNSource, wbemPath, wellKnownObjects"/>
+                  <param name="filterAttribute" value="whenChanged, whenCreated, instanceType, ms-sql-olapcube, ms-sql-database, ms-sql-server, ms-sql-sqlpublication"/>
+                  <param name="filterAttribute" value="ms-sql-sqldatabase, ms-sql-sqlrepository, ms-sql-sqlserver, acpolity, acsubnet, msexchconfigurationcontainer"/>
+                  <param name="filterAttribute" value="msmqconfiguration, msmqenterprisesettings, msmqmigrateduser, msmqqueue, msmqsettings, msmqsitelink, ntdsconnection"/>
+                  <param name="filterAttribute" value="ntdsdsa, ntdsservice, ntdssitesettings, ntfrsmember, ntfrsreplicaset, ntfrssettings, ntfrssubscriber"/>
+                  <param name="filterAttribute" value="ntfrssubscriptions, accountExpires, aCSPolicyName, adminCount, badPasswordTime, badPwdCount, codePage"/>
+                  <param name="filterAttribute" value="controlAccessRights, dBCSPwd, defaultClassStore, desktopProfile, dynamicLDAPServer, groupMembershipSAM, groupPriority"/>
+                  <param name="filterAttribute" value="groupsToIgnore, homeDirectory, homeDrive, lastLogoff, lastLogon, lmPwdHistory, localeID, lockoutTime, logonCount"/>
+                  <param name="filterAttribute" value="logonHours, logonWorkstation, mSMQDigests, mSMQDigestsMig, mSMQSignCertificates, mSMQSignCertificatesMig"/>
+                  <param name="filterAttribute" value="msNPAllowDialin, msNPCallingStationID, msNPSavedCallingStationID, msRADIUSCallbackNumber, msRADIUSFramedIPAddress"/>
+                  <param name="filterAttribute" value="msRADIUSFramedRoute, msRADIUSServiceType, msRASSavedCallbackNumber, msRASSavedFramedIPAddress, msRASSavedFramedRoute"/>
+                  <param name="filterAttribute" value="networkAddress, ntPwdHistory, operatorCount, otherLoginWorkstations, preferredOU, primaryGroupID, profilePath"/>
+                  <param name="filterAttribute" value="pwdLastSet, scriptPath, servicePrincipalName, userAccountControl, userParameters, userSharedFolder"/>
+                  <param name="filterAttribute" value="userSharedFolderOther, userSMIMECertificate, userWorkstations, masteredBy, maxStorage, userPrincipalName, objectSid"/>
+                  <param name="filterAttribute" value="samaccounttype, badPasswordCount, sAMAccountControl, ADsPath, directReport"/>
+                  <param name="directoryType" value="ActiveDirectory"/>
+                  <param name="activationAttribute" value="obuseraccountcontrol"/>
+                  <param name="filterAuxiliaryClass" value="person,organizationalPerson,OblixOrgPerson,oblixpersonpwdpolicy,oblixadvancedgroup,oblixgroup,oblixAuxLocation"/>
+                  <param name="activationValue" value="ACTIVATED"/>
+                  <param name="deactivationValue" value="DEACTIVATED,ObWfPendingActivate,ObWfPendingDeactivate"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>ActiveDirectory Password</name>
+               <class>com.octetstring.vde.chain.plugins.ADPasswordUpdate.ADPasswordUpdate</class>
+               <initParams>
+                  <param name="adapter" value="AD SSL Adapter"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Dump After</name>
+               <class>com.octetstring.vde.chain.plugins.DumpTransactions.DumpTransactions</class>
+               <initParams>
+                  <param name="loglevel" value="info"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Performance Monitor</name>
+               <class>com.octetstring.vde.chain.plugins.performance.MonitorPerformance</class>
+               <initParams/>
+            </plugin>
+         </plugins>
+         <default>
+            <plugin name="Dump Before"/>
+            <plugin name="Active Directory Ranged Attributes"/>
+            <plugin name="ObjectClass Mapper"/>
+            <plugin name="ActiveDirectory Password"/>
+            <plugin name="Dump After"/>
+            <plugin name="Performance Monitor"/>
+         </default>
+         <add/>
+         <bind/>
+         <delete/>
+         <get/>
+         <modify/>
+         <rename/>
+      </pluginChains>
+      <hosts>
+         <host port="3268" percentage="100" readonly="false">ADHOSTNAME</host>
+      </hosts>
+      <remoteBase>CN=Users,DC=vmware,DC=com</remoteBase>
+      <secure>false</secure>
+      <failover>false</failover>
+      <passCredentials>Always</passCredentials>
+      <binddn>ADBINDUSERNAME</binddn>
+      <bindpass>ADBINDUSERPASS</bindpass>
+      <dnAttributeList>
+         <attribute>member</attribute>
+         <attribute>memberOf</attribute>
+         <attribute>managedObjects</attribute>
+         <attribute>distinguishedname</attribute>
+         <attribute>objectcategory</attribute>
+         <attribute>manager</attribute>
+         <attribute>secretary</attribute>
+         <attribute>obgroupadministrator</attribute>
+         <attribute>managedby</attribute>
+         <attribute>obgroupcreator</attribute>
+      </dnAttributeList>
+      <pageSize>0</pageSize>
+      <referals>true</referals>
+      <heartBeatInterval>60</heartBeatInterval>
+      <timeout>5000</timeout>
+      <maxPoolSize>20</maxPoolSize>
+      <maxPoolWait>1000</maxPoolWait>
+      <maxPoolChecks>10</maxPoolChecks>
+      <quickFail>false</quickFail>
+      <escapeSlashes>true</escapeSlashes>
+      <kerberos>false</kerberos>
+      <useDNS>No</useDNS>
+      <pingprotocol>tcp</pingprotocol>
+      <pingbinddn/>
+      <pingbindpass/>
+      <kerberosRetry>false</kerberosRetry>
+   </ldap>
+   <ldap id="AD - Engineering" version="4">
+      <root>ou=engineering,ou=internal,dc=vmware,dc=com</root>
+      <active>true</active>
+      <routing>
+         <critical>true</critical>
+         <priority>50</priority>
+         <inclusionFilter/>
+         <exclusionFilter/>
+         <plugin/>
+         <retrieve/>
+         <store/>
+         <visible>No</visible>
+         <levels>-1</levels>
+         <bind>true</bind>
+         <bind-adapters/>
+         <views/>
+         <dnpattern/>
+      </routing>
+      <pluginChains xmlns="http://xmlns.oracle.com/iam/management/ovd/config/plugins">
+         <plugins>
+            <plugin>
+               <name>Dump Before</name>
+               <class>com.octetstring.vde.chain.plugins.DumpTransactions.DumpTransactions</class>
+               <initParams>
+                  <param name="loglevel" value="info"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Active Directory Ranged Attributes</name>
+               <class>com.octetstring.vde.chain.plugins.adRangedAttributes.ActiveDirectoryRangedAttributes</class>
+               <initParams/>
+            </plugin>
+            <plugin>
+               <name>ObjectClass Mapper</name>
+               <class>com.octetstring.vde.chain.plugins.objectClass.ObjectClassMapper</class>
+               <initParams>
+                  <param name="filterObjectClassOnModify" value="true"/>
+                  <param name="addAttribute-group" value="samaccountname=%cn%"/>
+                  <param name="addAttribute-group" value="groupType=4"/>
+                  <param name="mapAttribute" value="uniqueMember=member"/>
+                  <param name="mapAttribute" value="owner=managedBy"/>
+                  <param name="mapAttribute" value="uid=samaccountname"/>
+                  <param name="filterAttribute-group" value="seeAlso,businessCategory,o"/>
+                  <param name="mapObjectClass" value="groupofuniquenames=group"/>
+                  <param name="mapObjectClass" value="inetorgperson=user"/>
+                  <param name="filterAttribute" value="nsAccountLock,obgroupcreator"/>
+                  <param name="filterAttribute" value="allowedAttributes, allowedAttributesEffective, allowedChildClasses, allowedChildClassesEffective, assistant"/>
+                  <param name="filterAttribute" value="bridgeheadServerListBL, canonicalName, createTimeStamp, department, distinguishedName, dSASignature, dSCorePropagationData"/>
+                  <param name="filterAttribute" value="extensionName, flags, fromEntry, frsComputerReferenceBL, fRSMemberReferenceBL, fSMORoleOwner, generationQualifier"/>
+                  <param name="filterAttribute" value="instanceTyp, isCriticalSystemObject, isDeleted, isPrivilegeHolder, lastKnownParent, managedObjects, modifyTimeStamp"/>
+                  <param name="filterAttribute" value="mS-DS-ConsistencyChildCount, mS-DS-ConsistencyGuid, name, netbootSCPBL, nonSecurityMemberBL, nTSecurityDescriptor"/>
+                  <param name="filterAttribute" value="objectCategory, objectGUID, objectVersion, partialAttributeDeletionList, partialAttributeSet, possibleInferiors"/>
+                  <param name="filterAttribute" value="queryPolicyBL, replPropertyMetaData, replUpToDateVector, revision, sDRightsEffective, serverReferenceBL"/>
+                  <param name="filterAttribute" value="showInAdvancedViewOnly, siteObjectBL, subRefs, subSchemaSubEntry, systemFlags, uSNChanged, uSNCreated"/>
+                  <param name="filterAttribute" value="uSNDSALastObjRemoved, USNIntersite, uSNLastObjRem, uSNSource, wbemPath, wellKnownObjects"/>
+                  <param name="filterAttribute" value="whenChanged, whenCreated, instanceType, ms-sql-olapcube, ms-sql-database, ms-sql-server, ms-sql-sqlpublication"/>
+                  <param name="filterAttribute" value="ms-sql-sqldatabase, ms-sql-sqlrepository, ms-sql-sqlserver, acpolity, acsubnet, msexchconfigurationcontainer"/>
+                  <param name="filterAttribute" value="msmqconfiguration, msmqenterprisesettings, msmqmigrateduser, msmqqueue, msmqsettings, msmqsitelink, ntdsconnection"/>
+                  <param name="filterAttribute" value="ntdsdsa, ntdsservice, ntdssitesettings, ntfrsmember, ntfrsreplicaset, ntfrssettings, ntfrssubscriber"/>
+                  <param name="filterAttribute" value="ntfrssubscriptions, accountExpires, aCSPolicyName, adminCount, badPasswordTime, badPwdCount, codePage"/>
+                  <param name="filterAttribute" value="controlAccessRights, dBCSPwd, defaultClassStore, desktopProfile, dynamicLDAPServer, groupMembershipSAM, groupPriority"/>
+                  <param name="filterAttribute" value="groupsToIgnore, homeDirectory, homeDrive, lastLogoff, lastLogon, lmPwdHistory, localeID, lockoutTime, logonCount"/>
+                  <param name="filterAttribute" value="logonHours, logonWorkstation, mSMQDigests, mSMQDigestsMig, mSMQSignCertificates, mSMQSignCertificatesMig"/>
+                  <param name="filterAttribute" value="msNPAllowDialin, msNPCallingStationID, msNPSavedCallingStationID, msRADIUSCallbackNumber, msRADIUSFramedIPAddress"/>
+                  <param name="filterAttribute" value="msRADIUSFramedRoute, msRADIUSServiceType, msRASSavedCallbackNumber, msRASSavedFramedIPAddress, msRASSavedFramedRoute"/>
+                  <param name="filterAttribute" value="networkAddress, ntPwdHistory, operatorCount, otherLoginWorkstations, preferredOU, primaryGroupID, profilePath"/>
+                  <param name="filterAttribute" value="pwdLastSet, scriptPath, servicePrincipalName, userAccountControl, userParameters, userSharedFolder"/>
+                  <param name="filterAttribute" value="userSharedFolderOther, userSMIMECertificate, userWorkstations, masteredBy, maxStorage, userPrincipalName, objectSid"/>
+                  <param name="filterAttribute" value="samaccounttype, badPasswordCount, sAMAccountControl, ADsPath, directReport"/>
+                  <param name="directoryType" value="ActiveDirectory"/>
+                  <param name="activationAttribute" value="obuseraccountcontrol"/>
+                  <param name="filterAuxiliaryClass" value="person,organizationalPerson,OblixOrgPerson,oblixpersonpwdpolicy,oblixadvancedgroup,oblixgroup,oblixAuxLocation"/>
+                  <param name="activationValue" value="ACTIVATED"/>
+                  <param name="deactivationValue" value="DEACTIVATED,ObWfPendingActivate,ObWfPendingDeactivate"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>ActiveDirectory Password</name>
+               <class>com.octetstring.vde.chain.plugins.ADPasswordUpdate.ADPasswordUpdate</class>
+               <initParams>
+                  <param name="adapter" value="AD SSL Adapter"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Dump After</name>
+               <class>com.octetstring.vde.chain.plugins.DumpTransactions.DumpTransactions</class>
+               <initParams>
+                  <param name="loglevel" value="info"/>
+               </initParams>
+            </plugin>
+            <plugin>
+               <name>Performance Monitor</name>
+               <class>com.octetstring.vde.chain.plugins.performance.MonitorPerformance</class>
+               <initParams/>
+            </plugin>
+         </plugins>
+         <default>
+            <plugin name="Dump Before"/>
+            <plugin name="Active Directory Ranged Attributes"/>
+            <plugin name="ObjectClass Mapper"/>
+            <plugin name="ActiveDirectory Password"/>
+            <plugin name="Dump After"/>
+            <plugin name="Performance Monitor"/>
+         </default>
+         <add/>
+         <bind/>
+         <delete/>
+         <get/>
+         <modify/>
+         <rename/>
+      </pluginChains>
+      <hosts>
+         <host port="3268" percentage="100" readonly="false">ADHOSTNAME</host>
+      </hosts>
+      <remoteBase>OU=Engineering,DC=vmware,DC=com</remoteBase>
+      <secure>false</secure>
+      <failover>false</failover>
+      <passCredentials>Always</passCredentials>
+      <binddn>ADBINDUSERNAME</binddn>
+      <bindpass>ADBINDUSERPASS</bindpass>
+      <dnAttributeList>
+         <attribute>member</attribute>
+         <attribute>memberOf</attribute>
+         <attribute>managedObjects</attribute>
+         <attribute>distinguishedname</attribute>
+         <attribute>objectcategory</attribute>
+         <attribute>manager</attribute>
+         <attribute>secretary</attribute>
+         <attribute>obgroupadministrator</attribute>
+         <attribute>managedby</attribute>
+         <attribute>obgroupcreator</attribute>
+      </dnAttributeList>
+      <pageSize>0</pageSize>
+      <referals>true</referals>
+      <heartBeatInterval>60</heartBeatInterval>
+      <timeout>5000</timeout>
+      <maxPoolSize>20</maxPoolSize>
+      <maxPoolWait>1000</maxPoolWait>
+      <maxPoolChecks>10</maxPoolChecks>
+      <quickFail>false</quickFail>
+      <escapeSlashes>true</escapeSlashes>
+      <kerberos>false</kerberos>
+      <useDNS>No</useDNS>
+      <pingprotocol>tcp</pingprotocol>
+      <pingbinddn/>
+      <pingbindpass/>
+      <kerberosRetry>false</kerberosRetry>
+   </ldap>
+   <standard id="AD" version="3">
+      <root>ou=internal,dc=vmware,dc=com</root>
+      <active>true</active>
+      <routing>
+         <critical>true</critical>
+         <priority>50</priority>
+         <inclusionFilter/>
+         <exclusionFilter/>
+         <plugin/>
+         <retrieve/>
+         <store/>
+         <visible>No</visible>
+         <levels>-1</levels>
+         <bind>true</bind>
+         <bind-adapters>
+            <exclude>AD - Users</exclude>
+            <exclude>AD - Engineering</exclude>
+         </bind-adapters>
+         <views/>
+         <dnpattern/>
+      </routing>
+      <pluginChains xmlns="http://xmlns.oracle.com/iam/management/ovd/config/plugins">
+         <plugins>
+            <plugin>
+               <name>Performance Monitor</name>
+               <class>com.octetstring.vde.chain.plugins.performance.MonitorPerformance</class>
+               <initParams/>
+            </plugin>
+         </plugins>
+         <default>
+            <plugin name="Performance Monitor"/>
+         </default>
+         <add/>
+         <bind/>
+         <delete/>
+         <get/>
+         <modify/>
+         <rename/>
+      </pluginChains>
+      <index>
+         <presence>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+            <attribute>description</attribute>
+            <attribute>seeAlso</attribute>
+            <attribute>objectclass</attribute>
+            <attribute>ou</attribute>
+            <attribute>uid</attribute>
+            <attribute>mail</attribute>
+         </presence>
+         <exact/>
+         <ordering>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+            <attribute>description</attribute>
+            <attribute>seeAlso</attribute>
+            <attribute>objectclass</attribute>
+            <attribute>ou</attribute>
+            <attribute>uid</attribute>
+            <attribute>mail</attribute>
+         </ordering>
+         <substring>
+            <attribute>sn</attribute>
+            <attribute>cn</attribute>
+         </substring>
+         <searchUnIndexed>true</searchUnIndexed>
+         <sensitiveAttributeEnabled>true</sensitiveAttributeEnabled>
+         <sensitiveAttributes>
+            <attribute>orclCSFPassword</attribute>
+            <attribute>javaSerializedData</attribute>
+         </sensitiveAttributes>
+      </index>
+      <dbname>data/localDB</dbname>
+      <transactionLogSize>0</transactionLogSize>
+      <cacheSize>1000</cacheSize>
+      <readOnly>false</readOnly>
+      <backup>
+         <file>backup/localDBbck</file>
+         <hour>23</hour>
+         <minute>45</minute>
+         <max>7</max>
+      </backup>
+      <passwordEncryption>SSHA</passwordEncryption>
+      <locales/>
+      <compactDatabase>false</compactDatabase>
+      <autoRdn>false</autoRdn>
+   </standard>
+</adapters>

@@ -1,0 +1,11 @@
+#!/usr/bin/ksh
+
+# Import global conf 
+. $global_conf
+
+R_SCRIPTDIR="/oracle/clone/scripts"
+R_CCMSTARTSCRIPT="$R_SCRIPTDIR/Start_CCM.sh"
+
+# Start Concurrent Manager
+
+su - applmgr -c $R_CCMSTARTSCRIPT

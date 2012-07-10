@@ -2,8 +2,18 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
+
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+PASSWORD=$password
+DOWNLOAD_URL=$download_url
+JOBTRACKER=$jobtracker
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+DFS_REPLICATION=$dfs_replication
 
 # TO SET IPTABLES OFF
 /etc/init.d/iptables save
@@ -23,12 +33,61 @@ function check_error()
    fi
 }
 
+# Function To Validate Integer 
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+# PARAMETER VALIDATION 
+if [ "x${install_path}" = "x" ]; then 
+    error_exit "install_path not set."
+fi
+
+if [ "x${group_name}" = "x" ]; then 
+    error_exit "group_name not set."
+fi
+
+if [ "x${user_name}" = "x" ]; then 
+    error_exit "user_name not set."
+fi
+
+if [ "x${password}" = "x" ]; then 
+    error_exit "password not set."
+fi
+
+if [ "x${download_url}" = "x" ]; then 
+    error_exit "download_url not set."
+fi
+
+if [ "x${jobtracker}" = "x" ]; then 
+    error_exit "jobtracker not set."
+fi
+
+if [ "x${selfip}" = "x" ]; then 
+    error_exit "selfip not set."
+fi
+
+if [ "x${slaveips}" = "x" ]; then 
+    error_exit "slaveips not set."
+fi
+
+if [ "x${DFS_REPLICATION}" = "x" ]; then 
+    error_exit "dfs_replication not set."
+else
+   if ! valid_int $DFS_REPLICATION; then
+      error_exit "Invalid parameter dfs_replication"
+   fi
+fi
+
 # MAKING CHAMGES TO THE SSHD_CONFIG FILE
 echo "RSAAuthentication yes" >> /etc/ssh/sshd_config
 echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
-/etc/init.d/sshd restart
-service sshd start 
-chkconfig sshd on 
 
 # ADDING THE DEDICATED GROUP AND HADOOP USER
 groupadd $GROUP_NAME
@@ -58,18 +117,24 @@ if [ $DistroBasedOn == "Debian" ] ; then
     echo $http_proxy
     export DEBIAN_FRONTEND=noninteractive
     apt-get install -y linux-firmware < /dev/console > /dev/console 
-    # Install MySQL package 
     apt-get update -y
     apt-get -f -y install
     apt-get -f -y install expect --fix-missing
+    sudo /etc/init.d/ssh restart
 elif [ $DistroBasedOn == "RedHat" ] ; then 
 	yum --nogpgcheck --noplugins -y install expect
+      /etc/init.d/sshd restart
+      service sshd start 
+      chkconfig sshd on 
 elif [ "$DistroBasedOn" = "SuSe" ] ; then
 	echo $DistroBasedOn
 	zypper rr repo-oss
 	zypper ar -f http://download.opensuse.org/distribution/11.2/repo/oss/ repo-oss
 	zypper --non-interactive --no-gpg-checks ref
 	zypper --non-interactive --no-gpg-checks install expect            
+      /etc/init.d/sshd restart
+      service sshd start 
+      chkconfig sshd on 
 fi
 
 check_error "UNABLE TO INSTALL EXPECT PACKAGE.";

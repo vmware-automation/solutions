@@ -1,0 +1,139 @@
+#!/usr/bin/ksh
+
+# Import global conf 
+. $global_conf
+
+# Declare Library Utilities / Procedure Calls
+
+Proc_Log()
+{
+echo "`date` - ${S_PROC_MESSAGE} \n" | tee -a ${R_LOGFILE}
+}
+
+Error_Check()
+{
+if [ "$?" != "0" ]
+then
+        echo "********************************" | tee -a ${R_LOGFILE}
+        echo "Failure in Cloning Procedure" | tee -a ${R_LOGFILE}
+        echo "Error whilst ${S_PROC_MESSAGE} " | tee -a ${R_LOGFILE}
+        echo "********************************" | tee -a ${R_LOGFILE}
+	echo="******** Procedure Aborted *******" | tee -a ${R_LOGFILE}
+	exit 2
+fi
+}
+
+#
+# End of Internal Procedure Calls
+#
+
+# NFS Mount the Source disk to copy Oracle Binaries and Datafiles
+
+#mkdir /oracle/backup_vmwbak2
+
+mount -a
+
+# NFS Mount the disk to copy scripts for cloning
+
+mkdir /tmp/mount
+mount -t nfs -o hard,rsize=32768,wsize=32768 $NFS_HOST:/vfsbdropbox /tmp/mount
+
+# Create oratab
+mkdir -p /etc
+touch /etc/oratab
+chmod a+rw /etc/oratab
+
+# Create oraInst.loc
+mkdir -p /etc
+touch /etc/oraInst.loc
+echo "inventory_loc=/oracle/home/oracle/oraInventory" >> /etc/oraInst.loc
+
+# Create oraInventory
+mkdir -p /oracle/home/oracle/oraInventory
+chmod -R a+rw /oracle/home/oracle/oraInventory
+
+
+# Create directories for clone scripts and logs
+
+mkdir /oracle/clone
+mkdir /oracle/clone/scripts
+mkdir /oracle/clone/scripts/log
+chown -R oracle:oinstall /oracle/clone/
+
+
+# Copy the required scripts to configure Database
+
+cp /tmp/mount/EBS_SCRIPTS/new/db/*.sh /oracle/clone/scripts/
+chmod 777 /oracle/clone/scripts/*.sh
+
+# Set Runtime variables
+
+R_SCRIPTDIR="/oracle/clone/scripts"
+R_LOGFILE="${R_SCRIPTDIR}/log/Copy_DB_Binaries.log"
+
+
+# Create New Log File
+
+touch ${R_LOGFILE}
+chown -R oracle:oinstall ${R_LOGFILE}
+
+#
+S_PROC_MESSAGE="Start of Copying Oracle Binaries ${R_SID} "; Proc_Log
+#
+
+# Obtain required Runtime Data
+
+#
+S_PROC_MESSAGE="Get Database Name "; Proc_Log
+#
+
+
+R_SID=$SID
+
+
+echo "Sid = ${R_SID}" | tee -a ${R_LOGFILE}
+
+
+# Create Directories for Oracle Binaries and Datafiles
+
+#
+S_PROC_MESSAGE="Creating Directories for Oracle Binaries and Datafiles"; Proc_Log
+#
+
+mkdir /oracle/app
+mkdir /oracle/app/oracle
+mkdir /oracle/app/oracle/product
+mkdir /oracle/app/oracle/product/10.2.0
+mkdir /oracle/app/oracle/product/10.2.0/db
+mkdir /oracle/oradata
+mkdir /oracle/oradata/${R_SID}
+
+chown -R oracle:oinstall /oracle/app/
+chown -R oracle:oinstall /oracle/oradata/${R_SID}
+chmod -R 775 /oracle/app/
+chmod -R 775 /oracle/oradata/${R_SID}
+
+# Copy Oracle Binaries and Datafiles from NFS disk
+
+#
+S_PROC_MESSAGE="Perform Restore (rsync) of Oracle Binaries and Datafiles "; Proc_Log
+#
+
+nohup rsync -aS /oracle/backup_vmwbak2/app/oracle/product/10.2.0/db/* /oracle/app/oracle/product/10.2.0/db/ &
+
+nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK/* /oracle/oradata/${R_SID}/ &
+
+nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK1/* /oracle/oradata/${R_SID}/ &
+
+nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK2/* /oracle/oradata/${R_SID}/ &
+
+nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK3/* /oracle/oradata/${R_SID}/ &
+
+nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK4/* /oracle/oradata/${R_SID}/ &
+
+rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK5/* /oracle/oradata/${R_SID}/ 
+
+#nohup rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK6/* /oracle/oradata/${R_SID}/ &
+
+#rsync -aS /oracle/backup_vmwbak2/oradata/VMWBAK7/* /oracle/oradata/${R_SID}/
+

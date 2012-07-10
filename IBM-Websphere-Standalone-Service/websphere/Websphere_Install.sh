@@ -3,8 +3,6 @@
 # IMPORT GLOBAL CONF 
 . $global_conf
 
-export http_proxy=http://proxy.vmware.com:3128
-
 export PATH=$PATH:/usr/local/sbin/
 export PATH=$PATH:/usr/sbin/
 export PATH=$PATH:/sbin

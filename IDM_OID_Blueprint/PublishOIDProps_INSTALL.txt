@@ -1,0 +1,116 @@
+#!/bin/bash
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#IDM_OID_HOST=
+#IDM_OID_PORT=
+#IDM_OID_ADMIN_USER=
+#IDM_OID_ADMIN_PASS=
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MOUNTPOINTLOCATION=/tmp/mount
+PERFORCECONFIGLOCATION="/oracle/config/Perforce"
+IDMPROPERTIESFILE="$PERFORCECONFIGLOCATION/oid.properties"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${IDM_OID_HOST}" = "x" ]; then
+    error_exit "IDM_OID_HOST not set."
+fi
+
+if [ "x${IDM_OID_PORT}" = "x" ]; then
+    error_exit "IDM_OID_PORT not set."
+fi
+
+if [ "x${IDM_OID_ADMIN_USER}" = "x" ]; then
+    error_exit "IDM_OID_ADMIN_USER not set."
+fi
+
+if [ "x${IDM_OID_ADMIN_PASS}" = "x" ]; then
+    error_exit "IDM_OID_ADMIN_PASS not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#Create Config Directory Structure
+echo_d "Creating Config Directory Structure"
+mkdir -p $PERFORCECONFIGLOCATION
+check_error "Errors during creating config directory structure.";
+echo_d "Creating Config Directory Structure -- DONE"
+
+# Copy IDM Perforce Template
+echo_d "Copying IDM Perforce Template"
+cp -rp $MOUNTPOINTLOCATION/IDM/perforce/Templates/* $PERFORCECONFIGLOCATION/.
+chown -R oracle:oinstall $PERFORCECONFIGLOCATION
+chmod -R 775 $PERFORCECONFIGLOCATION
+check_error "Errors during copying IDM Perforce Template.";
+echo_d "Copying IDM Perforce Template -- DONE"
+
+
+## extract Environment Name
+# Use ENV_NAME if specified. 
+
+## echo environment Name to see for which environment this blueprint is being executed, ex: dev1
+echo $ENV_NAME
+
+echo_d "Prepare oid.properties file for publishing to Perforce"
+replace_string_in_file $IDMPROPERTIESFILE "<IDM_OID_HOST>" "$IDM_OID_HOST"
+replace_string_in_file $IDMPROPERTIESFILE "<IDM_OID_PORT>" "$IDM_OID_PORT"
+replace_string_in_file $IDMPROPERTIESFILE "<IDM_OID_ADMIN_USER>" "$IDM_OID_ADMIN_USER"
+replace_string_in_file $IDMPROPERTIESFILE "<IDM_OID_ADMIN_PASS>" "$IDM_OID_ADMIN_PASS"
+echo_d "Prepare oid.properties file for publishing to Perforce -- DONE"
+
+echo_d "Publish oid.properties file to Perforce"

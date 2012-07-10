@@ -1,0 +1,451 @@
+[ENGINE]
+
+#DO NOT CHANGE THIS.
+Response File Version=1.0.0.0.0
+
+[GENERIC]
+
+#Set this to true if installation and configuration need to be done, all other required variables need to be provided. Variable "INSTALL AND CONFIGURE LATER TYPE" must be set to false if this is set to true as the variables are mutually exclusive
+INSTALL AND CONFIGURE TYPE=true
+
+#Set this to true if only Software only installation need to be done. If this is set to true then variable "INSTALL AND CONFIGURE TYPE" must be set to false, since the variables are mutually exclusive.
+INSTALL AND CONFIGURE LATER TYPE=false
+
+#Provide true to create a new weblogic domain. WebLogic Server must already be installed.
+CREATE_NEW_DOMAIN=true
+
+#Provide true to extend domain. WebLogic Server must already be installed and the domain must be up and running.
+USE_EXISTING_DOMAIN=false
+
+#Provide true to configure components without domain.
+NO_DOMAIN=false
+
+#Provide true to expand the clusters in domain. WebLogic Server must already be installed and the domain must be up and running.
+EXTEND_CLUSTER=false
+
+#Domain name may only contain alphanumeric characters or the underscore (_) or hyphen (-) characters.
+DOMAIN_NAME=<DOMAIN_NAME>
+
+#Provide the complete path of domain home.
+DOMAIN_HOME=<DOMAIN_HOME>
+
+#Provide the User Name for WebLogic Domain. The value may only contain alphanumeric characters, or the underscore (_) or hyphen (-) characters.
+DOMAIN_ADMINISTRATOR_USERNAME=weblogic
+
+#Provide the password for WebLogic Domain. Valid passwords are 8 to 30 characters long, must begin with an alphabetic character, use only alphanumeric, underscore (_), dollar ($) or pound (#) characters and include at least one number.
+DOMAIN_ADMINISTRATION_PASSWORD=<SECURE VALUE>
+
+#Confirm the WebLogic Domain password.
+ADMINISTRATOR_PASSWORD_CONFIRM=<SECURE VALUE>
+
+#Provide the localhost name for Create Domain and machine name on which domain is up and running for Extend Domain and Expand Cluster.
+DOMAIN_HOST_NAME=localhost
+
+#Provide the port in which domain is up and running. Required for Extend Domain and Expand Cluster.
+DOMAIN_PORT_NO=<DOMAIN_PORT_NO>
+
+#Write the complete path to a valid Middleware Home.
+AS_HOME_LOCATION=<AS_HOME_LOCATION>
+
+#Give the complete path to a valid WebLogic Server Home.
+WL_HOME=<WL_HOME>
+
+#Give the name of the Oracle Home directory. The Oracle Home directory name may only contain alphanumeric , hyphen (-) , dot (.) and underscore (_) characters, and it must begin with an alphanumeric character.
+ORACLE_HOME=<ORACLE_HOME>
+
+#Give the complete path for an Oracle Instance directory to be created. This is the location where the software configuration files and runtime processes will reside.
+INSTANCE_HOME=<INSTANCE_HOME>
+
+#Give a name for Oracle Instance corresponding to the Instance Home. The Oracle Instance name may only contain alphanumeric and underscore (_) characters, it must begin with an alphabetic (a-z or A-Z) character, and must be from 4 to 30 characters in length.
+INSTANCE_NAME=<INSTANCE_NAME>
+
+#Give OID if Oracle Internet Directory is selected for configuration.
+LIST_OF_COMPONENTS_FOR_SCHEMAS=<LIST_OF_COMPONENTS_FOR_SCHEMAS>
+
+#Set this to true if you want the configuration wizard to assign the ports automatically.
+AUTOMATIC_PORT_DETECT=true
+
+#Give the location for the file containing the list of static ports if you manually want to assign ports.
+STATICPORT INI FILE LOCATION=
+
+#Provide a password for a new account to connect to the Oracle Virtual Directory administrative service, cn=orcladmin. Use 5-30 characters. Use only alphanumerics, underscore (_), dollar ($), or pound (#). At least one number is required.
+OVD_ADMIN_PASSWORD=<SECURE VALUE>
+
+#Confirm the password of Oracle Virtual Directory administrative service.
+CONFIRM_OVD_ADMIN_PASSWORD=<SECURE VALUE>
+
+#Provide the base, or the leftmost entry, of the virtual directory namespace that Oracle Virtual Directory will use to set its initial Access Control Lists (ACLs). For example, for the namespace dc=mycompany,dc=com, you would enter dc=com.
+OVD_LDAPv3_NAME_SPACE=<OVD_LDAPv3_NAME_SPACE>
+
+#Provide true to enable the HTTP Web Gateway to be protected by SSL. Oracle highly recommends that you use SSL/TLS for Oracle Virtual Directory's administrative gateway service. Disabling SSL/TLS  could result in your server administration traffic being monitored and even compromised.
+IS_ADMIN_SERVER_OF_OVD_IN_SECURE_MODE=true
+
+#provide true for securing HTTP client connection information. Give true if HTTP Web Gateway is set to true.
+IS_HTTP_WEB_GATEWAY_OF_OVD_SECURE=false
+
+#Provide true for Oracle Virtual Directory to be configured.
+IS_LDAP_CLIENT_LISTENER_FOR_OVD_SELECTED=false
+
+#Oracle Virtual Directory includes an HTML-based gateway that provides DSML and XSLT-rendered directory reporting. Provide true to enable HTML-based gateway.
+IS_HTTP_WEB_GATEWAY_OF_OVD_SELECTED=false
+
+#Specify a new Administrator User Name to connect to the Oracle Virtual Directory administrative service, For example, for the Administrator User Name you would enter cn=orcladmin.
+OVD_ADMIN=<OVD_ADMIN>
+
+#Provide true if OID scheme version is 10g.
+OID_UPGRADE_FLAG=false
+
+#Provide true to create OID Schema.
+CREATE_OID_SCHEMA=false
+
+#Provide the OID schema name.
+OID_SCHEMA_NAME=ODS
+
+#Provide true if ODS schema chosen is already being used by an existing OID . Please ensure that the system time on this Identity Management Node is in sync with the time on other Identity Management Nodes that are part of this Oracle Application Server Cluster (Identity Management) configuration. Failure to ensure this may result in unwanted instance failovers, inconsistent operational attributes in directory entries and potential inconsistent behaviour of password state policies.
+IS_SECOND_OID_INSTALL=true
+
+#Provide true if RAC database is used.
+IS_OID_RACDB_INSTANCE_NAME_SPECIFIED=false
+
+#Provide the DN of the top node for storing component data in the directory. This can be a realm, or the top node of a branch, instead of the top node of the directory.
+OID_NAMESPACE=dc=us,dc=oracle,dc=com
+
+#Provide a 5-30 character password for OID server administrator. Use only alphanumerics, underscore (_), dollar ($), or pound (#). At least one number is required.
+OID_ADMIN_PASSWORD=<SECURE VALUE>
+
+#Confirm OID Administrator password.
+OID_ADMIN_CONFIRM_PASSWORD=<SECURE VALUE>
+
+#Provide Oracle Internet Directory Server user name.
+OID_USER=cn=ovdadmin
+
+#Provide a 5-30 character password for PKCS12. Use only alphanumerics, underscore (_), dollar ($), or pound (#). At least one number is required.
+PKCS12_PASSWORD=<SECURE VALUE>
+
+#Confirm PKCS12 password
+PKCS12_PASSWORD_CONFIRM=<SECURE VALUE>
+
+#The Server ID identifies the Oracle Identity Federation instance. The Server ID must be unique within the domain per logical Oracle Identity Federation instance. Thus, clustered instances acting as a single logical instance will have the same Server ID.
+OIF_SERVER_ID=oif_idm
+
+#Provide true for Advanced Configuration of Oracle Identity Federation. The user would be able to specify the Authentication Mechanism, User Data Store, Federation Data Store and the Transient Data Store.
+OIF_CONFIGURATION_TYPE_ADVANCED=true
+
+#Provide true for Basic Configuration of Oracle Identity Federation.
+OIF_CONFIGURATION_TYPE_BASIC=false
+
+#Provide Authentication Mechanism for Oracle Identity Federation. Valid values are JAAS and LDAP.
+OIF_AUTHENTICATION_TYPE=LDAP
+
+#Provide User Data Store type for Oracle Identity Federation. Valid values are NONE,LDAP and RDBMS.
+OIF_USER_STORE_TYPE=LDAP
+
+#Provide Federation Data Store type for Oracle Identity Federation. Valid values are NONE,LDAP,RDBMS and XML.
+OIF_FEDERATION_STORE_TYPE=LDAP
+
+#Provide User Session Store type for Oracle Identity Federation. Valid values are MEMORY and RDBMS.
+OIF_USER_SESSION_STORE_TYPE=RDBMS
+
+#Provide Message Store type for Oracle Identity Federation. Valid values are MEMORY and RDBMS.
+OIF_MESSAGE_STORE_TYPE=MEMORY
+
+#Provide Configuration Store type for Oracle Identity Federation. Valid values are FILE and RDBMS.
+OIF_CONFIGURATION_STORE_TYPE=FILE
+
+#Provide true if User Data Store type is LDAP.
+IS_OIF_USER_STORE_LDAP_TYPE=true
+
+#Provide true if User Data Store type is RDBMS.
+IS_OIF_USER_STORE_RDBMS_TYPE=false
+
+#Provide true if Federation Data Store type is LDAP.
+IS_OIF_FEDERATION_STORE_LDAP_TYPE=true
+
+#Provide true if Federation Data Store type is RDBMS.
+IS_OIF_FEDERATION_STORE_RDBMS_TYPE=false
+
+#Provide true if Oracle Identity Federation Store is of type RDBMS.
+IS_OIF_STORE_RDBMS_TYPE=true
+
+#Provide true if Federation Authentication Mechanism is LDAP.
+IS_OIF_AUTHENTICATION_LDAP_TYPE=true
+
+#Provide true if Message Store type is RDBMS.
+IS_OIF_MESSAGE_STORE_RDBMS_TYPE=true
+
+#Provide true if Configuration Store type is RDBMS.
+IS_OIF_CONFIGURATION_STORE_RDBMS_TYPE=false
+
+#Provide true if Federation Data Store type is XML.
+IS_OIF_FEDERATION_STORE_XML_TYPE=false
+
+#Provide the full path for the Transient Data Store database host, listen port, and service name , for example, myserver.mycompany.com:1111:mydb1. Separate the path, port, and service name using a colon (:).
+TRANSIENT_RDBMS_HOSTNAME=localhost:1521:orcl.us.oracle.com
+
+#Provide the Oracle Identity Federation schema name for Transient Data Store.
+TRANSIENT_RDBMS_USER_NAME=dev_oif
+
+#Provide the password for Transient Data Store schema.
+TRANSIENT_RDBMS_PASSWORD=<SECURE VALUE>
+
+#Provide true if RAC Database is used for Transient Data Store.
+IS_OIF_TRANSIENT_STORE_RAC_INSTANCE_SPECIFIED=<SECURE VALUE>
+
+#Provide true if RAC Database with instance name is used for Transient Data Store.
+OIF_RACDB_TRANSIENT_STORE_URL_WITH_INSTANCE=<SECURE VALUE>
+
+#Provide the full path for the User Store database host, listen port, and service name , for example, myserver.mycompany.com:1111:mydb1. Separate the path, port, and service name using a colon (:).
+USER_RDBMS_HOSTNAME=localhost:1521:orcl.us.oracle.com
+
+#Provide the database user name for User Data Store.
+USER_RDBMS_USER_NAME=scott
+
+#Provide the password for User Data Store user.
+USER_RDBMS_PASSWORD=<SECURE VALUE>
+
+#Provide Login Table for User Data Store user.
+USER_RDBMS_LOGIN_TABLE=EMP
+
+#Provide User ID Attribute for User Data Store.
+USER_RDBMS_USER_ID_ATTRIBUTE=ENAME
+
+#Provide User Description Attribute for User Data Store.
+USER_RDBMS_USER_DESCRIPTION_ATTRIBUTE=JOB
+
+#Provide true if RAC Database is used for User Data Store.
+IS_OIF_USER_STORE_RAC_INSTANCE_SPECIFIED=
+
+#Provide true if RAC Database with instance name is used for User Data Store.
+OIF_RACDB_USER_STORE_URL_WITH_INSTANCE=
+
+#Provide the full path for the Federation Data Store database host, listen port, and service name , for example, myserver.mycompany.com:1111:mydb1. Separate the path, port, and service name using a colon (:).
+FEDERATION_RDBMS_HOSTNAME=localhost:1521:orcl.us.oracle.com
+
+#Provide the Oracle Identity Federation schema name for Federation Data Store.
+FEDERATION_RDBMS_USER_NAME=dev_oif
+
+#Provide the password for Federation Data Store schema.
+FEDERATION_RDBMS_PASSWORD=<SECURE VALUE>
+
+#Provide true if RAC Database is used for Federation Data Store.
+IS_OIF_FED_STORE_RAC_INSTANCE_SPECIFIED=<SECURE VALUE>
+
+#Provide true if RAC Database with instance name is used for Federation Data Store.
+OIF_RACDB_FED_STORE_URL_WITH_INSTANCE=<SECURE VALUE>
+
+
+[SYSTEM]
+
+
+[APPLICATIONS]
+
+#Provide true if configuring in a clustered envronment.
+IS_CLUSTER_CONFIGURATION=false
+
+
+[RELATIONSHIPS]
+
+#Provide true to install Oracle Internet Directory.
+INSTALL_OID_COMPONENT=<INSTALL_OID_COMPONENT>
+
+#Provide true to install Oracle Directory Integration Platform.
+INSTALL_DIP_COMPONENT=<INSTALL_DIP_COMPONENT>
+
+#Provide true to install Oracle Virtual Directory
+INSTALL_OVD_COMPONENT=<INSTALL_OVD_COMPONENT>
+
+#Provide true to install Oracle Identity Federation.
+INSTALL_OIF_COMPONENT=<INSTALL_OIF_COMPONENT>
+
+#Provide true to install Oracle Directory Service Manager.
+INSTALL_ODSM_COMPONENT=<INSTALL_ODSM_COMPONENT>
+
+#Provide true to install Oracle HTTP Server.
+INSTALL_OHS_COMPONENT=<INSTALL_OHS_COMPONENT>
+
+#Provide true to install Enterprise Management.
+INSTALL_EM_COMPONENT=<INSTALL_EM_COMPONENT>
+
+#Provide true if selecting federation components for install.
+FEDERATION_COMPONENTS=<FEDERATION_COMPONENTS>
+
+#Provide true if selecting management components for install.
+MANAGEMENT_COMPONENTS=<MANAGEMENT_COMPONENTS>
+
+#Provide the list of components selected for install. Example OID:OVD:OIF:OHS:ODSM:EM:DIP
+SELECTED_COMPONENTS_FOR_INSTALL=<SELECTED_COMPONENTS_FOR_INSTALL>
+
+#Provide true to configure Oracle Internet Directory.
+CONFIGURE_OID_COMPONENT=<CONFIGURE_OID_COMPONENT>
+
+#Provide true to configure Oracle Directory Integration Platform.
+CONFIGURE_DIP_COMPONENT=<CONFIGURE_DIP_COMPONENT>
+
+#Provide true to configure Oracle Virtual Directory.
+CONFIGURE_OVD_COMPONENT=<CONFIGURE_OVD_COMPONENT>
+
+#Provide true to configure Oracle Identity Federation.
+CONFIGURE_OIF_COMPONENT=<CONFIGURE_OIF_COMPONENT>
+
+#Provide true to configure Oracle Directory Service Manager.
+CONFIGURE_ODSM_COMPONENT=<CONFIGURE_ODSM_COMPONENT>
+
+#Provide true to configure Enterprise Management.
+CONFIGURE_EM_COMPONENT=<CONFIGURE_EM_COMPONENT>
+
+#Provide true if configuring federation components.
+FEDERATION_COMPONENTS_FOR_CONFIGURE=<FEDERATION_COMPONENTS_FOR_CONFIGURE>
+
+#Provide true if configuring management components.
+MANAGEMENT_COMPONENTS_FOR_CONFIGURE=<MANAGEMENT_COMPONENTS_FOR_CONFIGURE>
+
+#Provide the list of components selected for configuration separated by colon. Example OID:OVD:DIP:ODSM.
+SELECTED_COMPONENTS_FOR_CONFIGURATION=<SELECTED_COMPONENTS_FOR_CONFIGURATION>
+
+#Enter the full path, listen port, and service name for the database, for example myserver.mycompany.com:1111:mydb1. Separate the path, port, and service name using a colon (:).
+OID_DB_INFO=localhost:1521:orcl.us.oracle.com
+
+#Provide the database OID schema name.
+OID_DB_USER=ODS
+
+#Provide the database ODSSM schema name
+ODSSM_DB_USER=ODSSM
+
+#Provide the ODS schema password.
+ODS_PASSWORD=<SECURE VALUE>
+
+#Confirm the ODS Schema password.
+CONFIRM_ODS_PASSWORD=<SECURE VALUE>
+
+#Provide the ODSSM schema password.
+ODSSM_PASSWORD=<SECURE VALUE>
+
+#Confirm the ODSSM schema password.
+CONFIRM_ODSSM_PASSWORD=<SECURE VALUE>
+
+#Provide false if service name is used.
+IS_SERVICE_ID_USED=false
+
+#Provide true if RAC database URL with instance name is used.
+OID_RACDB_URL_WITH_INSTANCE_NAME=<SECURE VALUE>
+
+#Provide the Administrator password for Oracle Internet Directory.
+OID_ADMIN_PASSWORD=<SECURE VALUE>
+
+#Provide true to create a new metadata repository in the database provided by the user. The schema here refers to the ODS schema for OID.
+CREATE_NEW_SCHEMA=false
+
+#Provide true if component schema has already been created using Repository Creation Utility (RCU) into an available database. The schema here refers here to the ODS schema for OID.
+USE_EXISTING_SCHEMA=true
+
+#Provide the database user name. The user must have SYSDBA user privileges in order to create the metadata repository.
+CREATE_DATABASE_USERNAME=
+
+#Provide the database password. The user must have SYSDBA user privileges in order to create the metadata repository.
+CREATE_DATABASE_PASSWORD=<SECURE VALUE>
+
+#Provide the LDAP Type for Authentication Mechanism. Valid values are Oracle Internet Directory,Oracle Virtual Directory,Microsoft Active Directory,SunOne and IBM Directory Server
+AUTHENTICATION_LDAP_TYPE=Oracle Internet Directory
+
+#Provide the LDAP URL for Authentication Mechanism. Format:ldap://host:port or ldaps://host:port.
+AUTHENTICATION_LDAP_TYPE_LDAP_URL=ldap://localhost:3060
+
+#Provide the user name of LDAP server for Authentication Mechanism.
+AUTHENTICATION_LDAP_TYPE_LDAP_USER_NAME=cn=ovdadmin
+
+#Provide the LDAP server password for Authentication Mechanism.
+AUTHENTICATION_LDAP_TYPE_LDAP_PASSWORD=<SECURE VALUE>
+
+#Provide the LDAP Base DN for Authentication Mechanism.
+AUTHENTICATION_LDAP_BASE_DN=dc=us,dc=oracle,dc=com
+
+#Provide the LDAP User Credential ID for Authentication Mechanism.
+AUTHENTICATION_USER_CREDENTIAL_ID_ATTRIBUTE=uid
+
+#Provide the LDAP User Unique ID for Authentication Mechanism.
+AUTHENTICATION_USER_UNIQUE_ID_ATTRIBUTE=uid
+
+#Provide the LDAP Person Object Class for Authentication Mechanism.
+AUTHENTICATION_PERSON_OBJECT_CLASS=inetOrgPerson
+
+#Provide the LDAP User Description Attribute for User Data Store.
+USER_LDAP_USER_DESCRIPTION_ATTRIBUTE=uid
+
+#Provide the LDAP User ID Attribute for User Data Store.
+USER_LDAP_USER_ID_ATTRIBUTE=orclguid
+
+#Provide the LDAP User Unique ID for User Data Store.
+USER_LDAP_UNIQUE_ID=<SECURE VALUE>
+
+#Provide the LDAP Person Object Class for User Data Store.
+USER_LDAP_PERSON_OBJECT_CLASS=inetOrgPerson
+
+#Provide the LDAP Base DN for User Data Store.
+USER_LDAP_BASE_DN=dc=us,dc=oracle,dc=com
+
+#Provide the LDAP Type for User Store. Valid values are Oracle Internet Directory,Oracle Virtual Directory,Microsoft Active Directory,SunOne and IBM Directory Server
+USER_LDAP_TYPE=Oracle Internet Directory
+
+#Provide the LDAP URL for User Data Store. Format:ldap://host:port or ldaps://host:port.
+USER_LDAP_URL=ldap://localhost:3060
+
+#Provide the user name of LDAP server for Federation Data Store.
+USER_LDAP_USER_NAME=cn=ovdadmin
+
+#Provide the LDAP server password for User Data Store.
+USER_LDAP_PASSWORD=<SECURE VALUE>
+
+#Provide the LDAP User Federation Record Context for Federation Data Store.
+FEDERATION_LDAP_USER_RECORD_CONTEXT=
+
+#Provide the LDAP Type for Federation Data Store. Valid values are Oracle Internet Directory,Microsoft Active Directory,SunOne and IBM Directory Server
+FEDERATION_LDAP_TYPE=Oracle Internet Directory
+
+#Provide the LDAP URL for Federation Data Store. Format:ldap://host:port or ldaps://host:port.
+FEDERATION_LDAP_URL=ldap://localhost:3060
+
+#Provide the LDAP Container Object Class for Federation Data Store.
+FEDERATION_LDAP_CONTAINER_OBJECT_CLASS=
+
+#Provide the LDAP Domain Prefix for Federation Data Store. This value is needed only when LDAP type is Microsoft Active Directory.
+FEDERATION_LDAP_AD_DOMAIN_PREFIX=
+
+#Provide the user name of LDAP server for Federation Data Store.
+FEDERATION_LDAP_USER_NAME=cn=ovdadmin
+
+#Provide the LDAP server password for Federation Data Store.
+FEDERATION_LDAP_PASSWORD=<SECURE VALUE>
+
+#Provide the My Oracle Support Username. If you wish to ignore Oracle Configuration Manager configuration provide empty string for user name.
+MYORACLESUPPORT_USERNAME=<MYORACLESUPPORT_USERNAME>
+
+#Provide the My Oracle Support Password
+MYORACLESUPPORT_PASSWORD=<SECURE VALUE>
+
+#Set this to true if you wish to decline the security updates. Setting this to true and providing empty string for My Oracle Support username will ignore the Oracle Configuration Manager configuration
+DECLINE_SECURITY_UPDATES=<DECLINE_SECURITY_UPDATES>
+
+#Set this to true if My Oracle Support Password is specified
+SECURITY_UPDATES_VIA_MYORACLESUPPORT=false
+
+#Provide the Proxy Host
+PROXY_HOST=
+
+#Provide the Proxy Port
+PROXY_PORT=
+
+#Provide the Proxy Username
+PROXY_USER=
+
+#Provide the Proxy Password
+PROXY_PWD=<SECURE VALUE>
+
+#Provide true if extending the Oracle Identity Federation cluster
+EXTEND_OIF_CLUSTER=false
+
+#Provide true if extending the Oracle Directory Service cluster.
+EXTEND_ODS_CLUSTER=false
+
+#Provide true if DIP Schema version is 10g.
+DIP_UPGRADE_FLAG=false
+

@@ -2,8 +2,16 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
+
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+JOBTRACKER=$jobtracker
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+DFS_REPLICATION=$dfs_replication
 
 # Function To Display Error and Exit
 function error_exit()
@@ -146,13 +154,13 @@ check_error "UNABLE TO ADD NAMENODE IP TO MASTERS FILE.";
 echo $JOBTRACKER >> /etc/hosts
 
 # DETERMINING THE NUMBER OF NODES IN CLUSTER
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 
 ## MAKING ENTRY TO THE SLAVE FILE ##
 :> $HADOOP_HOME/conf/slaves
 for (( i=0;i<$IP_ARRAY_LENGTH;i++)); do
-	echo ${SlAVEIPS[${i}]}>> $HADOOP_HOME/conf/slaves
-    echo ${SlAVEIPS[${i}]}>> /etc/hosts
+	echo ${SLAVEIPS[${i}]}>> $HADOOP_HOME/conf/slaves
+    echo ${SLAVEIPS[${i}]}>> /etc/hosts
 	check_error "UNABLE TO ADD NAMENODE'S SLAVE IP TO SLAVES FILE.";
 done
 

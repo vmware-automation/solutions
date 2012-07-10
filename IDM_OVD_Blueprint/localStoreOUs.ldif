@@ -1,0 +1,10 @@
+version: 1
+dn: ou=internal,dc=vmware,dc=com
+objectclass: organizationalUnit
+objectclass: top
+ou: internal
+
+dn: dc=vmware,dc=com
+objectclass: domain
+objectclass: top
+dc: vmware

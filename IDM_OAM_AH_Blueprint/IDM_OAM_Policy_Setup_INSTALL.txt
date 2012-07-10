@@ -1,0 +1,168 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+NFS=/tmp/mount
+TMPDIR="/oracle/install/tmp"
+SETUPHOME="/oracle/config"
+SETUPLOCATION="$SETUPHOME/policy"
+POLICYSCRIPT="$SETUPLOCATION/policy_setup.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+# Copy Policy Domain LDIFs
+echo_d "Copying Policy Domain LDIFs"
+cp -rp $NFS/IDM/oam/Templates/policy $SETUPHOME/.
+check_error "Error during copying Policy Domain LDIFs"
+echo_d "Copying Policy Domain LDIFs -- DONE"
+
+# Change ownership of OAM Policy Domain LDIFs
+echo_d "Change ownership of OAM Policy Domain LDIFs"
+chown -R oracle:oinstall $SETUPLOCATION
+chmod -R 775 $SETUPLOCATION
+check_error "Errors during ownership of OAM Policy Domain LDIFs"
+echo_d "Change ownership of OAM Policy Domain LDIFs -- DONE"
+
+echo_d "Creating OAM Policy Setup Script"
+touch $POLICYSCRIPT
+chown oracle:oinstall $POLICYSCRIPT
+chmod u+x $POLICYSCRIPT
+
+echo "#!/bin/bash" > $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "# Delete existing OIS/WP IDs" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "echo \" Search and Delete existing OIS/WP IDs ..\"" >> $POLICYSCRIPT
+echo "ldapsearch -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -b \"obpolicyContainerId=WebResrcDB,obcontainerId=Policies,o=Oblix,cn=oam,dc=company,dc=com\" -s one \"(|(objectclass=oblixOISServerIDNode)(objectclass=oblixOISServerConfigInfo)(objectclass=oblixWebpassConfigInfo))\" -LL > $TMPDIR/ois_wp_old.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to search existing OIS/WP IDs\";else echo \" Search --Done\";fi" >> $POLICYSCRIPT
+echo "perl -p0e 's/\n //g' $TMPDIR/ois_wp_old.ldif | grep dn | sed 's/dn: //g' > $TMPDIR/ois_wp_del.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to grab OIS/WP DNs for Delete operation\";else echo \" Grab DNs --Done\";fi" >> $POLICYSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $TMPDIR/ois_wp_del.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting OIS/WP IDs\";else echo \" Delete --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+
+echo "# Delete existing AAA ID" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "echo \" Search and Delete existing AAA ID ..\"" >> $POLICYSCRIPT
+echo "ldapsearch -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -b \"obapp=PSC,o=Oblix,cn=oam,dc=company,dc=com\" -s one \"(|(objectclass=oblixAAAServerIDNode)(objectclass=oblixAAAServerConfigInfo))\" -LL > $TMPDIR/aaa_old.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to search existing AAA ID\";else echo \" Search --Done\";fi" >> $POLICYSCRIPT
+echo "perl -p0e 's/\n //g' $TMPDIR/aaa_old.ldif | grep dn | sed 's/dn: //g' > $TMPDIR/aaa_del.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to grab AAA DNs for Delete operation\";else echo \" Grab DNs --Done\";fi" >> $POLICYSCRIPT
+echo "ldapdelete -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $TMPDIR/aaa_del.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Error while deleting AAA ID\";else echo \" Delete --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+
+echo "# Import OIS/WP Definitions" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+replace_string_in_file $SETUPLOCATION/ois_wp_def.ldif "env" "$ENV"
+replace_string_in_file $SETUPLOCATION/ois_wp_def.ldif "\.domain" "\.$DOMAIN"
+echo "echo \" Importing OIS/WP Definitions ..\"" >> $POLICYSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/ois_wp_def.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to import OIS/WP definitions\";else echo \" --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "# Import AAA/WG Definitions" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+replace_string_in_file $SETUPLOCATION/aaa_wg_def.ldif "env" "$ENV"
+replace_string_in_file $SETUPLOCATION/aaa_wg_def.ldif "\.domain" "\.$DOMAIN"
+echo "echo \" Importing AAA/WG Definitions ..\"" >> $POLICYSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/aaa_wg_def.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to import AAA/WG definitions\";else echo \" --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "# Import HOST IDs" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+replace_string_in_file $SETUPLOCATION/hostID.ldif "env" "$ENV"
+replace_string_in_file $SETUPLOCATION/hostID.ldif "\.domain" "\.$DOMAIN"
+echo "echo \" Importing Host IDs ..\"" >> $POLICYSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/hostID.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to import Host IDs\";else echo \" --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "# Import Policy Domains" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+echo "echo \" Importing Policy Domains ..\"" >> $POLICYSCRIPT
+echo "ldapadd -h $OID_HOST -p $OID_PORT -D cn=orcladmin -w $OID_PWD -x -f $SETUPLOCATION/policies.ldif" >> $POLICYSCRIPT
+echo "if [ \$? != 0 ]; then echo \"Failed to import Policy Domains\";else echo \" --Done\";fi" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT
+
+echo "echo \" Restarting OAM services ..\"" >> $POLICYSCRIPT
+echo "$SETUPHOME/OAM/OAM_stop_ALL.sh" >> $POLICYSCRIPT
+echo "$SETUPHOME/OAM/OAM_start_ALL.sh" >> $POLICYSCRIPT
+echo "echo \" \"" >> $POLICYSCRIPT
+echo "" >> $POLICYSCRIPT        
+     
+echo_d "Creating OAM Policy Setup Script -- DONE"
+
+echo_d "Running OAM Policy Setup Script"
+su - oracle -c $POLICYSCRIPT
+echo_d "Running OAM Policy Setup Script -- DONE"

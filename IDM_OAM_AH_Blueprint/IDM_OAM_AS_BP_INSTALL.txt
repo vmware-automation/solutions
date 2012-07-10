@@ -1,0 +1,305 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#Required Properties
+#ORACLE_HOME_BASE=/oracle/products/10.1.4.0.1
+#JAVA_HOME=/usr/java/default
+
+#OIDHOSTNAME=
+#OIDPORT=389
+#OIDADMINUSER="cn=orcladmin"
+#OIDADMINPASSWORD="admin123"
+
+#PASSPHRASE="admin123"
+
+#SERVACCTPASSWORD="welcome1"
+#ACCESSSERVERID=$(hostname)"_aaa"
+
+#########SCRIPT INTERNAL PARAMETERS#########
+OHS_ORACLE_HOME="$ORACLE_HOME_BASE/oam_admin"
+ORACLE_HOME=$ORACLE_HOME_BASE/oam_idm
+
+IDMINSTALLERALLLOCATION="/oracle/install/OAMinstaller"
+
+AS_ORACLE_HOME="$ORACLE_HOME_BASE/oam_idm/access"
+IDMASINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101401"
+IDMASINSTALLSCRIPT="$IDMASINSTALLERLOCATION/AS_runinstaller.sh"
+IDMASRESPONSEFILE="$IDMASINSTALLERLOCATION/as_install_options.txt"
+IDMASRESPONSEFILETEMPLATE="$IDMINSTALLERALLLOCATION/Templates/as_install_options.txt"
+
+IDMPATCHINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101420_patchset"
+IDMPATCHINSTALLSCRIPT="$IDMPATCHINSTALLERLOCATION/PATCH_runinstaller.sh"
+IDMBPINSTALLERLOCATION="$IDMINSTALLERALLLOCATION/oam_101420_BP"
+IDMBPINSTALLSCRIPT="$IDMBPINSTALLERLOCATION/BP_runinstaller.sh"
+
+IDMCONFIGLOCATION="/oracle/config/OAM"
+OAMFIXROOTCASCRIPT="$IDMCONFIGLOCATION/OAM_fix_root_ca_AS.sh"
+OAMSTOPALLSCRIPT="$IDMCONFIGLOCATION/OAM_stop_ALL.sh"
+OAMSTARTALLSCRIPT="$IDMCONFIGLOCATION/OAM_start_ALL.sh"
+
+ACCESSSERVERID=$(hostname)"_aaa"
+
+OIDCONFIGLOCATION="/oracle/config/OID"
+OIDOAMIMPORTSERVACCTSSCRIPT="$OIDCONFIGLOCATION/OID_OAMImport_service_accounts.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${ORACLE_HOME_BASE}" = "x" ]; then
+    error_exit "ORACLE_HOME_BASE not set."
+fi
+
+if [ "x${JAVA_HOME}" = "x" ]; then
+    error_exit "JAVA_HOME not set."
+fi
+
+if [ "x${PASSPHRASE}" = "x" ]; then
+    error_exit "PASSPHRASE not set."
+fi
+
+if [ "x${SERVACCTPASSWORD}" = "x" ]; then
+    error_exit "SERVACCTPASSWORD not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+#Create OID OAM Import Service Accounts Script
+echo_d "Create OID OAM Import Service Accounts Script"
+
+touch $OIDOAMIMPORTSERVACCTSSCRIPT
+chown oracle:oinstall $OIDOAMIMPORTSERVACCTSSCRIPT
+chmod a+x $OIDOAMIMPORTSERVACCTSSCRIPT
+
+echo '#!/bin/bash' >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "cd $OIDCONFIGLOCATION" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "ldapmodify -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/mod_OblixAnonymous_orcladmin.ldif" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "ldapadd -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/add_oam_service_accounts.ldif" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "sed -ie \"s/<SERVACCTPASSWORD>/$SERVACCTPASSWORD/\" change_service_accounts_password.ldif" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "ldapmodify -h $OIDHOSTNAME -D $OIDADMINUSER -w $OIDADMINPASSWORD -p $OIDPORT -x -f $OIDCONFIGLOCATION/change_service_accounts_password.ldif" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+echo "exit \"$?\"" >> $OIDOAMIMPORTSERVACCTSSCRIPT
+
+echo_d "Create OID OAM Import Service Accounts Script -- DONE"
+
+#Run OID OAM Import Service Accounts Script
+echo_d "Running OID OAM Import Service Accounts Script"
+su - oracle -c $OIDOAMIMPORTSERVACCTSSCRIPT
+check_error "Failed to clean up OID for OAM PM installation.";
+echo_d "Running OID OAM Import Service Accounts Script -- DONE"
+
+echo_d "Making IDM OAM AS Installer Script"
+touch $IDMASINSTALLSCRIPT
+chown oracle:oinstall $IDMASINSTALLSCRIPT
+chmod a+x $IDMASINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMASINSTALLSCRIPT
+echo "cd $IDMASINSTALLERLOCATION" >> $IDMASINSTALLSCRIPT
+echo "./Oracle_Access_Manager10_1_4_0_1_linux_Access_Server -options $IDMASRESPONSEFILE  -silent" >> $IDMASINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMASINSTALLSCRIPT
+echo_d "Making IDM OAM AS Installer Script -- DONE"
+
+#Make as_install_options.txt
+
+echo_d "Prepare response file for IDM OAM AS Installer"
+
+cp -rp $IDMASRESPONSEFILETEMPLATE $IDMASRESPONSEFILE
+
+replace_string_in_file $IDMASRESPONSEFILE "<gccLibraryLocationBean.libraryLocation>" "$IDMINSTALLERALLLOCATION/gcc_lib"
+replace_string_in_file $IDMASRESPONSEFILE "<aaa.installLocation>" "$AS_ORACLE_HOME"
+replace_string_in_file $IDMASRESPONSEFILE "<oblixDSInfoBean.dsHostMachine>" "$OIDHOSTNAME"
+replace_string_in_file $IDMASRESPONSEFILE "<oblixDSInfoBean.dsPortNumber>" "$OIDPORT"
+replace_string_in_file $IDMASRESPONSEFILE "<oblixDSInfoBean.dsBindDN>" "$OIDADMINUSER"
+replace_string_in_file $IDMASRESPONSEFILE "<oblixDSInfoBean.dsPassword>" "$OIDADMINPASSWORD"
+replace_string_in_file $IDMASRESPONSEFILE "<aaaInfoBean.accessServerID>" "$ACCESSSERVERID"
+replace_string_in_file $IDMASRESPONSEFILE "<simpleModeInfoBean.passphrase>" "$PASSPHRASE"
+
+echo_d "Prepare response file for IDM OAM AS Installer -- DONE"
+
+echo_d "Running IDM OAM AS Installer Script"
+su - oracle -c $IDMASINSTALLSCRIPT
+echo_d "Running IDM OAM AS Installer Script -- DONE"
+
+#Create OAM Fix Root CA Script
+echo_d "Create OAM Fix Root CA Script"
+
+touch $OAMFIXROOTCASCRIPT
+chown oracle:oinstall $OAMFIXROOTCASCRIPT
+chmod a+x $OAMFIXROOTCASCRIPT
+
+echo '#!/bin/bash' >> $OAMFIXROOTCASCRIPT
+echo "cd $IDMCONFIGLOCATION" >> $OAMFIXROOTCASCRIPT
+echo "mv $AS_ORACLE_HOME/oblix/tools/openssl/simpleCA $AS_ORACLE_HOME/oblix/tools/openssl/simpleCA.orig" >> $OAMFIXROOTCASCRIPT
+echo "mkdir $AS_ORACLE_HOME/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "tar xf simpleCA.tar -C $AS_ORACLE_HOME/oblix/tools/openssl/simpleCA" >> $OAMFIXROOTCASCRIPT
+echo "exit \"$?\"" >> $OAMFIXROOTCASCRIPT
+
+echo_d "Create OAM Fix Root CA Script -- DONE"
+
+#Run Fix Root CA Script
+echo_d "Running OAM Fix Root CA Script"
+su - oracle -c $OAMFIXROOTCASCRIPT
+check_error "Failed to fix Root CA of OAM AS.";
+echo_d "Running OAM Fix Root CA Script -- DONE"
+
+#Create OAM Stop All Script
+echo_d "Create OAM Stop All Script"
+
+touch $OAMSTOPALLSCRIPT
+chown oracle:oinstall $OAMSTOPALLSCRIPT
+chmod a+x $OAMSTOPALLSCRIPT
+
+echo '#!/bin/bash' >> $OAMSTOPALLSCRIPT
+echo "$OHS_ORACLE_HOME/opmn/bin/opmnctl stopall" >> $OAMSTOPALLSCRIPT
+echo "sleep 10" >> $OAMSTOPALLSCRIPT
+echo "$ORACLE_HOME/identity/oblix/apps/common/bin/stop_ois_server" >> $OAMSTOPALLSCRIPT
+echo "sleep 20" >> $OAMSTOPALLSCRIPT
+echo "$ORACLE_HOME/access/oblix/apps/common/bin/stop_access_server" >> $OAMSTOPALLSCRIPT
+echo "sleep 20" >> $OAMSTOPALLSCRIPT
+echo "exit \"$?\"" >> $OAMSTOPALLSCRIPT
+
+echo_d "Create OAM Stop All Script -- DONE"
+
+#Run OAM Stop All Script
+echo_d "Running OAM Stop All Script"
+su - oracle -c $OAMSTOPALLSCRIPT
+check_error "Failed to stop OAM all components.";
+echo_d "Running OAM Stop All Script -- DONE"
+
+#Create OAM Start All Script
+echo_d "Create OAM Start All Script"
+
+touch $OAMSTARTALLSCRIPT
+chown oracle:oinstall $OAMSTARTALLSCRIPT
+chmod a+x $OAMSTARTALLSCRIPT
+
+echo '#!/bin/bash' >> $OAMSTARTALLSCRIPT
+echo "$ORACLE_HOME/identity/oblix/apps/common/bin/start_ois_server" >> $OAMSTARTALLSCRIPT
+echo "sleep 20" >> $OAMSTARTALLSCRIPT
+echo "$ORACLE_HOME/access/oblix/apps/common/bin/start_access_server" >> $OAMSTARTALLSCRIPT
+echo "sleep 20" >> $OAMSTARTALLSCRIPT
+echo "$OHS_ORACLE_HOME/opmn/bin/opmnctl startall" >> $OAMSTARTALLSCRIPT
+echo "sleep 10" >> $OAMSTARTALLSCRIPT
+echo "exit \"$?\"" >> $OAMSTARTALLSCRIPT
+
+echo_d "Create OAM Start All Script -- DONE"
+
+#Create OAM Patch Installation Script
+echo_d "Create OAM Patch Installation Script"
+
+touch $IDMPATCHINSTALLSCRIPT
+chown oracle:oinstall $IDMPATCHINSTALLSCRIPT
+chmod a+x $IDMPATCHINSTALLSCRIPT
+
+echo '#!/bin/bash' >> $IDMPATCHINSTALLSCRIPT
+echo "cd $IDMPATCHINSTALLERLOCATION" >> $IDMPATCHINSTALLSCRIPT
+echo "$IDMPATCHINSTALLERLOCATION/identity/Oracle_Access_Manager10_1_4_2_0_Patch_linux_Identity_Server_binary_parameter/patchinst -id $ORACLE_HOME/identity" >> $IDMPATCHINSTALLSCRIPT
+echo "$IDMPATCHINSTALLERLOCATION/webpass/Oracle_Access_Manager10_1_4_2_0_Patch_linux_OHS_WebPass_binary_parameter/patchinst -id $OHS_ORACLE_HOME/webcomponent/webpass/identity" >> $IDMPATCHINSTALLSCRIPT
+echo "$IDMPATCHINSTALLERLOCATION/pm/Oracle_Access_Manager10_1_4_2_0_Patch_linux_OHS_Policy_Manager_binary_parameter/patchinst -id $OHS_ORACLE_HOME/webcomponent/webpass/access" >> $IDMPATCHINSTALLSCRIPT
+echo "$IDMPATCHINSTALLERLOCATION/access/Oracle_Access_Manager10_1_4_2_0_Patch_linux_Access_Server_binary_parameter/patchinst -id $ORACLE_HOME/access" >> $IDMPATCHINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMPATCHINSTALLSCRIPT
+
+echo_d "Create OAM Patch Installation Script -- DONE"
+
+echo_d "Running OAM Patch Installation Script"
+su - oracle -c $IDMPATCHINSTALLSCRIPT
+echo_d "Running OAM Patch Installation Script -- DONE"
+
+#Create OAM BP Installation Script
+echo_d "Create OAM BP Installation Script"
+
+touch $IDMBPINSTALLSCRIPT
+chown oracle:oinstall $IDMBPINSTALLSCRIPT
+chmod a+x $IDMBPINSTALLSCRIPT
+
+echo '#!/bin/bash' >> $IDMBPINSTALLSCRIPT
+echo "cd $IDMBPINSTALLERLOCATION" >> $IDMBPINSTALLSCRIPT
+echo "$IDMBPINSTALLERLOCATION/ois/Oracle_Access_Manager10_1_4_2_0_BP11_Patch_linux_Identity_Server_binary_parameter/patchinst -id $ORACLE_HOME/identity" >> $IDMBPINSTALLSCRIPT
+echo "$IDMBPINSTALLERLOCATION/webpass/Oracle_Access_Manager10_1_4_2_0_BP09_Patch_linux_OHS_WebPass_binary_parameter/patchinst -id $OHS_ORACLE_HOME/webcomponent/webpass/identity" >> $IDMBPINSTALLSCRIPT
+echo "$IDMBPINSTALLERLOCATION/pm/Oracle_Access_Manager10_1_4_2_0_BP01_Patch_linux_OHS_Policy_Manager_binary_parameter/patchinst -id $OHS_ORACLE_HOME/webcomponent/webpass/access" >> $IDMBPINSTALLSCRIPT
+echo "$IDMBPINSTALLERLOCATION/access/Oracle_Access_Manager10_1_4_2_0_BP11_Patch_linux_Access_Server_binary_parameter/patchinst -id $ORACLE_HOME/access" >> $IDMBPINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMBPINSTALLSCRIPT
+
+echo_d "Create OAM BP Installation Script -- DONE"
+
+echo_d "Running OAM BP Installation Script"
+su - oracle -c $IDMBPINSTALLSCRIPT
+echo_d "Running OAM BP Installation Script -- DONE"
+
+#Fix OHS Startup Issue
+echo_d "Fix OHS Startup Issue"
+mkdir -p /oblix/oracle/nls
+ln -s $OHS_ORACLE_HOME/webcomponent/webpass/access/oblix/oracle/nls/data /oblix/oracle/nls/data
+echo_d "Fix OHS Startup Issue -- DONE"
+
+#Run OAM Start All Script
+echo_d "Running OAM Start All Script"
+su - oracle -c $OAMSTARTALLSCRIPT
+check_error "Failed to start OAM all components.";
+echo_d "Running OAM Start All Script -- DONE"

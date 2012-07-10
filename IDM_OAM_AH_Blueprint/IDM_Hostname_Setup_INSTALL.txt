@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+# Set hostname variable
+HOST_NAME=`echo $HOST_NAME_PATTERN | sed "s/%e/$ENV_NAME/g"`
+
+# Change VM hostname
+hostname $HOST_NAME
+
+# Add DNS entry for this host
+
+
+# Replace hostname in /etc/hosts
+sed -i.bak "s/$IP_ADDRESS.*/$IP_ADDRESS $HOST_NAME.$DOMAIN_NAME $HOST_NAME/g" /etc/hosts
+sed -i.bak "s/HOSTNAME=.*/HOSTNAME=$HOST_NAME.$DOMAIN_NAME/g" /etc/sysconfig/network
+
+# set HOST_NAME INCLUDING DOMAIN
+HOST_NAME="$HOST_NAME"."$DOMAIN_NAME"
+
+echo "Setting hostname to $HOST_NAME"

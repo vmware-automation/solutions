@@ -19,5 +19,4 @@ To add the Websphere Application Server v8.0.0 to  vFabric Application Director 
 
 2. Save the service.
 
-For the Websphere 8.0.0 installer packages, you need to download it from Oracle download website, and put them in a NFS server that the deployment Websphere service can mount onto. During the deployment of the Websphere App Server, the service will copy the installer packages from the NFS server and start the installation.
 

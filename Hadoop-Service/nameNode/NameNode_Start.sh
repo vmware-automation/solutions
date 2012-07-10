@@ -2,8 +2,13 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
+
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+USER_NAME=$user_name
+SELFIP=$selfip
+SLAVEIPS=$slaveips
 
 # Function To Display Error and Exit
 function error_exit()
@@ -35,7 +40,7 @@ su $USER_NAME -c "$HADOOP_HOME/bin/hadoop namenode -format"
 su $USER_NAME -c "nohup nice -n 0 $HADOOP_HOME/bin/hadoop --config $HADOOP_HOME/conf/ namenode > "namenode.log" 2>&1 < /dev/null &"
 check_error "UNABLE TO INVOKE HADOOP.SH TO START NAMENODE";
 
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 
 # Try 120 times to start post-install scripts, which means the script will wait for about 20mins at most
 # until the installation finishes (each loop will wait for 10 seconds for the installation to finish.)

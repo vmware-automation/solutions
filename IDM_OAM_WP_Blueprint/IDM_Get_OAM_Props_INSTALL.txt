@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#IDM_OVD_HOST=
+#IDM_OVD_PORT=
+#IDM_OVD_PASS=
+#IDM_OAM_HOSTIP=
+#IDM_OAM_HOSTNAME=
+#IDM_OAM_SERVERNAME=
+#IDM_OAM_PORT=
+#IDM_OAM_PASS=
+#IDM_OAM_AS_SERVERID=
+#IDM_OAM_WG_SERVERID=
+#IDM_OAM_WG_PASS=
+
+#ENV_NAME=
+
+###########Shared Functions##################
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+####################SCRIPT EXECUTION ##################
+
+
+echo_d "Get environment information from vCO"
+# set Hostname variable
+
+echo $ENV_NAME
+echo_d "Get environment information from vCO -- Done"
+
+echo_d "Get oam.properties file from repo"
+
+echo_d "Import OAM properties as environment variables"
+export $(cat oam.properties)
+echo $IDM_OVD_HOST
+echo $IDM_OVD_PORT
+echo $IDM_OVD_PASS
+echo $IDM_OAM_HOSTIP
+echo $IDM_OAM_HOSTNAME
+echo $IDM_OAM_SERVERNAME
+echo $IDM_OAM_PORT
+echo $IDM_OAM_PASS
+echo $IDM_OAM_AS_SERVERID
+echo $IDM_OAM_WG_SERVERID
+echo $IDM_OAM_WG_PASS
+
+echo_d "Import OAM properties as environment variables -- Done"

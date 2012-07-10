@@ -1,8 +1,18 @@
 #!/bin/bash
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 
-###########Paramter Validation Functions##################
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+PASSWORD=$password
+DOWNLOAD_URL=$download_url
+NAMENODE=$namenode
+JOBTRACKER=$jobtracker
+DFS_REPLICATION=$dfs_replication
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+
 # Function To Display Error and Exit
 function error_exit()
 {
@@ -16,6 +26,62 @@ function check_error()
       error_exit "$1";
    fi
 }
+
+# Function To Validate Integer 
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+# PARAMETER VALIDATION 
+if [ "x${install_path}" = "x" ]; then 
+    error_exit "install_path not set."
+fi
+
+if [ "x${group_name}" = "x" ]; then 
+    error_exit "group_name not set."
+fi
+
+if [ "x${user_name}" = "x" ]; then 
+    error_exit "user_name not set."
+fi
+
+if [ "x${password}" = "x" ]; then 
+    error_exit "password not set."
+fi
+
+if [ "x${download_url}" = "x" ]; then 
+    error_exit "download_url not set."
+fi
+
+if [ "x${namenode}" = "x" ]; then 
+    error_exit "namenode not set."
+fi
+
+if [ "x${jobtracker}" = "x" ]; then 
+    error_exit "jobtracker not set."
+fi
+
+if [ "x${selfip}" = "x" ]; then 
+    error_exit "selfip not set."
+fi
+
+if [ "x${slaveips}" = "x" ]; then 
+    error_exit "slaveips not set."
+fi
+
+if [ "x${DFS_REPLICATION}" = "x" ]; then 
+    error_exit "dfs_replication not set."
+else
+   if ! valid_int $DFS_REPLICATION; then
+      error_exit "Invalid parameter dfs_replication"
+   fi
+fi
 
 # TO SET IPTABLES OFF
 /etc/init.d/iptables save

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export http_proxy=http://proxy.vmware.com:3128
 export WAS_HOME=/opt/vmware-appdirector/IBM/WebSphere/AppServer
 export JAVA_HOME=$WAS_HOME/java	
 export PATH=$JAVA_HOME/bin:$WAS_HOME/bin:$PATH

@@ -2,10 +2,14 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
 
-###########Paramter Validation Functions##################
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+USER_NAME=$user_name
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+
 # Function To Display Error and Exit
 function check_error()
 {

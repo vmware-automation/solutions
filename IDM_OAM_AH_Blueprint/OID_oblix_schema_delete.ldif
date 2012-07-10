@@ -1,0 +1,2448 @@
+#
+# iPlanet Oracle schema deletion LDIF file.
+#
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.32 NAME 'oblixCluster' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obIsEncrypted )  MAY ( obAAAMembers $ obService $ obTimeStamp ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.10 NAME 'oblixMasterAuditPolicy' DESC 'Oracle Access Manager defined objectclass' SUP oblixAuditPolicy  STRUCTURAL MAY ( obAuditFields $ obDateType $ obDateSeparator $ obEscapeChar $ obRecordSeparator $ obAuditEventMap $ obKeyValSeparator $ obListItemSeparator $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.1 NAME 'oblixtabpanel' DESC 'Oracle Access Manager defined objectclass' SUP oblixpanel  STRUCTURAL MAY ( obpanelfilter $ obhtmlfile $ obtabsearchbaseStr $ obdirty $ obver $ obtemplateclass ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.18 NAME 'oblixgroupOfUniqueNames' DESC 'Oracle Access Manager defined objectclass' SUP groupOfUniqueNames  STRUCTURAL MAY ( obuniquememberStr $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.24 NAME 'oblixResourceType' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obSchemeName $ obResourceType $ obDisplayName $ obResourceMatching $ obResourceOperation $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.23 NAME 'oblixCustomAuthzCondition' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdisplayname $ obdescription $ obpolicyConditionOrder $ obpolicyConditionUsage $ obschemeID $ obRequiredParams $ obOptionalParams $ obAdditionalParams $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.22 NAME 'oblixAuthzPluginScheme' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdisplayname $ obdescription $ obCustomLib $ obMgdNameSpace $ obMgdCodeUsed $ obRequiredParams $ obOptionalParams $ obUserProfileAttrs $ obRequestContextParams $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.17 NAME 'oblixMgmtNode' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( commonName )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.16 NAME 'oblixSyncRecord' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obSyncRequestNo )  MAY ( obCompID $ obCompSDID $ obCompWRORID $ obSyncRequestType $ obSyncChangeType $ obSyncTime $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.15 NAME 'oblixGSN' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obseqno )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.18 NAME 'oblixAAAServerIDNode' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obServerID $ obMaxAAAServerConnections )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.12 NAME 'oblixAAAServerConfigInfo' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obHostname $ obPort )  MAY ( obDebug $ obDebugFileName $ obThreads $ obIsEncrypted $ obMaxAAASessionTime $ obver $ obService $ obsnmpenabled $ obsnmpagentport ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.11 NAME 'oblixWebgateConfigInfo' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obHostname $ obPort )  MAY ( obMaxAAAServerConnections $ obDebug $ obMaxAAASessionTime $ obFailoverThreshold $ obSleepFor $ obAAAPrimaryServerID $ obAAASecondaryServerID $ obIsEncrypted $ obMaxSessionTime $ obMaxWebgateCacheElems $ obWebgateCacheTimeout $ obPrimaryCookieDomain $ obIdleSessionTimeout $ obTimeStamp $ obPreferredHost $ obAccessClientPasswd $ obver $ obService $ obServerTimeoutThreshold $ obsnmpenabled $ obsnmpagentport $ obPrimaryClusters $ obBackupClusters $ obCredentials $ obAccessComponentDescription $ obcompounddata ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.14 NAME 'oblixHostId' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdisplayname $ obdescription $ obHostNamePort $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.9 NAME 'oblixAuditPolicy' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obAuditEvent $ obAuditProfileattrs $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.8 NAME 'oblixAAAEngineConfig' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obAuditFileName $ obMaxAuditFileSize $ obAuditFileRotationInterval $ obAuditBufferSize $ obMaxUserCacheElems $ obUserCacheTimeout $ obMaxPolicyCacheElems $ obPolicyCacheTimeout $ obEngineConfigRefreshPeriod $ obURLPrefixReloadInterval $ obPasswordPolicyReloadInterval $ obAuditBufferFlushInterval $ obAuditFlag $ obsessiontokencache $ obmaxsessiontokencacheelems ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.7 NAME 'oblixPSCConfig' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obUserAttrsToCache $ obUrlMatching $ obRootdir ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.6 NAME 'oblixWRSSearchResultColumns' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obSearchResultColumns $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.5 NAME 'oblixWebResourceSearchList' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obSearchList ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.28 NAME 'oblixApplicationAuditInfo' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obLogLevel $ obProfileAttrs $ obAppEventInfo $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.27 NAME 'oblixEncryptionKey' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( commonName )  MAY ( obSharedSecret $ obSecretSize $ obTimeStamp $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.21 NAME 'oblixOISServerIDNode' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obServerID $ obMaxOISServerConnections )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.20 NAME 'oblixOISServerConfigInfo' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obHostname $ obPort )  MAY ( obDebug $ obDebugFileName $ obThreads $ obIsEncrypted $ obMaxOISSessionTime $ obAuditFileName $ obAuditBufferSize $ obAuditMaxFileSize $ obAuditFlag $ obDateType $ obDateSeparator $ obLogFileName $ obLogFileMaxSize $ obScopeFileName $ obFileRotateInterval $ obAuditFileRotationInterval $ obAuditFileFlushInterval $ obAuditFields $ obEscapeChar $ obLogFileRotationInterval $ obLogCacheFlushInterval $ obLogCacheMaxSize $ obver $ obsnmpenabled $ obsnmpagentport $ obcompounddata ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.19 NAME 'oblixWebpassConfigInfo' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obHostname $ obPort )  MAY ( obMaxOISServerConnections $ obDebug $ obMaxOISSessionTime $ obFailoverThreshold $ obSleepFor $ obOISPrimaryServerID $ obOISSecondaryServerID $ obIsEncrypted $ obMaxSessionTime $ obMaxWebpassCacheElems $ obWebpassCacheTimeout $ obPrimaryCookieDomain $ obIdleSessionTimeout $ obTimeStamp $ obPreferredHost $ obver $ obServerTimeoutThreshold $ obsnmpenabled $ obsnmpagentport ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.13 NAME 'oblixWRSCAdminCommon' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( commonName $ obHTTPOperations $ obMoreHTTPOperations )  MAY ( obSharedSecret $ obSecretRecycleTime $ obSecretSize $ obTimeStamp $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.8.1.1 NAME 'oblixadvancedgroup' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obver $ obgroupsubscriptiontype $ obgroupexpandeddynamic $ obgrouppuredynamic $ obgroupadministrator $ obgroupsubscribemessage $ obgroupunsubscribemessage $ obgroupsubscriptionfilter $ obgroupsubscribenotification $ obgroupdynamicfilter $ obgroupsimplifiedaccesscontrol ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.7 NAME 'OblixWorkflowTarget' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obwftargetid )  MAY ( obwftargetdnStr $ obwftargetlabel $ obwftargetfilter $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.6 NAME 'OblixWorkflowAttribute' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obattr $ obattrtype ) MAY ( obwfattrflags $ obwfattrdefval $ obattrvals $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.5 NAME 'oblixWorkFlowResourceAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obworkflowname $ obwfstepid ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.4 NAME 'OblixWorkflowStepInstance' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obwfstepinstid $ obworkflowstepdn )  MAY ( obentrycondition $ obwfstatus $ obrequiredattribute $ obprovisionedattribute $ oboptionalattribute $ obparticipant $ obactordn $ obactionname $ obdatecreated $ obdateprocessed $ obactorcomment $ obexitcondition $ obactionreturncode $ obtriggeredworkflow $ obver $ obretrycount $ obretrydone $ oblockedby $ obapp $ obcompounddata $ obdynamicparticipantsset ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.3 NAME 'OblixWorkflowInstance' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obwfinstanceid $ obworkflowdn $ obtargetdn )  MAY ( obcurrentdn $ obcurrentstep $ obclass $ obapp $ obworkflowtype $ obattr $ obdatecreated $ obdateprocessed $ obparentworkflow $ obparentstep $ obwfstatus $ obtriggeredworkflow $ obver $ obHostName $ obPort $ obactionindicator $ obwftypename $ obactorcomment $ obkey $ obcertid $ obworkflowname $ oblockedby $ obwfsupplementalval ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.2 NAME 'oblixWorkflowStep' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obwfstepid $ obactionname $ oborder ) MAY ( obdescription $ obentrycondition $ obactioncallback $ obrequiredattribute $ obprovisionedattribute $ oboptionalattribute $ obver $ obforcecommit $ obuseraction $ obwfattrorder $ obwfsubflowsStr $ obcompounddata ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.7.1.1 NAME 'oblixWorkflow' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obworkflowid $ obworkflowname $ obclass $ obworkflowtype )  MAY ( obtreepathStr $ obtreepathfilter $ obwfdomainfilter $ obnoofinstances $ obattr $ obapp $ obwffirstStep $ obready $ obdefiner $ obdescription $ oblabeleddn $ obwftypename $ obisworkflowprovisioned $ obsubscriptiontypes $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.4 NAME 'oblixChallengeScheme' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obtype )  MAY ( obdisplayname $ obdescription $ obMappingFilter $ obCustomLib $ obChallengeMethod $ obChallengeRedirect $ obLevel $ obChallengeParameter $ obSelectionFilter $ obMappingBase $ obCredentialPassword $ obAnonUser $ obver $ obenabled ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.3 NAME 'oblixAuthenticationPolicy' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdisplayname $ obdescription $ obschemeID $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.2 NAME 'oblixSiteDomain' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdescription $ obdisplayname $ obEvalOrder $ obPolicyRuleName $ obEnabled $ obver $ obAuthzEvalExp $ obduplicateAction ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.1 NAME 'oblixURLPrefix' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ oburlprefix $ obSiteDomainID )  MAY ( obdescription $ obHostContext $ obResourceType $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.8 NAME 'oblixGroupResourceAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obResourceUidStr $ obResourceAttribute $ obgroupsubscriptiontype $ obgrouptype ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.11 NAME 'oblixDelegatedAdministratorAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obpolicyConditionUidStr $ obpolicyConditionGroupStr $ obpolicyConditionRole ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.7 NAME 'oblixUserResourceAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obResourceUidStr $ obResourceAttribute ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.6 NAME 'oblixGenericResourceAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obResourceUidStr $ obResourceAttribute $ obobjectclass $ obsize $ obContainmentNotifyLimit ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.1 NAME 'oblixResourceOperationRule' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdisplayname $ obdescription $ obResourceOperation $ obResourceType $ obPolicyRuleName $ obResourcePropagatePolicy $ obResourceUmbrellaPolicy $ obResourceFilter $ obResourcePriority $ obResourceID $ obAbsPathPattern $ obver $ obAuthzEvalExp $ obduplicateAction ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.4 NAME 'oblixWebResourceAuxClass' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obname $ obHostContext $ obAbsPathPattern $ obQueryStrPattern $ obQueryStrNameValuePattern ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.3 NAME 'oblixWRSCAction' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obSuccessRedirect $ obSuccessProfileAttrs $ obSuccessFixedVals $ obFailRedirect $ obFailProfileAttrs $ obFailFixedVals $ obInconclusiveRedirect $ obInconclusiveProfileAttrs $ obInconclusiveFixedVals ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.2 NAME 'oblixPolicyTimePeriodCondition' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obptpConditionTime $ obptpConditionMonthOfYearMask $ obptpConditionDayOfMonthMask $ obptpConditionDayOfWeekMask $ obptpConditionTimeOfDayMask $ obptpConditionTimeZone ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.10 NAME 'oblixPolicyCondition' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obpolicyConditionOrder $ obpolicyConditionUsage $ obpolicyConditionUidStr $ obpolicyConditionGroupStr $ obpolicyConditionRole $ obpolicyConditionRuleURL $ obpolicyConditionTreeURL $ obpolicyConditionIPAddress $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.5 NAME 'oblixPolicyRule' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname )  MAY ( obdescription $ obpolicyRuleEnabled $ obpolicyRuleConditionList $ obpolicyRuleActionList $ obpolicyRuleDeniedActionList $ obpolicyRuleValidityPeriodList $ obpolicyRuleConditionListType $ obpolicyRulePriority $ obdisplayname $ obpolicyKeyword $ obpolicyTimingCondLocalOrAbs $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.5.1.9 NAME 'oblixPolicyContainer' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obpolicyContainerId )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete:objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.28 NAME 'oblixDBInstance' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname ) MAY ( obDBAgentHost $ obDBAgentPort $ obDBAgentLoginName $ obDBAgentLoginPassword $ obDBAgentFlags $ obDBAgentInitialConnections $ obDBAgentMaxConnections $ obDBAgentTimeLimit $ obDBAgentSizeLimit $ obDBAgentCert7PathName $ obDBAgentSecurePort $ obdescription $ oborder $ obdisplayname $ obver $ obDSNName $ obDatabaseName ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete:objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.27 NAME 'oblixVirtualDB' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname ) MAY ( obdbtype $ obschemadomain $ obdisplayname $ obisschemamaster $ obsearchbasestr $ obdbsubtype $ obdboperation $ obflags $ obdescription $ obdbdatatype $ oborder $ obdbusedby $ obmaximumservers $ obfailoverthreshold $ obsleepfor $ obenabled $ obver $ obdbusedbyflag $ obMaxSessionTime $ obUsedByApp ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.25 NAME 'oblixContainer' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obcontainerId )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.24 NAME 'oblixAuxLocation' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( oblocationdn $ obrectangle ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.21 NAME 'oblixPersonPwdPolicy' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obpasswordcreationdate $ obpasswordhistory $ obpasswordchangeflag $ obpasswordexpmail $ oblockouttime $ oblogintrycount $ obfirstlogin $ obresponsetries $ oblastloginattemptdate $ oblastresponseattemptdate $ obresponsetimeout $ oblastsuccessfullogin $ oblastfailedlogin $ obAnsweredChallenges $ obYetToBeAnsweredChallenge ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.20 NAME 'oblixPasswordPolicy' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obpasswordpolicyid )  MAY ( obinputvalidationrules $ obpasswordvalidityperiod $ obpasswordexpirynoticeperiod $ obexpirynoticemode $ oblostpasswordmechanism $ oblostpasswordmodel $ obchangeonreset $ obkeephistory $ obpasswordpolicydomain $ obpasswordpolicyname $ obpasswordpolicyfilter $ obpasswordminimumage $ oblogintries $ oblockoutduration $ oblogintimeout $ obpasswordpolicyenabled $ obver $ obcompounddata $ obLPMdn ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.19 NAME 'oblixmedia' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obid )  MAY ( obmediatype $ obmediatypefileext $ obdescription $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.16 NAME 'oblixuserdefinedbutton' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname $ obhtmlfile )  MAY ( obapp $ obbuttonimgfilename $ obmouseover $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.14 NAME 'oblixgroup' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obgroupcreator $ obgroupcreationdate $ obgrouptype $ obsubscriptiontypes ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.13 NAME 'oblixorgperson' DESC 'Oracle Access Manager defined objectclass' SUP top  AUXILIARY MAY ( obuiconfig $ oblocationdn $ obrectangle $ obpsftid $ obdirectreports $ obindirectmanager $ obuseraccountcontrol $ obobjectclass $ obver $ oboutofofficeindicator ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.9 NAME 'oblixclass' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obclass $ obready )  MAY ( obclassattr $ obclasstype $ obhidden $ obver $ obclasskind ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.8 NAME 'oblixapplication' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obapp )  MAY ( obdirfunctions $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.7 NAME 'oblixrule' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obattr $ obid $ obrule )  MAY ( obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.6 NAME 'oblixenum' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obstoreas $ obid )  MAY ( obdisplayname $ oborder $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.4 NAME 'oblixmetaattribute' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obattr )  MAY ( obdisplayname $ obdisplaytype $ obdatetype $ obdateseparator $ obsemantictype $ obchoicetype $ oborder $ obcardinality $ oblifecycleinfo $ obsearchable $ obrows $ obcols $ obsize $ obvisible $ obreportable $ obobjectclass $ oblookupattr $ obmatchattr $ obclass $ obdefaultvalue $ obmaxlength $ obdatatype $ obdriving $ obdrivenby $ obver $ obMappingAttribute ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.3 NAME 'oblixlocation' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obid )  MAY ( oblocationname $ oblocationtitle $ obphoto $ obparentlocationdn $ obrectangle $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.2 NAME 'oblixconfig' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obpersonoc $ obsearchbase $ organizationName )  MAY ( obsearchbasestr $ obgroupoc $ obpolicybase $ obbugreportemail $ obwebmasteremail $ obfeedbackemail $ obphotostyle $ obphotoheight $ obphotowidth $ obsmtphostname $ obsmtpport $ obsmtpdomainname $ obmailsenttype $ obasynchmailqueuesize $ obdefaultstyle $ obdefaultonlystyle $ obusersessiontimeout $ obrichhtmlemail $ obver $ obpasswordexpiryredirecturl $ oblostpasswordredirecturl $ obpasswordchangeredirecturl $ obaccountlockoutredirecturl $ obpasswordmanagementflag $ obadditionalsearchbasesStr $ obusersessionelapsetime $ obssologouturl $ obduplicateAction $ obcompounddata ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.0 NAME 'oblixpanel' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obpanelid $ obclass $ obready $ obname $ obpaneltype )  MAY ( oborder $ obdescription $ obfilter $ obmouseover $ obpaneltabimgfilename $ obpaneltabimgdepressed $ obpaneltabimgfilenamebottom $ obpaneltabimgdepressedbottom $ obpaneltitleimgfilename $ obpanelelctabimgfilename $ obpanelelctabimgfilename2 $ obpanelelctabimgfilenamebottom $ obpanelelctabimgfilename2bottom $ obtaboptions $ obhidden $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.35 NAME 'oblixLanguage' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obid ) MAY ( oblanguage $ obsubtag $ oborder $ obdisplayname $ obenabled $ obver ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.30 NAME 'oblixAuthenticationFlow' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname ) MAY ( obStartEvalWith $ obStepFlow ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.31 NAME 'oblixAuthenticationStep' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname ) MAY ( obdisplayname $ obindex $ obPluginNumber ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.6.1.33 NAME 'oblixReportStatus' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obname ) MAY ( obdisplayname $ obDescription $ obServerID $ obTimeStamp $ obReportType $ obReportStatus $ obReportMinorStatus $ obReportInput $ obPercentage ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: objectclasses
+objectclasses: ( 1.3.6.1.4.1.3831.0.1.36 NAME 'OblixLPMPolicy' DESC 'Oracle Access Manager defined objectclass' SUP top STRUCTURAL MUST ( obLPMName $ obCPSource $ obMinimumChallengeConfigure $ obAllowDuplicateResponses $ obMinimumChallengeAnswer $ obChallengePoseType $ obSendEmail $ obPolicyEnabled ) MAY ( obCPSet $  obResponseMinimumLength ) )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.1 NAME 'obdirectreports' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.7 NAME 'obapp' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.8 NAME 'obattr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.13 NAME 'obbugreportemail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.14 NAME 'obbuttonimgfilename' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.15 NAME 'obcardinality' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.16 NAME 'obchoicetype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.17 NAME 'obclass' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.18 NAME 'obclassattr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.19 NAME 'obclasstype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.21 NAME 'obdatecreated' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.22 NAME 'obdateprocessed' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.24 NAME 'obdefaultstyle' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.25 NAME 'obdefaultonlystyle' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.26 NAME 'obdescription' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.27 NAME 'obdirfunctions' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.28 NAME 'obdisplayname' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.29 NAME 'obdisplaytype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.35 NAME 'obfeedbackemail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.36 NAME 'obfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.37 NAME 'obhidden' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.38 NAME 'obhtmlfile' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.39 NAME 'obid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.41 NAME 'oblifecycleinfo' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.42 NAME 'oblocationdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.43 NAME 'oblocationname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.44 NAME 'oblocationtitle' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.52 NAME 'obmouseover' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.53 NAME 'obname' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.59 NAME 'obobjectclass' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.61 NAME 'oborder' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.63 NAME 'obrows' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.64 NAME 'obcols' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.65 NAME 'obsize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.68 NAME 'obpanelelctabimgfilename' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.69 NAME 'obpanelelctabimgfilename2' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.70 NAME 'obpanelfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.71 NAME 'obpanelid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.72 NAME 'obpaneltabimgfilename' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.73 NAME 'obpaneltabimgdepressed' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.74 NAME 'obpaneltitleimgfilename' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.75 NAME 'obpaneltype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.76 NAME 'obparentlocationdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.77 NAME 'obpersonoc' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.78 NAME 'obphoto' DESC 'Oracle Access Manager defined attribute type' SYNTAX '1.3.6.1.4.1.1466.115.121.1.5'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.79 NAME 'obphotoheight' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.80 NAME 'obphotostyle' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.81 NAME 'obphotowidth' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.83 NAME 'obpsftid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.84 NAME 'obready' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.85 NAME 'obrectangle' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.88 NAME 'obrule' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.89 NAME 'obsearchable' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.90 NAME 'obsearchbase' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.91 NAME 'obsemantictype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.92 NAME 'obsmtphostname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.93 NAME 'obsmtpport' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.94 NAME 'obstoreas' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.103 NAME 'obuiconfig' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.104 NAME 'obusersessiontimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.106 NAME 'obver' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.111 NAME 'obvisible' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.112 NAME 'obwebmasteremail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.118 NAME 'obrichhtmlemail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.119 NAME 'obindirectmanager' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.126 NAME 'obdatetype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.127 NAME 'obdateseparator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.128 NAME 'oblookupattr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.129 NAME 'obmatchattr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.130 NAME 'obsmtpdomainname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.131 NAME 'obreportable' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.133 NAME 'obclasskind' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.134 NAME 'obmediatype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.135 NAME 'obmediatypefileext' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.136 NAME 'obdefaultvalue' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.137 NAME 'obmaxlength' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.138 NAME 'obdatatype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.139 NAME 'obdirty' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.140 NAME 'obinputvalidationrules' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.141 NAME 'obpasswordvalidityperiod' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.142 NAME 'obpasswordexpirynoticeperiod' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.143 NAME 'obexpirynoticemode' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.144 NAME 'oblostpasswordmechanism' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.145 NAME 'oblostpasswordmodel' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.146 NAME 'obchangeonreset' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.147 NAME 'obpasswordpolicyid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.148 NAME 'obkeephistory' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.149 NAME 'obpasswordcreationdate' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.150 NAME 'obpasswordchangeflag' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.151 NAME 'obpasswordhistory' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.152 NAME 'obpasswordexpmail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.153 NAME 'obasynchmailqueuesize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.154 NAME 'obmailsenttype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.155 NAME 'obpanelelctabimgfilenamebottom' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.156 NAME 'obpanelelctabimgfilename2bottom' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.157 NAME 'obpaneltabimgfilenamebottom' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.158 NAME 'obpaneltabimgdepressedbottom' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.160 NAME 'obtaboptions' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.161 NAME 'obdrivenby' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.162 NAME 'obdriving' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.163 NAME 'obcontainerId' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.165 NAME 'obgroupoc' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.166 NAME 'obpasswordpolicydomain' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.167 NAME 'obpasswordpolicyname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.168 NAME 'obpasswordpolicyfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.169 NAME 'obpasswordminimumage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.170 NAME 'oblogintries' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.171 NAME 'oblockoutduration' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.172 NAME 'oblogintrycount' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.173 NAME 'oblockouttime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.174 NAME 'obfirstlogin' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.175 NAME 'obresponsetries' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.176 NAME 'oblastloginattemptdate' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.177 NAME 'oblogintimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.178 NAME 'obpasswordexpiryredirecturl' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.179 NAME 'oblostpasswordredirecturl' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.180 NAME 'obpasswordchangeredirecturl' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.181 NAME 'obpasswordmanagementflag' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.185 NAME 'obDBAgentHost' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.186 NAME 'obDBAgentPort' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.188 NAME 'obDBAgentLoginName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.189 NAME 'obDBAgentLoginPassword' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.191 NAME 'obDBAgentFlags' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.192 NAME 'obDBAgentInitialConnections' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.193 NAME 'obDBAgentMaxConnections' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.194 NAME 'obDBAgentTimeLimit' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.195 NAME 'obDBAgentSizeLimit' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.196 NAME 'obDBAgentCert7PathName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.198 NAME 'obDBAgentSecurePort' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.199 NAME 'oblastresponseattemptdate' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.200 NAME 'obresponsetimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.202 NAME 'obdbtype' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.203 NAME 'obschemadomain' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.204 NAME 'obisschemamaster' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.205 NAME 'obdbsubtype' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.206 NAME 'obdboperation' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.207 NAME 'obdbdatatype' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.209 NAME 'obdbusedby' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.211 NAME 'obmaximumservers' DESC 'Oracle Access Manager defined attribute type' SYNTAX 1.3.6.1.4.1.1466.115.121.1.27  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.220 NAME 'obpasswordpolicyenabled' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.221 NAME 'obflags' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.222 NAME 'obusersessionelapsetime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.223 NAME 'obssologouturl' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.224 NAME 'obsearchbasestr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.227 NAME 'obsnmpenabled' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.228 NAME 'obsnmpagentport' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.229 NAME 'oblanguage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.230 NAME 'obsubtag' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.241 NAME 'obDBUsedByFlag' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.242 NAME 'obtabsearchbaseStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.243 NAME 'obuniquememberStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.244 NAME 'obadditionalsearchbasesStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.245 NAME 'obtemplateclass' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.246 NAME 'obUsedByApp' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.247 NAME 'obDSNName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.248 NAME 'obDatabaseName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.249 NAME 'oblastsuccessfullogin' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.250 NAME 'oblastfailedlogin' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.251 NAME 'obaccountlockoutredirecturl' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.252 NAME 'obLPMdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.253 NAME 'obAnsweredChallenges' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.254 NAME 'obYetToBeAnsweredChallenge' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.255 NAME 'obLPMName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.256 NAME 'obCPSource' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.257 NAME 'obCPSet' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.258 NAME 'obMinimumChallengeConfigure' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.259 NAME 'obResponseMinimumLength' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.260 NAME 'obAllowDuplicateResponses' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.261 NAME 'obMinimumChallengeAnswer' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.262 NAME 'obChallengePoseType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.263 NAME 'obSendEmail' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.0.0.264 NAME 'obPolicyEnabled' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch'  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.2.0.1 NAME 'obuseraccountcontrol' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.2.0.2 NAME 'oboutofofficeindicator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.1 NAME 'obgroupsubscriptiontype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.3 NAME 'obgroupcreator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.4 NAME 'obgroupdynamicfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.6 NAME 'obgroupcreationdate' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.7 NAME 'obgrouptype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.8 NAME 'obgroupexpandeddynamic' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.9 NAME 'obgroupadministrator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'distinguishedNameMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.12'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.10 NAME 'obgroupsubscriptionfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.11 NAME 'obgroupsubscribemessage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.12 NAME 'obgroupunsubscribemessage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.13 NAME 'obgroupsubscribenotification' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.15 NAME 'obgrouppuredynamic' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.3.0.16 NAME 'obgroupsimplifiedaccesscontrol' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.0 NAME 'obpolicyRuleEnabled' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.1 NAME 'obpolicyRuleConditionList' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.2 NAME 'obpolicyRuleActionList' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.3 NAME 'obpolicyRuleDeniedActionList' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.4 NAME 'obpolicyRuleValidityPeriodList' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.5 NAME 'obpolicyRuleConditionListType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.6 NAME 'obpolicyRulePriority' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.7 NAME 'obpolicyKeyword' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.9 NAME 'obSuccessRedirect' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.10 NAME 'obSuccessProfileAttrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.11 NAME 'obSuccessFixedVals' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.12 NAME 'obFailRedirect' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.13 NAME 'obFailProfileAttrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.14 NAME 'obFailFixedVals' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.15 NAME 'obptpConditionTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.16 NAME 'obptpConditionMonthOfYearMask' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.17 NAME 'obptpConditionDayOfMonthMask' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.18 NAME 'obptpConditionDayOfWeekMask' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.19 NAME 'obptpConditionTimeOfDayMask' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.20 NAME 'obptpConditionTimeZone' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.21 NAME 'obResourceAttribute' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.22 NAME 'obResourceOperation' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.23 NAME 'obResourceType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.24 NAME 'obPolicyRuleName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.25 NAME 'obResourcePropagatePolicy' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.26 NAME 'obResourceUmbrellaPolicy' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.27 NAME 'obAbsPathPattern' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.28 NAME 'obQueryStrPattern' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.31 NAME 'obQueryStrNameValuePattern' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.40 NAME 'obpolicyContainerId' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.41 NAME 'obpolicyTimingCondLocalOrAbs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.42 NAME 'obContainmentNotifyLimit' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.43 NAME 'obResourceFilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.44 NAME 'obResourcePriority' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.45 NAME 'obResourceUidStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.46 NAME 'obpolicyConditionUidStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.47 NAME 'obpolicyConditionGroupStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.32 NAME 'obpolicyConditionOrder' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.33 NAME 'obpolicyConditionUsage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.36 NAME 'obpolicyConditionRole' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.37 NAME 'obpolicyConditionRuleURL' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.38 NAME 'obpolicyConditionTreeURL' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.5.0.39 NAME 'obpolicyConditionIPAddress' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.1 NAME 'obSiteDomainID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.2 NAME 'obChallengeMethod' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.3 NAME 'obChallengeRedirect' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.4 NAME 'obHostName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.5 NAME 'obPort' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.8 NAME 'obEvalOrder' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.9 NAME 'obMappingFilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.10 NAME 'obCustomLib' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.11 NAME 'obLevel' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.12 NAME 'obschemeID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.13 NAME 'obtype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.16 NAME 'obChallengeParameter' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.17 NAME 'obSelectionFilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.18 NAME 'obMappingBase' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.19 NAME 'obCredentialPassword' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.20 NAME 'obAnonUser' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.21 NAME 'obSearchList' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.22 NAME 'obSearchResultColumns' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.48 NAME 'obHostNamePort' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.47 NAME 'obHostContext' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.49 NAME 'oburlprefix' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.83 NAME 'obOISPrimaryServerID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.84 NAME 'obMaxOISServerConnections' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.85 NAME 'obMaxOISSessionTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.86 NAME 'obOISSecondaryServerID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.87 NAME 'obMaxWebpassCacheElems' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.88 NAME 'obWebpassCacheTimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.95 NAME 'obAuditMaxFileSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.96 NAME 'obAuditFileFlushInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.97 NAME 'obAuditFlag' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.98 NAME 'obLogFileName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.99 NAME 'obLogFileMaxSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.100 NAME 'obScopeFileName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.101 NAME 'obFileRotateInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.105 NAME 'obProfileAttrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.106 NAME 'obLogLevel' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.107 NAME 'obAppEventInfo' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.112 NAME 'obLogFileRotationInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.113 NAME 'obLogCacheFlushInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.114 NAME 'obLogCacheMaxSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.115 NAME 'obService' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.117 NAME 'obCipher' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.116 NAME 'obServerTimeoutThreshold' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.118 NAME 'obStartEvalWith' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.119 NAME 'obStepFlow' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.120 NAME 'obindex' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.121 NAME 'obPluginNumber' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.122 NAME 'obAuthzEvalExp'  DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.123 NAME 'obduplicateAction'  DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.124 NAME 'obInconclusiveRedirect' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.125 NAME 'obInconclusiveProfileAttrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.126 NAME 'obInconclusiveFixedVals' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.127 NAME 'obAAAMembers' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.129 NAME 'obPrimaryClusters' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.130 NAME 'obBackupClusters' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.132 NAME 'obAccessComponentDescription' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.131 NAME 'obCredentials' DESC 'Oracle Access Manager defined attribute type' SYNTAX '1.3.6.1.4.1.1466.115.121.1.5'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.23 NAME 'obAuditFileName' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.24 NAME 'obAuditFileRotationInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.25 NAME 'obMaxAuditFileSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.26 NAME 'obAuditBufferSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.64 NAME 'obMaxUserCacheElems' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.65 NAME 'obUserCacheTimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.66 NAME 'obMaxPolicyCacheElems' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.67 NAME 'obPolicyCacheTimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.68 NAME 'obEngineConfigRefreshPeriod' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.69 NAME 'obAuditBufferFlushInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.70 NAME 'obURLPrefixReloadInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.27 NAME 'obAuditEvent' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.28 NAME 'obAuditProfileattrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.29 NAME 'obEscapeChar' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.30 NAME 'obRecordSeparator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.31 NAME 'obAuditFields' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.77 NAME 'obAuditEventMap' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.80 NAME 'obKeyValSeparator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.81 NAME 'obListItemSeparator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.32 NAME 'obUserAttrsToCache' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.33 NAME 'obpolicybase' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.34 NAME 'obDebug' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.35 NAME 'obThreads' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.36 NAME 'obAAAPrimaryServerID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.37 NAME 'obMaxAAAServerConnections' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.38 NAME 'obIsEncrypted' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.39 NAME 'obMaxAAASessionTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.40 NAME 'obSharedSecret' DESC 'Oracle Access Manager defined attribute type' SYNTAX '1.3.6.1.4.1.1466.115.121.1.5'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.41 NAME 'obSecretRecycleTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.44 NAME 'obHTTPOperations' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.45 NAME 'obMoreHTTPOperations' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.46 NAME 'obRootdir' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.50 NAME 'obFailoverThreshold' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.51 NAME 'obSleepFor' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.60 NAME 'obAAASecondaryServerID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.61 NAME 'obServerID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.62 NAME 'obSecretSize' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.63 NAME 'obTimeStamp' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.71 NAME 'obMaxSessionTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.72 NAME 'obMaxWebgateCacheElems' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.73 NAME 'obWebgateCacheTimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.74 NAME 'obEnabled' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.75 NAME 'obUrlMatching' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.76 NAME 'obDebugFileName' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.78 NAME 'obPrimaryCookieDomain' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.79 NAME 'obIdleSessionTimeout' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.82 NAME 'obPreferredHost' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.108 NAME 'obAccessClientPasswd' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.52 NAME 'obCompID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.53 NAME 'obCompSDID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.54 NAME 'obCompWRORID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.55 NAME 'obSyncRequestType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.56 NAME 'obSyncChangeType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.57 NAME 'obSyncTime' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.58 NAME 'obSeqNo' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.59 NAME 'obSyncRequestNo' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.89 NAME 'obRequiredParams' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.90 NAME 'obOptionalParams' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.91 NAME 'obUserProfileAttrs' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.92 NAME 'obRequestContextParams' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.93 NAME 'obAdditionalParams' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.94 NAME 'obResourceMatching' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.102 NAME 'obSchemeName' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.103 NAME 'obResourceID' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.111 NAME 'obPasswordPolicyReloadInterval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.133 NAME 'obMgdNameSpace' DESC 'Name space used for managed plugin'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.134 NAME 'obMgdCodeUsed' DESC 'Indicates the plugin is managed'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.135 NAME 'obcompounddata' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.136 NAME 'obReportType' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.137 NAME 'obReportStatus' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.138 NAME 'obReportMinorStatus' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.139 NAME 'obReportInput' DESC 'Oracle Access Manager defined attribute type'  EQUALITY 'caseIgnoreIA5Match' SYNTAX '1.3.6.1.4.1.1466.115.121.1.26'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.140 NAME 'obPercentage' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.141 NAME 'obsessiontokencache' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.6.0.142 NAME 'obmaxsessiontokencacheelems' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.2 NAME 'obworkflowtype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.3 NAME 'oblabeleddn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.5 NAME 'obnoofinstances' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.6 NAME 'obdefiner' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.7 NAME 'obwfstepid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.8 NAME 'obentrycondition' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.9 NAME 'obactionname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.10 NAME 'obactioncallback' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.11 NAME 'obrequiredattribute' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.12 NAME 'obprovisionedattribute' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.13 NAME 'oboptionalattribute' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.15 NAME 'obwfinstanceid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.16 NAME 'obworkflowdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.17 NAME 'obcurrentstep' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.18 NAME 'obtargetdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.19 NAME 'obcurrentdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.20 NAME 'obparentworkflow' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.21 NAME 'obparentstep' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.22 NAME 'obwfstepinstid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.23 NAME 'obworkflowstepdn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.27 NAME 'obactordn' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.28 NAME 'obactorcomment' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.30 NAME 'obexitcondition' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.31 NAME 'obtriggeredworkflow' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.32 NAME 'obwfstatus' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.33 NAME 'obactionreturncode' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.34 NAME 'obworkflowname' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.35 NAME 'obwffirstStep' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.36 NAME 'obworkflowid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.37 NAME 'obparticipant' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.38 NAME 'obactionindicator' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.39 NAME 'obattrtype' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.40 NAME 'obattrvals' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.41 NAME 'obforcecommit' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.42 NAME 'obuseraction' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.43 NAME 'obwftypename' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.44 NAME 'obkey' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.45 NAME 'obcertid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.46 NAME 'obretrycount' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.47 NAME 'obretrydone' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.48 NAME 'oblockedby' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.49 NAME 'obisworkflowprovisioned' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.50 NAME 'obsubscriptiontypes' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.51 NAME 'obwftargetid' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.53 NAME 'obwftargetlabel' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.54 NAME 'obwftargetfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.55 NAME 'obtreepathfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.56 NAME 'obwfdomainfilter' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.57 NAME 'obwfattrorder' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.59 NAME 'obwfattrflags' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.60 NAME 'obwfattrdefval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.61 NAME 'obwfsupplementalval' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.62 NAME 'obtreepathStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.63 NAME 'obwftargetdnStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.64 NAME 'obwfsubflowsStr' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'caseIgnoreMatch' SUBSTR 'caseIgnoreSubstringsMatch' SYNTAX '1.3.6.1.4.1.1466.115.121.1.15'  X-ORIGIN 'user defined' )
+
+dn: cn=subSchemaSubentry
+changetype: modify
+delete: attributetypes
+attributetypes: ( 1.3.6.1.4.1.3831.7.0.65 NAME 'obdynamicparticipantsset' DESC 'Oracle Access Manager defined attribute type' EQUALITY 'integerMatch' ORDERING 'integerOrderingMatch'  SYNTAX '1.3.6.1.4.1.1466.115.121.1.27'  X-ORIGIN 'user defined' )

@@ -31,7 +31,7 @@ To add the Hadoop blueprint to vFabric Application Director follow the steps bel
 
 5. Add the dependencies to the services and scripts according to the blueprint.
 
-6. (Optional) For testing purpose, you can add "vFabric_tc_Server" service to the app, which will be used to test if the Hadoop service works. For detailed guidance of the sample app that will be added to to the tc_Server, please refer to the doc "Hadoop_Cluster_Sample_Webapp.pdf".
+6. (Optional) For testing purpose, you can add "vFabric_tc_Server" service to the app, which will be used to test if the Hadoop service works. The scripts are in the "tc_server" directory and the properties of the services are listed in "Hadoop_Properites" pdf file. For detailed guidance of the sample app that will be added to to the tc_Server, please refer to the doc sampleApp/Hadoop_Cluster_Sample_Webapp.pdf.
 
 7. Start the deployment of the Hadoop service app.
 

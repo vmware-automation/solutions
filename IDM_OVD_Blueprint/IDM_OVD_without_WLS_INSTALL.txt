@@ -1,0 +1,174 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+#########PARAMETERS FROM APPLICATION DIRECTOR - DEFAULTS#########
+#Required Properties
+#MW_BASE=/oracle
+#DOMAIN_NAME=idm
+#ORACLE_INSTANCE_NAME=asinst_1
+#OVDADMINUSER="cn=ovdadmin"
+#OVDADMINPASSWORD=admin123
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MW_HOME=$MW_BASE/products/fmw
+ORACLE_HOME=$MW_HOME/asinst_1
+MOUNTPOINTLOCATION=/tmp/mount
+
+IDMINSTALLERLOCATION="/oracle/install/OVDinstaller"
+IDMINSTALLSCRIPT="$IDMINSTALLERLOCATION/Disk1/OVD_runinstaller.sh"
+IDMRESPONSEFILE="$IDMINSTALLERLOCATION/Disk1/im_install_config_OVDONLY.rsp"
+IDMRESPONSEFILETEMPLATE="$IDMINSTALLERLOCATION/Templates/im_install_config.rsp"
+IDMORAINSTFILE="$IDMINSTALLERLOCATION/Templates/oraInst.loc"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+####################SCRIPT EXECUTION ##################
+echo_d "Parameter Validation"
+
+if [ "x${DOMAIN_NAME}" = "x" ]; then
+    error_exit "DOMAIN_NAME not set."
+fi
+
+if [ "x${ORACLE_INSTANCE_NAME}" = "x" ]; then
+    error_exit "ORACLE_INSTANCE_NAME not set."
+fi
+
+if [ "x${OVDADMINUSER}" = "x" ]; then
+    error_exit "OVDADMINUSER not set."
+fi
+
+if [ "x${OVDADMINPASSWORD}" = "x" ]; then
+    error_exit "OVDADMINPASSWORD not set."
+fi
+
+echo_d "Parameter Validation -- DONE"
+
+# Copy IDM OVD Installer
+echo_d "Copying IDM OVD Installer"
+mkdir -p $IDMINSTALLERLOCATION
+cp -rp $MOUNTPOINTLOCATION/IDM/ovd/* $IDMINSTALLERLOCATION/.
+check_error "Errors during copying IDM OVD Installer.";
+echo_d "Copying IDM OVD Installer -- DONE"
+
+# Change ownership of IDM OVD Installer
+echo_d "Change ownership of IDM OVD Installer"
+chown -R oracle:oinstall $IDMINSTALLERLOCATION
+chmod -R 775 $IDMINSTALLERLOCATION
+check_error "Errors during Change ownership of IDM OVD installer.";
+echo_d "Change ownership of IDM OVD Installer -- DONE"
+
+echo_d "Making IDM Installer Script"
+touch $IDMINSTALLSCRIPT
+chown oracle:oinstall $IDMINSTALLSCRIPT
+chmod a+x $IDMINSTALLSCRIPT
+
+echo "#!/bin/bash" > $IDMINSTALLSCRIPT
+echo "unset LD_ASSUME_KERNEL" > $IDMINSTALLSCRIPT
+echo "cd $IDMINSTALLERLOCATION/Disk1" >> $IDMINSTALLSCRIPT
+echo "echo y | ./runInstaller -silent -response $IDMRESPONSEFILE 3>&1 | cat" >> $IDMINSTALLSCRIPT
+echo "exit \"$?\"" >> $IDMINSTALLSCRIPT
+
+#Make im_install_config_OVDONLY.rsp
+
+cp -rp $IDMRESPONSEFILETEMPLATE $IDMRESPONSEFILE
+replace_string_in_file $IDMRESPONSEFILE "<DOMAIN_NAME>" "$DOMAIN_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<DOMAIN_HOME>" "$MW_HOME/user_projects/domains/$DOMAIN_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<OVD_ADMIN>" "$OVDADMINUSER"
+replace_string_in_file $IDMRESPONSEFILE "<SECURE VALUE>" "$OVDADMINPASSWORD"
+replace_string_in_file $IDMRESPONSEFILE "<DOMAIN_PORT_NO>" "$LISTENPORT"
+replace_string_in_file $IDMRESPONSEFILE "<AS_HOME_LOCATION>" "$MW_HOME"
+replace_string_in_file $IDMRESPONSEFILE "<WL_HOME>" "$MW_HOME/wlserver_10.3"
+replace_string_in_file $IDMRESPONSEFILE "<ORACLE_HOME>" "$MW_HOME/$DOMAIN_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<INSTANCE_NAME>" "$ORACLE_INSTANCE_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<INSTANCE_HOME>" "$MW_HOME/$ORACLE_INSTANCE_NAME"
+replace_string_in_file $IDMRESPONSEFILE "<LIST_OF_COMPONENTS_FOR_SCHEMAS>" ""
+replace_string_in_file $IDMRESPONSEFILE "<OVD_LDAPv3_NAME_SPACE>" "dc=company,dc=com"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_OID_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_DIP_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_OVD_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_OIF_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_ODSM_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_OHS_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<INSTALL_EM_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<FEDERATION_COMPONENTS>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<MANAGEMENT_COMPONENTS>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<SELECTED_COMPONENTS_FOR_INSTALL>" "OVD:ODSM:EM:"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_OID_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_DIP_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_OVD_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_OIF_COMPONENT>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_ODSM_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<CONFIGURE_EM_COMPONENT>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<FEDERATION_COMPONENTS_FOR_CONFIGURE>" "false"
+replace_string_in_file $IDMRESPONSEFILE "<MANAGEMENT_COMPONENTS_FOR_CONFIGURE>" "true"
+replace_string_in_file $IDMRESPONSEFILE "<SELECTED_COMPONENTS_FOR_CONFIGURATION>" "OVD:ODSM:EM:"
+replace_string_in_file $IDMRESPONSEFILE "<MYORACLESUPPORT_USERNAME>" ""
+replace_string_in_file $IDMRESPONSEFILE "<DECLINE_SECURITY_UPDATES>" "true"
+
+cp -rp $IDMORAINSTFILE "/etc/oraInst.loc"
+su - oracle -c $IDMINSTALLSCRIPT

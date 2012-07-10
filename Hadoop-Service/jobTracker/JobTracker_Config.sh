@@ -2,10 +2,16 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
 
-###########Paramter Validation Functions##################
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+USER_NAME=$user_name
+NAMENODE=$namenode
+SELFIP=$selfip
+SLAVEIPS=$slaveips
+DFS_REPLICATION=$dfs_replication
+
 # Function To Display Error and Exit
 function check_error()
 {
@@ -152,11 +158,11 @@ check_error "UNABLE TO ADD JOBTRACKER IP TO MASTERS FILE.";
 
 ## MAKING ENTRY TO THE SLAVES FILE ##
 # DETERMINING THE NUMBER OF NODES IN CLUSTER
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 
 :> $HADOOP_HOME/conf/slaves
 for (( i=0;i<$IP_ARRAY_LENGTH;i++)); do
-	echo ${SlAVEIPS[${i}]}>> $HADOOP_HOME/conf/slaves
+	echo ${SLAVEIPS[${i}]}>> $HADOOP_HOME/conf/slaves
 	check_error "UNABLE TO ADD JOBTRACKER'S SLAVE IP TO SLAVES FILE.";
 done
 

@@ -1,0 +1,55 @@
+version: 1
+dn: cn=oam,dc=company,dc=com
+objectclass: orclContainer
+objectclass: top
+cn: oam
+
+dn: ou=people,dc=company,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: people
+description: People branch is a top level container which holds internal and external user branches.
+
+dn: ou=customers,ou=people,dc=company,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: customers
+description: Customers branch is a container for external users.
+
+dn: ou=service_accounts,ou=people,dc=company,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: service_accounts
+description: Service accounts branch for Web Services and global administrators.
+
+dn: ou=users,ou=people,dc=company,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: users
+description: Internal users branch is a container for internal company users.
+
+dn: cn=OblixAnonymous,ou=service_accounts,ou=people,dc=company,dc=com
+objectclass: inetOrgPerson
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: orclUserV2
+cn: OblixAnonymous
+sn: OblixAnonymous
+orclisenabled: ENABLED
+uid: OblixAnonymous
+
+dn: cn=orcladmin,ou=service_accounts,ou=people,dc=company,dc=com
+objectclass: orclUserV2
+objectclass: orclUser
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: orcladmin
+sn: orcladmin
+description: Seed administrative user for subscriber.
+givenname: orcladmin
+mail: orcladmin
+orclsamaccountname: orcladmin
+uid: orcladmin

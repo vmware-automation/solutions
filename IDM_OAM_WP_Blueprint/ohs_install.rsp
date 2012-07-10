@@ -1,0 +1,432 @@
+####################################################################
+## Copyright (c) 1999, 2006 Oracle. All rights reserved.          ##
+##                                                                ##
+## Specify values for the variables listed below to customize     ##
+## your installation.                                             ##
+##                                                                ##
+## Each variable is associated with a comment. The comment        ##
+## identifies the variable type.                                  ##
+##                                                                ##
+## Please specify the values in the following format:             ##
+##                                                                ##
+##         Type         Example                                   ##
+##         String       "Sample Value"                            ##
+##         Boolean      True or False                             ##
+##         Number       1000                                      ##
+##         StringList   {"String value 1","String Value 2"}       ##
+##                                                                ##
+## The values that are given as <Value Required> need to be       ##
+## specified for a silent installation to be successful.          ##
+##                                                                ##
+##                                                                ##
+####################################################################
+
+RESPONSEFILE_VERSION=2.2.1.0.0
+
+#-------------------------------------------------------------------------------
+#Name       : UNIX_GROUP_NAME
+#Datatype   : String
+#Description: Unix group to be set for the inventory directory. Valid only in Unix platforms.
+#Example: UNIX_GROUP_NAME = "install"
+#-------------------------------------------------------------------------------
+UNIX_GROUP_NAME=<UNIX_GROUP_NAME>
+
+#-------------------------------------------------------------------------------
+#Name       : FROM_LOCATION
+#Datatype   : String
+#Description: Complete path to the products.xml.
+#Example: FROM_LOCATION = "../stage/products.xml"
+#-------------------------------------------------------------------------------
+FROM_LOCATION=<FROM_LOCATION>
+
+#-------------------------------------------------------------------------------
+#Name       : FROM_LOCATION_CD_LABEL
+#Datatype   : String
+#Description: This variable should only be used in multi-CD installations. It includes the label of the compact disk where the file "products.xml" exists. The label can be found in the file "disk.label" in the same directory as products.xml.
+#Example: FROM_LOCATION_CD_LABEL = "CD Label"
+#-------------------------------------------------------------------------------
+FROM_LOCATION_CD_LABEL="Oracle Application Server 10.1.3 SOA"
+
+#-------------------------------------------------------------------------------
+#Name       : NEXT_SESSION_RESPONSE
+#Datatype   : String
+#Description: Optionally specifies the full path of the next session's response file. If only a file name is specified, the response file is retrieved from the <TEMP>/oraInstall directory. This variable is only active if NEXT_SESSION is set to true.
+#Example: NEXT_SESSION_RESPONSE = "nextinstall.rsp"
+#-------------------------------------------------------------------------------
+NEXT_SESSION_RESPONSE=<Value Unspecified>
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_HOME
+#Datatype   : String
+#Description: Complete path of the Oracle Home.
+#Example: ORACLE_HOME = "C:\OHOME1"
+#-------------------------------------------------------------------------------
+ORACLE_HOME=<OHS_ORACLE_HOME>
+
+#-------------------------------------------------------------------------------
+#Name       : ORACLE_HOME_NAME
+#Datatype   : String
+#Description: Oracle Home Name. Used in creating folders and services.
+#Example: ORACLE_HOME_NAME = "OHOME1"
+#-------------------------------------------------------------------------------
+ORACLE_HOME_NAME="<OHS_ORACLE_HOME_NAME>"
+
+#-------------------------------------------------------------------------------
+#Name       : TOPLEVEL_COMPONENT
+#Datatype   : StringList
+#Description: The top level component to be installed in the current session.
+#The following choices are available. The value should contain only one of these choices.
+#The choices are of the form Internal Name, Version : External name. Please use the internal name and version while specifying the value.
+#    oracle.as.j2ee.top, 10.1.3.1.0 : Oracle Application Server SOA Suite 10.1.3.1.0
+#Example: TOPLEVEL_COMPONENT={"oracle.as.j2ee.top","10.1.3.1.0"}
+#-------------------------------------------------------------------------------
+TOPLEVEL_COMPONENT={"oracle.as.j2ee.top","10.1.3.1.0"}
+
+#-------------------------------------------------------------------------------
+#Name       : DEINSTALL_LIST
+#Datatype   : StringList
+#Description: List of components to be deinstalled during a deinstall session.
+#The following choices are available. The value should contain only one of these choices.
+#The choices are of the form Internal Name, Version : External name. Please use the internal name and version while specifying the value.
+#    oracle.as.j2ee.top, 10.1.3.1.0 : Oracle Application Server SOA Suite 10.1.3.1.0
+#Example: DEINSTALL_LIST={"oracle.as.j2ee.top","10.1.3.1.0"}
+#-------------------------------------------------------------------------------
+DEINSTALL_LIST={"oracle.as.j2ee.top","10.1.3.1.0"}
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_SPLASH_SCREEN
+#Datatype   : Boolean
+#Description: Set to true if the initial splash screen in OUI needs to be shown.
+#Example: SHOW_SPLASH_SCREEN = true
+#-------------------------------------------------------------------------------
+SHOW_SPLASH_SCREEN=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_WELCOME_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the Welcome page in OUI needs to be shown.
+#Example: SHOW_WELCOME_PAGE = false
+#-------------------------------------------------------------------------------
+SHOW_WELCOME_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_COMPONENT_LOCATIONS_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the component locations page in OUI needs to be shown.
+#This page only appears if there are products whose installed directory can be changed.
+#If you set this to false you will prevent the user from being able to specify alternate directories.
+#Example: SHOW_COMPONENT_LOCATIONS_PAGE = false
+#-------------------------------------------------------------------------------
+SHOW_COMPONENT_LOCATIONS_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_CUSTOM_TREE_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the custom tree page in OUI needs to be shown.
+#Use this page to select or de-select dependencies. This page appears only in a custom install type.
+#Example: SHOW_CUSTOM_TREE_PAGE = false
+#-------------------------------------------------------------------------------
+SHOW_CUSTOM_TREE_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_SUMMARY_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the summary page in OUI needs to be shown.
+#The summary page shows the list of components that will be installed in this session.
+#Example: SHOW_SUMMARY_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_SUMMARY_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_INSTALL_PROGRESS_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the install progress page in OUI needs to be shown.
+#This page shows the current status in the installation. The current status includes the product being installed and the file being copied.
+#Example: SHOW_INSTALL_PROGRESS_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_INSTALL_PROGRESS_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_REQUIRED_CONFIG_TOOL_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the required config assistants page in OUI needs to be shown.
+#This page shows the list of required configuration assistants that are part of this installation.
+#It shows the status of each assistant, including any failures with detailed information on why it failed.
+#Example: SHOW_REQUIRED_CONFIG_TOOL_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_REQUIRED_CONFIG_TOOL_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_CONFIG_TOOL_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the config assistants page in OUI needs to be shown.
+#This page shows the list of configuration assistants that are part of this installation and are configured to launch automatically.
+#It shows the status of each assistant, including any failures with detailed information on why it failed.
+#Example: SHOW_CONFIG_TOOL_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_CONFIG_TOOL_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_XML_PREREQ_PAGE
+#Datatype   : Boolean
+#Description: This variable determines whether or not to show the prereq page.
+#Example: SHOW_XML_PREREQ_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_XML_PREREQ_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_RELEASE_NOTES
+#Datatype   : Boolean
+#Description: Set to true if the release notes of this installation need to be shown at the end of installation.
+#This dialog is launchable from the End of Installation page and shows the list of release notes available for the products just installed.
+# This also requires the variable SHOW_END_SESSION_PAGE variable to be set to true.
+#Example: SHOW_RELEASE_NOTES = true
+#-------------------------------------------------------------------------------
+SHOW_RELEASE_NOTES=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_END_OF_INSTALL_MSGS
+#Datatype   : Boolean
+#Description: Set to true if the text on end of install screen is to be shown. The text is always available under <Oracle Home>/install/readme.txt.
+#Example: SHOW_END_OF_INSTALL_MSGS = true
+#-------------------------------------------------------------------------------
+SHOW_END_OF_INSTALL_MSGS=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_ROOTSH_CONFIRMATION
+#Datatype   : Boolean
+#Description: Set to true if the Confirmation dialog asking to run the root.sh script in OUI needs to be shown.
+#Valid only for Unix platforms.
+#Example: SHOW_ROOTSH_CONFIRMATION = true
+#-------------------------------------------------------------------------------
+SHOW_ROOTSH_CONFIRMATION=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_END_SESSION_PAGE
+#Datatype   : Boolean
+#Description: Set to true if the end of session page in OUI needs to be shown.
+#This page shows if the installation is successful or not.
+#Example: SHOW_END_SESSION_PAGE = true
+#-------------------------------------------------------------------------------
+SHOW_END_SESSION_PAGE=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_EXIT_CONFIRMATION
+#Datatype   : Boolean
+#Description: Set to true if the confirmation when exiting OUI needs to be shown.
+#Example: SHOW_EXIT_CONFIRMATION = true
+#-------------------------------------------------------------------------------
+SHOW_EXIT_CONFIRMATION=false
+
+#-------------------------------------------------------------------------------
+#Name       : NEXT_SESSION
+#Datatype   : Boolean
+#Description: Set to true to allow users to go back to the File Locations page for another installation. This flag also needs to be set to true in order to process another response file (see NEXT_SESSION_RESPONSE).
+#Example: NEXT_SESSION = true
+#-------------------------------------------------------------------------------
+NEXT_SESSION=false
+
+#-------------------------------------------------------------------------------
+#Name       : NEXT_SESSION_ON_FAIL
+#Datatype   : Boolean
+#Description: Set to true to allow users to invoke another session even if current install session has failed. This flag is only relevant if NEXT_SESSION is set to true.
+#Example: NEXT_SESSION_ON_FAIL = true
+#-------------------------------------------------------------------------------
+NEXT_SESSION_ON_FAIL=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_DEINSTALL_CONFIRMATION
+#Datatype   : Boolean
+#Description: Set to true if deinstall confimation is needed during a deinstall session.
+#Example: SHOW_DEINSTALL_CONFIRMATION = true
+#-------------------------------------------------------------------------------
+SHOW_DEINSTALL_CONFIRMATION=false
+
+#-------------------------------------------------------------------------------
+#Name       : SHOW_DEINSTALL_PROGRESS
+#Datatype   : Boolean
+#Description: Set to true if deinstall progress is needed during a deinstall session.
+#Example: SHOW_DEINSTALL_PROGRESS = true
+#-------------------------------------------------------------------------------
+SHOW_DEINSTALL_PROGRESS=false
+
+#-------------------------------------------------------------------------------
+#Name       : ACCEPT_LICENSE_AGREEMENT
+#Datatype   : Boolean
+#Description: By setting this variable to true, you are accepting the license agreement. This variable is used only for silent installations.
+#Example: ACCEPT_LICENSE_AGREEMENT = true
+#-------------------------------------------------------------------------------
+ACCEPT_LICENSE_AGREEMENT=true
+
+#-------------------------------------------------------------------------------
+#Name       : RESTART_SYSTEM
+#Datatype   : Boolean
+#Description: Set to true to allow automatic restart of the system, if set to false then installer will exit without restarting, no exit confirmation dialog is shown
+#Example: RESTART_SYSTEM = false
+#-------------------------------------------------------------------------------
+RESTART_SYSTEM=false
+
+#-------------------------------------------------------------------------------
+#Name       : CLUSTER_NODES
+#Datatype   : StringList
+#Description: This variable represents the cluster node names selected by the user for installation.
+#Example: CLUSTER_NODES = {"node1"}
+#-------------------------------------------------------------------------------
+CLUSTER_NODES={}
+
+#-------------------------------------------------------------------------------
+#Name       : OUI_HOSTNAME
+#Datatype   : String
+#Description: This variable holds the hostname of the system as set by the user.
+#Example: OUI_HOSTNAME =
+#-------------------------------------------------------------------------------
+OUI_HOSTNAME="<OUI_HOSTNAME>"
+
+#-------------------------------------------------------------------------------
+#Name       : REMOVE_HOMES
+#Datatype   : StringList
+#Description: List of the homes to be removed during a deinstall session. Each home is represented by its full path.
+#Example: REMOVE_HOMES = {<full_path_of_home1>,<full_path_of_home2>, ...}
+#-------------------------------------------------------------------------------
+REMOVE_HOMES={}
+
+#-------------------------------------------------------------------------------
+#Name       : COMPONENT_LANGUAGES
+#Datatype   : StringList
+#Description: Languages in which the components will be installed.
+#The following choices are available. The value should contain only one of these choices.
+#The choices are of the form Internal Name : External name. Please use the internal name while specifying the value.
+#    en,   : English
+#    fr,   : French
+#    ar,   : Arabic
+#    bn,   : Bengali
+#    pt_BR,   : Brazilian Portuguese
+#    bg,   : Bulgarian
+#    fr_CA,   : Canadian French
+#    ca,   : Catalan
+#    hr,   : Croatian
+#    cs,   : Czech
+#    da,   : Danish
+#    nl,   : Dutch
+#    ar_EG,   : Egyptian
+#    en_GB,   : English (United Kingdom)
+#    et,   : Estonian
+#    fi,   : Finnish
+#    de,   : German
+#    el,   : Greek
+#    iw,   : Hebrew
+#    hu,   : Hungarian
+#    is,   : Icelandic
+#    in,   : Indonesian
+#    it,   : Italian
+#    ja,   : Japanese
+#    ko,   : Korean
+#    es,   : Latin American Spanish
+#    lv,   : Latvian
+#    lt,   : Lithuanian
+#    ms,   : Malay
+#    es_MX,   : Mexican Spanish
+#    no,   : Norwegian
+#    pl,   : Polish
+#    pt,   : Portuguese
+#    ro,   : Romanian
+#    ru,   : Russian
+#    zh_CN,   : Simplified Chinese
+#    sk,   : Slovak
+#    sl,   : Slovenian
+#    es_ES,   : Spanish
+#    sv,   : Swedish
+#    th,   : Thai
+#    zh_TW,   : Traditional Chinese
+#    tr,   : Turkish
+#    uk,   : Ukrainian
+#    vi,   : Vietnamese
+#Example: COMPONENT_LANGUAGES = {"en"}
+#Component  : oracle.as.j2ee.top
+#-------------------------------------------------------------------------------
+COMPONENT_LANGUAGES={"en"}
+
+#-------------------------------------------------------------------------------
+#Name       : INSTALL_TYPE
+#Datatype   : String
+#Description: Installation type of the component.
+#The following choices are available. The value should contain only one of these choices.
+#The choices are of the form Internal Name : External name. Please use the internal name while specifying the value.
+#    allProducts,   : J2EE Server, Web Server and SOA Suite
+#    allProductsNoSOA,   : J2EE Server and Web Server
+#    core,   : J2EE Server
+#    httpServer,   : Web Server
+#Example: INSTALL_TYPE = "allProductsNoSOA"
+#Component  : oracle.as.j2ee.top
+#-------------------------------------------------------------------------------
+INSTALL_TYPE="httpServer"
+
+#-------------------------------------------------------------------------------
+#Name       : s_installOption
+#Datatype   : String
+#Description: Set to installSOABasic in case of basic (oneclick) installation
+#Set to installSOAAdvanced in case of advanced installation
+#--------------------------------------------------------------------------------
+s_installOption="installSOAAdvanced"
+
+#-------------------------------------------------------------------------------
+#Name       : sl_DlgClusterInfoWebReturn
+#Datatype   : StringList
+#Description: Stringlist consists of the following values. {"isConfigureCluster", "clusterMultiCastIp", "clusterMultiCastPort"}
+#If isConfigureCluster="YES", then set clusterMultiCastIp, clusterMultiCastPort
+#Component  : oracle.as.j2ee.top
+#Example    : sl_DlgClusterInfoWebReturn={"YES", "225.0.0.1","6790"}
+#-------------------------------------------------------------------------------
+sl_DlgClusterInfoWebReturn={"NO","",""}
+
+#-------------------------------------------------------------------------------
+#Name       : s_asInstanceName
+#Datatype   : String
+#Description: Application Server Instance Name
+#Component  : oracle.as.j2ee.top
+#Example    : s_asInstanceName="instance1"
+#-------------------------------------------------------------------------------
+s_asInstanceName="<s_asInstanceName>"
+
+#-------------------------------------------------------------------------------
+#Name       : szl_PortListSelect
+#Datatype   : StringList
+#Description: User selection of static ports option and location of the staticports.ini file. This file can be located anywhere on the host. The default value for this stringlist is {"NO" , "" } and this default accepts the default port assignments for this machine for all components selected for configuration. To specify a file where install needs to read specific ports available to assign to components, please specify the option "YES" and enter the fully qualified location where this file can be ready to determine which ports are occupied. Example: { "YES" , "/private/foo/staticports.ini"}
+#Component  : oracle.as.j2ee.top
+#Example    : szl_PortListSelect={"YES","/net/oracle_files/oracle/work/AdvancedSOA1/staticports.ini"}
+#             szl_PortListSelect={"NO",""}
+#-------------------------------------------------------------------------------
+#szl_PortListSelect={"NO",""}
+szl_PortListSelect={"YES","<szl_PortListSelect_iniFile>"}
+
+#-------------------------------------------------------------------------------
+#Name       : b_autoPortDetect
+#Datatype   : Boolean
+#Description: Used for silent installations. If set to "true", installer will automatically detect the ports, so you dont have to specify the ports in the response file.  If set to "false", installer will read the port numbers from the silent response file.
+#Component  : oracle.as.j2ee.top
+#-------------------------------------------------------------------------------
+b_autoPortDetect=true
+
+#-------------------------------------------------------------------------------
+#Name       : sl_DlgClusterInfoWebReturn
+#Datatype   : StringList
+#Description: Holds the return string list of ClusterInfoWeb dialog.
+#Component  : oracle.as.j2ee.top
+#-------------------------------------------------------------------------------
+sl_DlgClusterInfoWebReturn={"NO","",""}
+
+
+#-------------------------------------------------------------------------------
+#Name       : szl_InstanceInformation
+#Datatype   : StringList
+#Description: User-specified instance information. The stringlist takes only one value; the web instance name. NOTES: (1) Instance names must contain only alphanumeric characters (a-z, A-Z, 0-9 plus _ and -) and cannot be used for more than one Oracle Home per host.
+#Component  : oracle.as.j2ee.top
+#Example    : szl_InstanceInformation={"webinstance1"}
+#-------------------------------------------------------------------------------
+szl_InstanceInformation=<Value Unspecified>
+
+#Validations
+n_DlgClusterInfoWebValidate=0
+bMaskValidationClusterWebInfo=false
+nValidationInstanceInfo=0
+bMaskValidationInstanceInfo=false

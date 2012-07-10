@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# Import global conf
+. $global_conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin
+export HOME=/root
+
+# Tested on CentOS
+if [ -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
+    if [ -x /usr/sbin/setenforce ]; then
+        /usr/sbin/setenforce Permissive
+    else
+        echo 'SELinux is enabled. This may cause installation to fail.'
+    fi
+fi
+
+
+#########SCRIPT INTERNAL PARAMETERS#########
+MOUNTPOINTLOCATION=/tmp/mount
+TMPDIR="/oracle/install/tmp"
+SETUPHOME="/oracle/config"
+SETUPLOCATION="$SETUPHOME/selenium"
+SETUPPROPERTIES="$SETUPLOCATION/setup.properties"
+SETUPSCRIPT="$SETUPLOCATION/access_setup_end.sh"
+
+###########Parameter Validation Functions##################
+## Function To Display Error and Exit
+function check_error()
+{
+   if [ ! "$?" = "0" ]; then
+      error_exit "$1";
+   fi
+}
+
+function error_exit()
+{
+   echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+   exit 1
+}
+
+## Function To Validate Integer
+function valid_int()
+{
+   local data=$1
+   if [[ $data =~ ^[0-9]{1,9}$ ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function valid_length()
+{
+   local data=$1
+   if [[ ${#data} -ge 8 ]]; then
+      return 0;
+   else
+      return 1
+   fi
+}
+
+function echo_d()
+{
+    CURDATE=`date +%H:%M:%S`
+    echo -e $CURDATE  "$*"
+}
+
+## Function To Replace String in a File
+function replace_string_in_file()
+{
+   local processFile=$1
+   local oldString=$2
+   local newString=$3
+   newStringEsc="${newString//\//\\/}"      
+   
+   sed -ie "s/${oldString}/${newStringEsc}/" ${processFile}
+}
+
+echo_d "Creating OAM Access Setup Script"
+touch $SETUPSCRIPT
+chown oracle:oinstall $SETUPSCRIPT
+chmod u+x $SETUPSCRIPT
+
+echo "#!/bin/bash" > $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "# Declare variables" >> $SETUPSCRIPT
+echo "SEL_DIR=$SETUPLOCATION" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "# Run Access Setup - Initiate" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "cd $SETUPLOCATION" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "echo \"Running AAA Setup  ...\"" >> $SETUPSCRIPT
+echo "echo \"----------------------\"" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "export CLASSPATH=\$CLASSPATH:\$SEL_DIR/lib/selenium-server-standalone-2.21.0.jar:\$SEL_DIR/lib/junit.jar:\$SEL_DIR/classes/" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "export DISPLAY=:1" >> $SETUPSCRIPT 
+echo "" >> $SETUPSCRIPT
+echo "/usr/bin/Xvfb :1 -screen 0 1024x768x24 2>/dev/null &" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "java org.junit.runner.JUnitCore PMsetup1" >> $SETUPSCRIPT
+echo "echo \"----------------------\"" >> $SETUPSCRIPT
+echo "" >> $SETUPSCRIPT
+echo "echo \"Restart Identity Server and Web Server!\"" >> $SETUPSCRIPT
+
+echo_d "Creating OAM Access Setup Script -- DONE"
+
+echo_d "Running OAM Access Setup Script (2of2) "
+su - oracle -c $SETUPSCRIPT
+echo_d "Running OAM Access Setup Script (2of2)-- DONE"
