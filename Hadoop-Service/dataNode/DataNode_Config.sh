@@ -2,8 +2,17 @@
 
 # SETTING ENVIRONMENT VARIABLES
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export JAVA_HOME=/usr/java/jre-vmware
+
+# VARIABLES ASSIGNMENT
+INSTALL_PATH=$install_path
+GROUP_NAME=$group_name
+USER_NAME=$user_name
+NAMENODE=$namenode
+JOBTRACKER=$jobtracker
+DFS_REPLICATION=$dfs_replication
+SELFIP=$selfip
+SLAVEIPS=$slaveips
 
 ###########Paramter Validation Functions##################
 # Function To Display Error and Exit
@@ -151,14 +160,15 @@ echo $NAMENODE>> $HADOOP_HOME/conf/masters
 
 # MAKING ENTRY TO THE SLAVES FILE
 # DETERMINING THE NUMBER OF NODES IN CLUSTER
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 #:> $HADOOP_HOME/conf/slaves
 
 #To get the Host Name of the slave (Datanode) 
-IP_ARRAY_LENGTH=`echo ${#SlAVEIPS[*]}`
+IP_ARRAY_LENGTH=`echo ${#SLAVEIPS[*]}`
 
 for (( i=0;i<$IP_ARRAY_LENGTH;i++)); do
-    HOST_NAME=`hostname` 
+    host_name=`hostname` 
+    echo $host_name
 done
 
 echo "DATANODE CONFIGURATION DONE"

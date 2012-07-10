@@ -1,6 +1,5 @@
 #!/bin/bash
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export http_proxy=http://proxy.vmware.com:3128
 export INSTALL_PATH=/home/hadoop/project
 export USER_NAME=hadoop
 export HADOOP_HOME=$INSTALL_PATH/hadoop-0.20.203.0

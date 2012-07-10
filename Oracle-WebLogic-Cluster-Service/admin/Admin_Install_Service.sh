@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export http_proxy=http://proxy.vmware.com:3128
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/opt/vmware/bin:/opt/vmware/bin
 export JAVA_HOME=/usr/java/jre-vmware
 export PATH=$JAVA_HOME/bin:$PATH
