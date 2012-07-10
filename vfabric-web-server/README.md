@@ -14,7 +14,7 @@ To create a vFabric Web Server service in vFabric Application Director, follow t
 
 1.   [Add a new service to the catalog.](http://pubs.vmware.com/appdirector-1/topic/com.vmware.appdirector.using.doc/GUID-68665799-52B6-4B70-82CE-9F03C60958FB.html)
 
-2.   When entering details about the new service, use the following values, as shown in [this screenshot](vfws-create.png):
+2.   When entering details about the new service, use the following values, as shown in [this screenshot](vfabric-web-server/vfws-create.png):
 
     **Name**: `vFabric Web Server 5.1`  
     **Service Version**: `5.1`  
@@ -22,7 +22,7 @@ To create a vFabric Web Server service in vFabric Application Director, follow t
     **Supported OSes**: `CentOS32 5.6.0` `CentOS64 6.0.0` `CentOS64 5.6.0` `RHEL32 6.1.0` `RHEL64 6.1.0`  
     **Supported Components**: `SCRIPT` `Other`
 
-3.   Add the following required Properties to the service, as shown in [this screenshot](vfws-properties.png):
+3.   Add the following required Properties to the service, as shown in [this screenshot](vfabric-web-server/vfws-properties.png):
 <table border=1>
     <tr>
       <th style="background-color:#F0F0F0">Property Name</th>
@@ -46,7 +46,7 @@ To create a vFabric Web Server service in vFabric Application Director, follow t
     </tr> 
 </table>
 
-    Leave the values of `http_node_ips` and `webserver_ip` blank.  Use default values for the other columns, [as shown](vfws-properties.png).
+    Leave the values of `http_node_ips` and `webserver_ip` blank.  Use default values for the other columns, [as shown](vfabric-web-server/vfws-properties.png).
 
 4.  Copy and paste the contents of the `webserver-install.sh`, `webserver-config.sh`, and `webserver-start.sh` scripts to the corresponding service lifecycle stages under the Actions tab.
 
