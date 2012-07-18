@@ -66,8 +66,8 @@ fi
 if [ -f /bin/rpm ]; then
    if [ "$REV" == "5" ]; then
       echo "Installing vFabric Suite 5.1 EULA"
-      rpm --import http://repo.vmware.com/pub/rhel5/vfabric/5.1/RPM-GPG-KEY-VFABRIC-5.1-EL5 --httpproxy proxy.vmware.com --httpport 3128
-      rpm -Uvh --force http://repo.vmware.com/pub/rhel5/vfabric/5.1/vfabric-5.1-repo-5.1-1.noarch.rpm --httpproxy proxy.vmware.com --httpport 3128
+      rpm --import http://repo.vmware.com/pub/rhel5/vfabric/5.1/RPM-GPG-KEY-VFABRIC-5.1-EL5
+      rpm -Uvh --force http://repo.vmware.com/pub/rhel5/vfabric/5.1/vfabric-5.1-repo-5.1-1.noarch.rpm
    elif [ "$REV" == "6" ]; then
       echo "Installing vFabric Suite 5.1 EULA"
       rpm --import http://repo.vmware.com/pub/rhel6/vfabric/5.1/RPM-GPG-KEY-VFABRIC-5.1-EL6
