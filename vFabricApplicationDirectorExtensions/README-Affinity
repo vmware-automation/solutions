@@ -1,0 +1,8 @@
+For affinity rules instead of anti-affinity follow the instructions in the README but replace the line:
+
+java -cp vFabricApplicationDirectorExtensions.jar:vijava520110926.jar:dom4j-1.6.1.jar com.springsource.pso.vfabricappd.extensions.Main -r "antiaffinity" -u "$user" -v "$vcenter" -p "$password" -ips "$IPS" -n "$rulename"
+
+with: 
+
+java -cp vFabricApplicationDirectorExtensions.jar:vijava520110926.jar:dom4j-1.6.1.jar com.springsource.pso.vfabricappd.extensions.Main -r "affinity" -u "$user" -v "$vcenter" -p "$password" -ips "$IPS" -n "$rulename"
+

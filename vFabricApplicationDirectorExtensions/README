@@ -1,0 +1,55 @@
+/*
+Important Information:
+
+This task for antiaffinity has the following requirements:
+
+* The ESXis within the organizational vcd have to belong to a cluster.
+* DRS must be enabled.
+* The script needs access to vcenter (only one vcenter currently supported).
+* The ip addresses of the deployed virtual machines need to be unique.
+
+
+Copy the file AntiAffinity/bin/vFabricAppliationDirectorExtensions.tar to a webserver reachable by the virtual machines deployed by vFabric Application Director. 
+
+Create a task in vFabric Application Director called "AntiAffinity" and paste in the following script: 
+#!/bin/bash
+
+######### Script Begin ###################
+
+DIR=$PWD
+cd /tmp
+wget $script_home
+tar xvf vFabricApplicationDirectorExtensions-full.tar
+
+for (( i = 0 ; i < ${#cluster_ips[@]} ; i++ )) do
+if [ "$i" != '0' ]; then
+IPS=$IPS,
+fi
+IPS=$IPS${cluster_ips[$i]}
+done
+
+java -cp vFabricApplicationDirectorExtensions.jar:vijava520110926.jar:dom4j-1.6.1.jar com.springsource.pso.vfabricappd.extensions.Main -r "antiaffinity" -u "$user" -v "$vcenter" -p "$password" -ips "$IPS" -n "$rulename"
+RESULT=$?
+
+cd $DIR
+exit $RESULT
+######### End of Script ########################
+
+Add the following properties to your task:
+cluster_ips
+user
+password
+vcenter
+script_home
+
+
+In the execution plan of your application add your task at the end of the deployment and define the above properties:
+cluster_ips: Map it to a blueprint variable with the ip addresses of the vms the rule should be applied to
+user: The name of a vcenter user with permission to modify a cluster
+password: Password of the user
+vcenter: IP address of vcenter
+script_home=http://IP.OF.YOUR.WEBSERVER/whereever/vFabricApplicationDirectorExtensions-full.tar
+rulename: The name the rule should have. Does not to need to be unique.
+
+
+
