@@ -8,6 +8,11 @@ Before starting to work on the blueprint, download the following files
 * spring-nanotrader-mobile-0.0.1.BUILD-SNAPSHOT.war
 * spring-nanotrader-services-0.0.1.BUILD-SNAPSHOT.war
 * spring-nanotrader-web-0.0.1.BUILD-SNAPSHOT.war
+* rabbitmq-server.sh
+* sqlfire-locator.sh
+* sqlfire-server.sh
+* vfabric-tcserver.sh
+* vfabric-webserver.sh
 
 from Github 
 https://github.com/vmware-applicationdirector/solutions.git
