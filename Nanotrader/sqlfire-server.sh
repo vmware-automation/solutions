@@ -55,14 +55,14 @@ echo ./bin/sqlf server start -J-Xms128m -J-Xmx512m -J-Dsqlfire.prefer-netserver-
 -locators=$locatorslist -client-bind-address=$myip \
 -client-port=$client_port -dir=$sqlfdir \
 -J-Dsqlfire.prefer-netserver-ipaddress=true \
--license-serial-number=Y550V-40GEL-M8H8P-0PP9T-Z4FFZ 
+-license-serial-number=XXXXX-XXXXX-XXXXX-XXXXX-XXXXX 
 #-init-scripts=$init_script
 
 ./bin/sqlf server start -J-Xms128m -J-Xmx512m \
 -locators=$locatorslist -client-bind-address=$myip \
 -client-port=$client_port -dir=$sqlfdir \
 -J-Dsqlfire.prefer-netserver-ipaddress=true \
--license-serial-number=Y550V-40GEL-M8H8P-0PP9T-Z4FFZ 
+-license-serial-number=XXXXX-XXXXX-XXXXX-XXXXX-XXXXX 
 
 
 ##
