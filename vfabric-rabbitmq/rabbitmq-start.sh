@@ -23,9 +23,6 @@
 # From ApplicationDirector - Import and source global configuration
 . $global_conf
 
-# This sample script simply starts the tc Server instance created in the tcserver-config.sh sample script. 
-# this example server instance was created using the default tc Server port, and deploys the travel app from ApplicationDirector
-
 set -e
 
 export PATH=$PATH:/usr/sbin:/sbin:/usr/bin:/bin
