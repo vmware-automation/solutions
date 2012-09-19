@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+
+<!-- ====================================================================== -->
+<!-- AntiAffinity and more for Application Director				    -->
+<!-- ====================================================================== -->
+
+<project name="vFabricApplicationDirectorExtensions" default="pkg" basedir=".">
+
+	<property name="src.dir" value="java" />
+	<property name="classes.dir" value="build" />
+	<property name="jars.dir" value="bin" />
+	<property name="lib.dir" value="lib" />
+	<property name="dist.dir" value="../bin" />
+
+	<!-- ==================================================================== -->
+	<!-- Compiles/Preverifies the source code                                 -->
+	<!-- ==================================================================== -->
+	<target name="compile" depends="prepare.dirs">
+		<javac source="1.5" target="1.6" srcdir="${src.dir}" destdir="${classes.dir}" debug="on" deprecation="off" optimize="off">
+			<classpath>
+				<fileset dir="${lib.dir}" />
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!-- =================================================================== -->
+	<!-- Creates the manifest	                                             -->
+	<!-- =================================================================== -->
+	<target name="manifest" depends="compile">
+		<manifest file="${classes.dir}/META-INF/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}" />
+		</manifest>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Creates the jar	                                                 -->
+	<!-- =================================================================== -->
+	<target name="jar" depends="manifest">
+		<jar destfile="${jars.dir}/${ant.project.name}.jar" manifest="${classes.dir}/META-INF/MANIFEST.MF">
+			<fileset dir="${classes.dir}" />
+		</jar>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- Creates the pkg	                                                 -->
+	<!-- =================================================================== -->
+	<target name="pkg" depends="jar">
+		<tar basedir="${jars.dir}" destfile="${dist.dir}/${ant.project.name}.tar">
+		
+		 <fileset dir="${lib.dir}"/>
+		</tar>
+	</target>
+
+	<target name="prepare.dirs">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}/META-INF" />
+		<mkdir dir="${jars.dir}" />
+		<mkdir dir="${dist.dir}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${classes.dir}" />
+		<delete dir="${jars.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+</project>
+
