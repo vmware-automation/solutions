@@ -1,0 +1,103 @@
+### A place to store shared common functions/data
+### S.D.
+
+ERR_EXIT_CODE=1
+TS="~" # Tuple Separator
+NUM=^-?[0-9]+$
+#KEY_VAL=s/^.*\${\(.*\)}$/\1/
+
+# Try handler, executes command and examines response, exits script if command fails with error -1
+function try() {
+   local command="$@"
+   #echo "Executing: $command"
+   eval $command
+   if [ $? -ne 0 ]; then
+     echo "Command $command failed"
+     exit $ERR_EXIT_CODE
+   fi
+}
+
+function testFileExists() {
+    local targetFile=$1
+    if [[ ! -f $targetFile ]]; then
+        echo "Error: $targetFile doesn't exist!"
+        exit $ERR_EXIT_CODE
+    fi
+}
+
+# Given a map (array of "key:value" pairs) apply them to passed in template file and write the interpolated result to outputfile
+# A bit crude but it works
+function Map_applyTemplate() {
+    local templateMap=$1
+    local inputFile=$2
+    local outputFile=$3
+
+    if [[ ! $templateMap || ! $inputFile || ! $outputFile ]] ; then
+        echo "Missing one of templateMap: $templateMap, inputFile: $inputFile, outputFile: $outputFile"
+        exit $ERR_EXIT_CODE
+    fi
+    
+    declare -a templateMap=("${!1}")
+
+    OLDIFS=$IFS;
+    sedCmd='sed'
+    for entry in "${templateMap[@]}" ; do IFS=$TS; set $entry; 
+        sedCmd=" $sedCmd -e 's%$1%$2%g'"
+    done
+    IFS=$OLDIFS
+    sedCmd="$sedCmd "
+    echo "sed cmd: $sedCmd"
+    try $sedCmd $inputFile > $outputFile
+}
+
+# Given a map, export the key/values
+function Map_export() {
+    declare -a local targetMap=("${!1}")
+    local key
+    OLDIFS=$IFS;
+    for entry in ${targetMap[@]} ; do IFS=$TS; set $entry; 
+        key=`echo $1 | sed  -e 's%^.*\${\(.*\)}$%\1%'`
+        export $key=$2
+    done
+    IFS=$OLDIFS
+}
+
+# Yes this is linear
+function Map_get() {
+    declare -a local targetMap=("${!1}")
+    local key=$'\${'$2'}'
+    local returnVal=''
+    OLDIFS=$IFS;
+    for entry in ${targetMap[@]} ; do IFS=$TS; set $entry; 
+        if [[ $1 == $key ]]; then
+            returnVal=$2
+            break
+        fi
+    done
+    IFS=$OLDIFS
+    
+    echo $returnVal
+}
+
+# For the moment check if there is some value set for the key, 
+# TODO add an expression to validate the value as the third paramer
+function Map_validate() { # $1=map
+    declare -a local targetMap=("${!1}")
+    declare -a local errorResults=()
+
+    OLDIFS=$IFS;
+    for entry in ${targetMap[@]} ; do IFS=$TS; set $entry; 
+        if [[ $2 && $3 ]]; then # key=$1,value=$2,regexTest=$3
+            if [[ ! $2 =~ $3 ]]; then
+                echo "Failed: 1:$1, 2:$2, 3:$3"
+                errorResults[${#errorResults[@]}]="Missing required entry for key: $1, value: $2, test: $3"
+            fi
+        fi
+    done
+    IFS=$OLDIFS
+
+    if [[ ${#errorResults[@]} > 0 ]]; then
+        echo "Map validation failed: ${errorResults[@]}"
+        exit $ERR_EXIT_CODE
+    fi
+}

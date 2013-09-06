@@ -8,6 +8,18 @@ There are two services as part of this blueprint
 1. The domain controller which performs maitenance and coordination for the cluster, it itself does not host applications
 2. The slaves that register with the controller and are responsible for servicing applications.
 
+* KNOWN ISSUES *
+ATM the domain controller configures and starts successfully as do both slave instances for this basic test setup. Both slaves successfully register with the domain controller as can be observerd in the domain controller log located in /var/log/jboss-as/console.log. 
+
+==
+[Host Controller] 15:43:37,018 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015951: Admin console listening on http://10.140.17.83:9990
+[Host Controller] 15:43:37,018 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: JBoss AS 7.1.1.Final "Brontes" (Host Controller) started in 3486ms - Started 11 of 11 services (0 services are passive or on-demand)
+[Host Controller] 15:53:06,626 INFO  [org.jboss.as.domain] (domain-mgmt-handler-thread - 1) JBAS010918: Registered remote slave host "slave2", JBoss AS 7.1.1.Final "Brontes"
+[Host Controller] 15:53:27,621 INFO  [org.jboss.as.domain] (domain-mgmt-handler-thread - 2) JBAS010918: Registered remote slave host "slave1", JBoss AS 7.1.1.Final "Brontes"
+==
+
+However, for some reason when selecting one of the slave instances from the web console on the domain controller it gives an error. I will need to revisit this later.
+
 Creating Services
 -----------------
 
@@ -24,18 +36,20 @@ Creating Services
     See jbossdomaincontrollerdetails.png for an example.
 
 - Add properties similar to what is shown in jbossdomaincontrollerproperties.png
-    
-  domain_init_script - The domain controller service script (downloadable content)
-  host_master - The JBoss 7 host.xml file for the master configuration (downloadable content)
-  self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
-  cluster_nodenames_and_passwords - An array of key:value pairs for each slaves slave_name:slave_password
-    each slavename needs to be unique in the cluster an example of what this could look like would be:
-    ["slave-1:slave123","slave-2:slave456"] 
-  zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
-  JBOSS_MGMT_USER - the mgmt user free to chose
-  JBOSS_MGMT_PWD - the mgmt password free to chose
-  JBOSS_NAME_AND_VERSION - this is a legacy carry over and is basically the name of directory created from the zip
-  global_conf - the standard darwin_global.conf (downloadable content)
+ -  host_master - The JBoss 7 host.xml file for the master configuration (downloadable content)
+ -  domain_master - The JBoss 7 domain.xml file for the master configuration (downloadable content)
+ -  common_utils - this a place for storing extra utility methods (downloadable content)
+ -  cluster_group - this a place for storing extra utility methods (downloadable content)
+ -  global_conf - the standard darwin_global.conf (downloadable content)
+ -  JBOSS_MGMT_PWD - the mgmt password free to chose
+ -  JBOSS_NAME_AND_VERSION - this is a legacy carry over and is basically the name of directory created from the zip
+ -  JBOSS_MGMT_USER - the mgmt user free to chose
+ -  cluster_nodenames_and_passwords - An array of key:value pairs for each slaves slave_name:slave_password
+ -    each slavename needs to be unique in the cluster an example of what this could look like would be:
+ -    ["slave-1:slave123","slave-2:slave456"] 
+ -  zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
+ -  domain_init_script - The domain controller service script (downloadable content)
+ -  self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
 
   The host-master.xml, jboss-as-domain.sh and darwin_global.conf are located in the Content directory.
   These need to be configured to be downloadable content in the properties
@@ -56,18 +70,18 @@ Creating Services
     See jbossslavedetails.png for an example.
 
 - Add properties similar to what is shown in jbossslaveproperties.png
-  
-  domain_init_script - The slave service script (downloadable content)
-  host_slave - The JBoss 7 host.xml file for the slave configuration (downloadable content)
-  self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
-  master_ip - Bind this to the domain controllers ip in the blueprint, this is set in the JBOSS_HOME/system.properties to communicate with controller.
-  zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
-  JBOSS_MGMT_USER - the mgmt user free to chose
-  JBOSS_MGMT_PWD - the mgmt password free to chose
-  JBOSS_NAME_AND_VERSION - this is a legacy carry over and is basically the name of directory created from the zip
-  global_conf - the standard darwin_global.conf (downloadable content)
-  slave_name - This is a unique slave name in the cluster, it must be an entry in the domain controller's cluster_nodenames_and_passwords array
-  slave_password - This is the password for this slave and is entered in the domain controller's cluster_nodenames_and_passwords array
+ -  cluster_group - this a place for storing extra utility methods (downloadable content)
+ -  slave_name - This is a unique slave name in the cluster, it must be an entry in the domain controller's cluster_nodenames_and_passwords array
+ -  slave_password - This is the password for this slave and is entered in the domain controller's cluster_nodenames_and_passwords array
+ -  JBOSS_MGMT_PWD - the mgmt password free to chose
+ -  JBOSS_NAME_AND_VERSION - this is a legacy carry over and is basically the name of directory created from the zip
+ -  global_conf - the standard darwin_global.conf (downloadable content)
+ -  self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
+ -  zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
+ -  JBOSS_MGMT_USER - the mgmt user free to chose
+ -  domain_init_script - The slave service script (downloadable content)
+ -  host_slave - The JBoss 7 host.xml file for the slave configuration (downloadable content)
+ -  master_ip - Bind this to the domain controllers ip in the blueprint, this is set in the JBOSS_HOME/system.properties to communicate with controller.
   
   The host-slave.xml, jboss-as-domain-slave.sh and darwin_global.conf are located in the Content directory.
   These need to be configured to be downloadable content in the properties

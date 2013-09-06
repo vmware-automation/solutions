@@ -22,7 +22,7 @@ try useradd -g $JBOSS_USER -d $HOME_DIR $JBOSS_USER
 
 cd $HOME_DIR
 echo "Installing $JBOSS_ZIP_PATH"
-try su $JBOSS_USER -c \"unzip $JBOSS_ZIP_PATH\"
+try su $JBOSS_USER -c \"tar zxvf $JBOSS_ZIP_PATH\"
 
 JBOSS_HOME=$HOME_DIR/$JBOSS_NAME_AND_VERSION/jboss-as
 
@@ -34,5 +34,7 @@ if [ ! -d $JBOSS_HOME ]; then
 fi
 
 # Configure specific for domain controller setup
-rm $JBOSS_HOME/domain/configuration/host*.xml
+rm -f $JBOSS_HOME/domain/configuration/host*.xml
+rm -f $JBOSS_HOME/domain/configuration/domain.xml
+cp $domain_master $JBOSS_HOME/domain/configuration/domain.xml
 cp $host_master $JBOSS_HOME/domain/configuration/host.xml

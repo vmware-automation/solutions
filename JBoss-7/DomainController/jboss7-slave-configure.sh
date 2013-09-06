@@ -7,10 +7,15 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 HOME_DIR=/home/jboss
 export JBOSS_HOME=$HOME_DIR/$JBOSS_NAME_AND_VERSION/jboss-as
+export SAS_JAR=$JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.0.Final.jar
+export PBOX_JAR=$JBOSS_HOME/modules/org/picketbox/main/picketbox-4.0.7.Final.jar
+export JBOSS_JAR=$JBOSS_HOME/bin/client/jboss-client.jar
+base64pw=`echo -n $slave_password | base64`
+#base64pw=$(/usr/bin/java -cp $SAS_JAR org.jboss.sasl.util.UsernamePasswordHashUtil "$slave_name" "ManagementRealm" "$slave_password" | cut -d'=' -f2)
 
 if [ ! -d $JBOSS_HOME ]; then
     "Echo JBOSS_HOME does not exist!"
-    exit -1
+    exit 1
 fi
 
 function addUserAndPassword() {
@@ -25,21 +30,21 @@ function addUserAndPassword() {
    local mgmt_users_file=$JBOSS_HOME/domain/configuration/mgmt-users.properties
 
    echo -e '\n' >> $app_users_file
-   local cmd="/usr/bin/java -cp $JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.1.Final.jar org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $app_users_file" 
+   local cmd="/usr/bin/java -cp $SAS_JAR org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $app_users_file" 
    echo "Executing $cmd"
    eval $cmd 
    if [ $? -ne 0 ]; then
       echo "Failed to set application user"
-      exit -1
+      exit 1
    fi
 
    echo -e '\n' >> $mgmt_users_file
-   cmd="/usr/bin/java -cp $JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.1.Final.jar org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $mgmt_users_file" 
+   cmd="/usr/bin/java -cp $SAS_JAR org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $mgmt_users_file" 
    echo "Executing $cmd"
    eval $cmd 
    if [ $? -ne 0 ]; then
       echo "Failed to set management user"
-      exit -1
+      exit 1
    fi
 }
 
@@ -78,7 +83,7 @@ JBOSS_USER=${JBOSS_USER:-"jboss"}
 EOF
 
 # Add jboss mgmt user
-addUserAndPassword $JBOSS_MGMT_USER $JBOSS_MGMT_PWD
+addUserAndPassword "$JBOSS_MGMT_USER" "$JBOSS_MGMT_PWD"
 
 # Setup properties file
 cat > $JBOSS_HOME/system.properties << EOF
@@ -86,16 +91,18 @@ jboss.domain.master.address=$master_ip
 jboss.bind.address.management=$self_ip
 jboss.bind.address=$self_ip
 jboss.bind.address.unsecure=$self_ip
-cluster.server.group=main-group
+jboss.domain.login.user=$slave_name
+jboss.domain.login.password=$base64pw
 cluster.server.name=$slave_name
+cluster.server.group=$cluster_group
 jboss.home.dir=$JBOSS_HOME
 EOF
 
-# Add the slave
-addUserAndPassword $slave_name $slave_password
+sed -i.bak "s/^\(\s*<secret\s*value=\"\)\(.*\)\(\".*\)$/\1$base64pw\3/" $JBOSS_HOME/domain/configuration/host.xml
 
 try chown -R $JBOSS_USER:$JBOSS_USER $JBOSS_HOME
 
 else
 	echo Service already installed 	
 fi
+

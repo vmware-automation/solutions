@@ -2,15 +2,19 @@
 set -e
 
 . $global_conf
+. $common_utils
 
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 HOME_DIR=/home/jboss
 export JBOSS_HOME=$HOME_DIR/$JBOSS_NAME_AND_VERSION/jboss-as
+export SAS_JAR=$JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.0.Final.jar
+export PBOX_JAR=$JBOSS_HOME/modules/org/picketbox/main/picketbox-4.0.7.Final.jar
+export JBOSS_JAR=$JBOSS_HOME/bin/client/jboss-client.jar
 
 if [ ! -d $JBOSS_HOME ]; then
     "Echo JBOSS_HOME does not exist!"
-    exit -1
+    exit 1
 fi
 
 function addUserAndPassword() {
@@ -25,21 +29,21 @@ function addUserAndPassword() {
    local mgmt_users_file=$JBOSS_HOME/domain/configuration/mgmt-users.properties
 
    echo -e '\n' >> $app_users_file
-   local cmd="/usr/bin/java -cp $JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.1.Final.jar org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $app_users_file" 
+   local cmd="/usr/bin/java -cp $SAS_JAR org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $app_users_file" 
    echo "Executing $cmd"
    eval $cmd 
    if [ $? -ne 0 ]; then
       echo "Failed to set application user"
-      exit -1
+      exit 1
    fi
 
    echo -e '\n' >> $mgmt_users_file
-   cmd="/usr/bin/java -cp $JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.1.Final.jar org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $mgmt_users_file" 
+   cmd="/usr/bin/java -cp $SAS_JAR org.jboss.sasl.util.UsernamePasswordHashUtil \"$name\" \"ManagementRealm\" \"$pw\" >> $mgmt_users_file" 
    echo "Executing $cmd"
    eval $cmd 
    if [ $? -ne 0 ]; then
       echo "Failed to set management user"
-      exit -1
+      exit 1
    fi
 }
 
@@ -67,7 +71,7 @@ then
        try mkdir -p /var/log/jboss-as
        JBOSS_CONSOLE_LOG="/var/log/jboss-as/console.log"
    fi
-   
+
 cat >> $PROVIDED_INIT_DIR/jboss-as.conf << EOF
 JBOSS_HOME=$JBOSS_HOME
 JBOSS_PIDFILE=$JBOSS_PIDFILE
@@ -78,21 +82,28 @@ JBOSS_USER=${JBOSS_USER:-"jboss"}
 EOF
 
     # Add jboss mgmt user
-    addUserAndPassword $JBOSS_MGMT_USER $JBOSS_MGMT_PWD
+    addUserAndPassword "$JBOSS_MGMT_USER" "$JBOSS_MGMT_PWD"
 
     # Setup properties file
 cat > $JBOSS_HOME/system.properties << EOF
 jboss.bind.address.management=$self_ip
+jboss.bind.address=$self_ip
 jboss.home.dir=$JBOSS_HOME
+cluster.server.group=$cluster_group
 EOF
 
+    servers=""
     # Add users for every slave instance in this deployment
     for o in "${cluster_nodenames_and_passwords[@]}"; do
         IFS=':' read -ra namePassword <<< "$o"
-        name=${namePassword[0]}
-        pw=${namePassword[1]}
-        addUserAndPassword $name $pw
+        addUserAndPassword "${namePassword[0]}" "${namePassword[1]}"
+        # servers="$servers <server name=\"${namePassword[0]}\" group=\"$cluster_group\" auto-start=\"true\"> <socket-bindings port-offset=\"150\" /> </server>"
     done
+
+    # Need to apply the servers to the template and create the actual host.xml
+    # PARAM_MAP=("\${servers}${TS}$servers")
+    # host_master="$JBOSS_HOME/domain/configuration/host.xml"
+    # Map_applyTemplate PARAM_MAP[@] $host_master_tmpl $host_master
 
     try chown -R $JBOSS_USER:$JBOSS_USER $JBOSS_HOME
 
