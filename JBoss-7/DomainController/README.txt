@@ -8,21 +8,66 @@ There are two services as part of this blueprint
 1. The domain controller which performs maitenance and coordination for the cluster, it itself does not host applications
 2. The slaves that register with the controller and are responsible for servicing applications.
 
-* KNOWN ISSUES *
-ATM the domain controller configures and starts successfully as do both slave instances for this basic test setup. Both slaves successfully register with the domain controller as can be observerd in the domain controller log located in /var/log/jboss-as/console.log. 
-
 ==
-[Host Controller] 15:43:37,018 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015951: Admin console listening on http://10.140.17.83:9990
-[Host Controller] 15:43:37,018 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: JBoss AS 7.1.1.Final "Brontes" (Host Controller) started in 3486ms - Started 11 of 11 services (0 services are passive or on-demand)
-[Host Controller] 15:53:06,626 INFO  [org.jboss.as.domain] (domain-mgmt-handler-thread - 1) JBAS010918: Registered remote slave host "slave2", JBoss AS 7.1.1.Final "Brontes"
-[Host Controller] 15:53:27,621 INFO  [org.jboss.as.domain] (domain-mgmt-handler-thread - 2) JBAS010918: Registered remote slave host "slave1", JBoss AS 7.1.1.Final "Brontes"
+[Host Controller] 23:06:21,047 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: JBoss AS 7.2.0.Final "Janus" (Host Controller) started in 4120ms - Started 11 of 11 services (0 services are passive or on-demand)
+[Host Controller] 23:33:40,311 INFO  [org.jboss.as.domain] (slave-request-threads - 1) JBAS010918: Registered remote slave host "slave1", JBoss AS 7.2.0.Final "Janus"
+[Host Controller] 23:37:55,449 INFO  [org.jboss.as.domain] (slave-request-threads - 1) JBAS010918: Registered remote slave host "slave2", JBoss AS 7.2.0.Final "Janus"
 ==
 
-However, for some reason when selecting one of the slave instances from the web console on the domain controller it gives an error. I will need to revisit this later.
+Building JBoss Archive
+----------------------
+NOTE: This Blueprint has been tested with JBoss AS 7.2.0.Final
+At present this was not a downloadable archive and required checking out and building manually
+1.) Checkout the code from GH
+$ git clone https://github.com/wildfly/wildfly.git
+Cloning into 'wildfly'...
+2.) You want to checkout the 7.2.0 Final
+$ git tag -l
+...
+7.2.0.Final
+...
+
+$ git checkout tags/7.2.0.Final
+Note: checking out 'tags/7.2.0.Final'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b new_branch_name
+
+HEAD is now at 4ed76ce... Prepare 7.2.0.Final for pre-releases
+3.) Build
+$./build.sh -DskipTests -Drelease=true install
+./tools/maven/bin/mvn -s tools/maven/conf/settings.xml install  -Dts.smoke  -DskipTests -Drelease=true
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+
+...
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6:16.144s
+
+4.) Deploy the newly built artifact to your content server.
+The location of the archive will be relative to the root of your build directory.
+$ ls -1 dist/target
+archive-tmp
+jboss-as-7.2.0.Final-src.tar.gz
+jboss-as-7.2.0.Final-src.zip
+jboss-as-7.2.0.Final.tar.gz
+jboss-as-7.2.0.Final.zip
+
+USE jboss-as-7.2.0.Final.tar.gz
+
 
 Creating Services
 -----------------
-
 1. Create a new JBoss 7 Domain Controller service in the catalog.
 
 - Use the following values for the service details:
@@ -50,6 +95,8 @@ Creating Services
  -  zip_url - This is the url of the JBoss-as-7xx.zip file (downloadable content)
  -  domain_init_script - The domain controller service script (downloadable content)
  -  self_ip - This is the ip address of this vm (bind this property to self:ip in the blueprint)
+ -  master_cluster_user - This is the username for the hornetmq cluster setting
+ -  master_cluster_password - This is the password for the hornetmq cluster setting
 
   The host-master.xml, jboss-as-domain.sh and darwin_global.conf are located in the Content directory.
   These need to be configured to be downloadable content in the properties
@@ -57,8 +104,9 @@ Creating Services
 - Add the install.sh, configure.sh, and start.sh script contents to the service lifecycles.
   For each one use the corresponding prefixed jboss7-domaincontroller*.sh file included.
 
-2. Create a new JBoss 7 Slave service in the catalog.
 
+2. Create a new JBoss 7 Slave service in the catalog.
+----------------------------------------------------
 - Use the following values for the service details:
 
 	Name: JBoss 7 Slave Instance
@@ -82,6 +130,8 @@ Creating Services
  -  domain_init_script - The slave service script (downloadable content)
  -  host_slave - The JBoss 7 host.xml file for the slave configuration (downloadable content)
  -  master_ip - Bind this to the domain controllers ip in the blueprint, this is set in the JBOSS_HOME/system.properties to communicate with controller.
+ -  master_cluster_user - Bind this to the domain controllers master_cluster_user property
+ -  master_cluster_password - Bind this to the domain controllers master_cluster_password property
   
   The host-slave.xml, jboss-as-domain-slave.sh and darwin_global.conf are located in the Content directory.
   These need to be configured to be downloadable content in the properties
@@ -116,8 +166,7 @@ NOTES:
 
 
 Adding the Blueprint
-----------------------
-
+--------------------
 - Create a new application, call it JBoss 7 Clustered for example
 - Drag 3 RHEL 6.1 or CentOS OS templates onto the blueprint area
 - On one drag the Domain Controller service you created in step 1, configure the properties a described.
@@ -135,3 +184,23 @@ Some additional files of interest
 /etc/jboss-as/jboss-as.conf - Contains properties for controlling jboss service startup and shutdown
 /etc/init.d/jboss - The jboss service script
 /var/log/jboss-as/console.log - The service log output
+
+JBoss Cluster Howto: https://docs.jboss.org/author/display/AS71/AS7+Cluster+Howto
+
+
+Verify Deployment
+-----------------
+Validation of the deploymsent setup can be done either from 
+
+1.) From either the webconsole at http://<domain controller ip>:9990/console
+Note: on the 7.2.0 release the console login just gave me a spinner and appeared to be hung
+2.) From the CLI
+[root@JBoss7-BDULH8AK bin]# $JBOSS_HOME/bin/jboss-cli.sh --controller=10.140.17.137
+You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.
+[disconnected /] connect
+[domain@10.140.17.137:9999 /] ls -l /host
+master
+slave1
+slave2
+[domain@10.140.17.137:9999 /] 
+

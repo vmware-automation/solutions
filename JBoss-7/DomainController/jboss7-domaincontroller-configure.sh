@@ -8,8 +8,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 HOME_DIR=/home/jboss
 export JBOSS_HOME=$HOME_DIR/$JBOSS_NAME_AND_VERSION/jboss-as
-export SAS_JAR=$JBOSS_HOME/modules/org/jboss/sasl/main/jboss-sasl-1.0.0.Final.jar
-export PBOX_JAR=$JBOSS_HOME/modules/org/picketbox/main/picketbox-4.0.7.Final.jar
+export SAS_JAR=$JBOSS_HOME/modules/system/layers/base/org/jboss/sasl/main/jboss-sasl-1.0.3.Final.jar
+export PBOX_JAR=$JBOSS_HOME/modules/system/layers/base/org/picketbox/main/picketbox-4.0.15.Final.jar
 export JBOSS_JAR=$JBOSS_HOME/bin/client/jboss-client.jar
 
 if [ ! -d $JBOSS_HOME ]; then
@@ -21,6 +21,7 @@ function addUserAndPassword() {
    local name=$1
    local pw=$2
    # This is the correct way to do it, but see bug https://issues.jboss.org/browse/AS7-4630
+   # And again https://issues.jboss.org/browse/AS7-5061
    # try $JBOSS_HOME/bin/add-user.sh --silent=true $JBOSS_MGMT_USER $JBOSS_MGMT_PWD # mgmt user
    # try $JBOSS_HOME/bin/add-user.sh --silent=true -a $JBOSS_MGMT_USER $JBOSS_MGMT_PWD # application user
 
@@ -86,8 +87,9 @@ EOF
 
     # Setup properties file
 cat > $JBOSS_HOME/system.properties << EOF
+jboss.messaging.cluster.user=$master_cluster_user
+jboss.messaging.cluster.password=$master_cluster_password
 jboss.bind.address.management=$self_ip
-jboss.bind.address=$self_ip
 jboss.home.dir=$JBOSS_HOME
 cluster.server.group=$cluster_group
 EOF
