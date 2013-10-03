@@ -28,7 +28,7 @@ Service Creation Steps
 * ruby_version string 2.0.0
 * rails_version string 4.0.0
 
--  Add the rails-install.sh script contents to the install service lifecycle.
+-  Add the rails-install,rails-configure and rails-start scripts to the corresponding service lifecycle.
 
 NOTES:
 
