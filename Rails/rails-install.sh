@@ -4,26 +4,29 @@ set -e
 export COMMON_INCLUDE=/tmp/common_include
 
 # Try handler, executes command and examines response, exits script if command fails with error -1
-cat > $COMMON_INCLUDE <<EOF
+cat > $COMMON_INCLUDE <<"EOF"
 export PATH="$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-export RVM_HOME=/usr/local/rvm
-export RAILSUSER=railsuser
-export HTTP_PROXY="$http_proxy"
-export HTTPS_PROXY="$https_proxy"
-export FTP_PROXY="$ftp_proxy"
-export CC=/usr/bin/gcc44
-export CXX=/usr/bin/g++44
-EOF
-cat >> $COMMON_INCLUDE <<"EOF"
 function try {
    local command="$@"
-   #echo "Executing: $command"
+   # echo "Executing: $command"
    eval $command
    if [ $? -ne 0 ]; then
      echo "Command $command failed"
      exit $ERR_EXIT_CODE
    fi
 }
+EOF
+cat >> $COMMON_INCLUDE <<EOF
+export RVM_HOME=/usr/local/rvm
+export RAILSUSER=railsuser
+export HTTP_PROXY="$http_proxy"
+export HTTPS_PROXY="$https_proxy"
+export FTP_PROXY="$ftp_proxy"
+export http_proxy="$http_proxy"
+export https_proxy="$https_proxy"
+export ftp_proxy="$ftp_proxy"
+export CC=/usr/bin/gcc44
+export CXX=/usr/bin/g++44
 EOF
 . $COMMON_INCLUDE
 
@@ -32,7 +35,9 @@ EOF
 # the rc file instead of -k because of environment issues. 
 # (depends on the HOME export above) 
 echo 'insecure' >> ~/.curlrc
-echo "proxy=$http_proxy" >> ~/.curlrc
+if [[ -n "$http_proxy" ]]; then
+    echo "proxy=$http_proxy" >> ~/.curlrc
+fi
 
 try yum -y --nogpgcheck install curl
 curl -O http://dl.fedoraproject.org/pub/epel/5/$(uname -i)/epel-release-5-4.noarch.rpm
@@ -40,7 +45,8 @@ curl -O http://rpms.famillecollet.com/enterprise/remi-release-5.rpm
 try rpm -Uvh *.rpm
 try sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/remi.repo
 
-try yum -y --nogpgcheck install gcc44 gcc44-c++ glib2 glib2-devel glibc glibc-devel patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison iconv-devel libjpeg-devel giflib-devel freetype-devel curl curl curl-devel httpd httpd-devel apr-devel apr-util-devel libxml2 libxml2-devel libxslt libxslt-devel sqlite-devel autoconf automake make openssl-devel bzip2-devel compat-libcurl3
+echo Installing Packages
+try yum -y --nogpgcheck install gcc44 gcc44-c++ glib2 glib2-devel glibc glibc-devel patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison iconv-devel libjpeg-devel giflib-devel freetype-devel curl curl curl-devel httpd httpd-devel apr apr-devel apr-util-devel libxml2 libxml2-devel libxslt libxslt-devel sqlite-devel autoconf automake make openssl-devel bzip2-devel compat-libcurl3 gcc-c++
 
 # Install Python
 echo "Installing Python"
@@ -92,13 +98,15 @@ set -e
 # need to source rvm in non-interactive shell
 . $RVM_HOME/scripts/rvm
 export HOME=/home/$RAILSUSER
-if [[ -z "$http_proxy" || -z "$https_proxy" || -z "$ruby_version" || -z "$rails_version" ]]; then
+if [[ -z "$ruby_version" || -z "$rails_version" ]]; then
     echo "Missing required environment variable"
     exit 1
 fi
 
 echo 'insecure' >> ~/.curlrc
-echo "proxy=$http_proxy" >> ~/.curlrc
+if [[ -n "$http_proxy" ]]; then
+    echo "proxy=$http_proxy" >> ~/.curlrc
+fi
 
 # Tell RVM to install Ruby
 echo "Installing ruby $ruby_version."

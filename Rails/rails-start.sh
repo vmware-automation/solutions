@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ae
+set -e
 
 export COMMON_INCLUDE=/tmp/common_include
 . $COMMON_INCLUDE

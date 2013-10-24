@@ -36,3 +36,8 @@ The darwin_global.conf file is an example how you can make shared properties acc
 Where you see '. $global_conf', this is mapped to the global_conf content property.
 
 After install visit http://${server.ip} to verify the rails/passenger environment
+
+Note
+----
+Due to the amount dependencies downloaded and installed and that certain gems are native the deployment time can result in being more than expected for the basic service.
+
